@@ -10,7 +10,7 @@ import {
 export default function PagePrix() {
   return (
     <main className="flex h-full w-[100vw] flex-row items-center justify-center p-32">
-      <Card className="mr-8">
+      {/* <Card className="mr-8">
         <CardHeader>
           <CardTitle>Gratuit</CardTitle>
           <CardDescription>
@@ -54,7 +54,7 @@ export default function PagePrix() {
         <CardFooter>
           <p>50€</p>
         </CardFooter>
-      </Card>
+      </Card> */}
     </main>
   );
 }
