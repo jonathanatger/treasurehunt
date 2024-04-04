@@ -126,6 +126,32 @@ export const useMarkers = function (
 
   // Delete an objective
   const deleteMutationCall = api.objectives.delete.useMutation({
+    onMutate: (variables) => {
+      const previousObjectives =
+        apiUtils.projects.fetchProjectObjectives.getData(_projectId);
+
+      if (previousObjectives === undefined) return previousObjectives;
+
+      const filteredObjectives = previousObjectives.filter(
+        (obj) =>
+          obj.projectid === variables.projectId &&
+          obj.order !== variables.order,
+      );
+
+      apiUtils.projects.fetchProjectObjectives.setData(
+        _projectId,
+        filteredObjectives,
+      );
+
+      return { previousObjectives };
+    },
+    onError: (err, newTodo, context) => {
+      apiUtils.projects.fetchProjectObjectives.setData(
+        _projectId,
+        context?.previousObjectives,
+      );
+      console.error(err);
+    },
     onSettled: () => {
       apiUtils.projects.fetchProjectObjectives.invalidate();
     },

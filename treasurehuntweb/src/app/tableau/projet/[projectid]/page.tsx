@@ -3,7 +3,6 @@ import { useEffect, useState, useRef } from "react";
 import { MapComponent } from "./mapComponent";
 import { ProjectObjectivesComponent } from "./projectObjectivesComponent";
 import { api } from "~/trpc/client";
-import { serverSynchronizer } from "~/lib/serverSynchronizer/synchronizer";
 
 export type simplifiedProjectObjective = {
   latitude: number;
@@ -21,9 +20,6 @@ export default function Page({ params }: { params: { projectid: string } }) {
     error,
     isLoading,
   } = api.projects.fetchProjectObjectives.useQuery(Number(params.projectid));
-
-  const synchronizer = useRef(new serverSynchronizer("message"));
-  synchronizer.current.message;
 
   return (
     <>
