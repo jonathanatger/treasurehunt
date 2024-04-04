@@ -1,7 +1,7 @@
 import "~/styles/globals.css";
 import { cn } from "~/lib/utils";
 
-import { Inter, Outfit, Montserrat } from "next/font/google";
+import { Inter, Outfit } from "next/font/google";
 import Link from "next/link";
 import { TRPCReactProvider } from "~/trpc/client";
 import { ReactElement } from "react";

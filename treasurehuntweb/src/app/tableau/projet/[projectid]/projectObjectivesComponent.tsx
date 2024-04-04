@@ -9,29 +9,34 @@ import { Button } from "~/components/ui/button";
 import { useEffect, SetStateAction, useRef } from "react";
 import { simplifiedProjectObjective } from "./page";
 import { useMarkers } from "~/lib/useMarkers";
+import { useContext } from "react";
+import { QueryClientContext } from "@tanstack/react-query";
+import { ProjectObjective } from "~/server/db/schema";
 
 export function ProjectObjectivesComponent({
   objectives,
-  setObjectives,
   mapObject,
+  projectId,
 }: {
-  objectives: simplifiedProjectObjective[];
-  setObjectives: React.Dispatch<SetStateAction<simplifiedProjectObjective[]>>;
+  objectives: ProjectObjective[] | undefined;
   mapObject: google.maps.Map | null;
+  projectId: number;
 }) {
+  const queryClient = useContext(QueryClientContext);
   const {
     deleteObjective,
     addMarkerOnClickListener,
     changeObjectiveOrder,
     updatePolyline,
-  } = useMarkers(objectives, setObjectives, mapObject);
+  } = useMarkers(objectives, mapObject, projectId, queryClient);
 
   useEffect(() => {
     updatePolyline();
   }, [objectives]);
+
   return (
     <>
-      <div className="px-2 pt-8">
+      <div className="px-2 py-8">
         <div className="flex w-full flex-col">
           {objectives &&
             objectives
@@ -49,6 +54,8 @@ export function ProjectObjectivesComponent({
                 />
               ))}
           <Button
+            className="h-32"
+            id="button-add-objective"
             onClick={() => {
               addMarkerOnClickListener(mapObject);
             }}

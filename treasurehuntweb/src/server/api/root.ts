@@ -1,9 +1,11 @@
+import { objectivesRouter } from "./routers/objectives";
 import { projectsRouter } from "./routers/projects";
 import { createCallerFactory, createTRPCRouter } from "./trpc";
 
 // primary router on the server -- new subrouters to be added here as they get created
 export const appRouter = createTRPCRouter({
   projects: projectsRouter,
+  objectives: objectivesRouter,
 });
 
 // export type definition of API

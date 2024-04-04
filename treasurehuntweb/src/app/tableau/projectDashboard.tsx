@@ -10,7 +10,6 @@ import { cn } from "~/lib/utils";
 import { api } from "~/trpc/client";
 import { Project } from "~/server/db/schema";
 import { revalidate } from "~/lib/serverActions";
-import { useRouter } from "next/router";
 import Link from "next/link";
 
 export function ProjectDashboard({
@@ -18,7 +17,9 @@ export function ProjectDashboard({
 }: {
   userprojects: Project[];
 }) {
-  return (
+  //wiki-devel.sugarlabs.org/images/e/e2/Arrow.cur  // const synchronizer = useRef(new serverSynchronizer("message"));
+
+  p: return (
     <div className="h-full rounded-md outline outline-slate-700">
       <div className="font-title py-8 text-3xl">VOS PROJETS</div>
       <div className="flex flex-row flex-wrap pb-8">
@@ -50,8 +51,6 @@ function ProjectCard({
   newProjectBehavior?: boolean;
   id: number;
 }) {
-  const deleteProject = api.projects.delete.useMutation();
-
   return (
     <Card className="mb-8 mr-8 w-64 cursor-pointer hover:scale-[1.05]">
       <Link href={`/tableau/projet/${id}`}>
@@ -70,7 +69,7 @@ function ProjectCard({
   );
 }
 
-function NewProjectCard({}: {}) {
+function NewProjectCard() {
   const newProject = api.projects.create.useMutation();
 
   function handleNewProjectClick(e: any) {

@@ -1,6 +1,5 @@
 import { ProjectDashboard } from "./projectDashboard";
 import { Project } from "~/server/db/schema";
-import Link from "next/link";
 import { api } from "~/trpc/server";
 
 export default async function Page() {

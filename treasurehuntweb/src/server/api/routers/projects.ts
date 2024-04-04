@@ -3,8 +3,6 @@ import { eq } from "drizzle-orm";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
 import { projectObjectives, projects } from "../../db/schema";
-import { revalidatePath } from "next/cache";
-import { revalidate } from "~/lib/serverActions";
 
 export const projectsRouter = createTRPCRouter({
   fetchUserProjects: publicProcedure.query(async ({ ctx }) => {
@@ -24,7 +22,7 @@ export const projectsRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const deleted = await ctx.db.insert(projects).values({
+      const created = await ctx.db.insert(projects).values({
         name: input.name,
         userId: input.userId,
         description: input.description,
