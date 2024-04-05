@@ -1,4 +1,4 @@
-import { useRef, useEffect, useContext } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MutableRefObject } from "react";
 import { api } from "~/trpc/client";
 import { getQueryKey } from "@trpc/react-query";
@@ -8,8 +8,85 @@ export const useMarkers = function (
   objectives: ProjectObjective[] | undefined,
   mapObject: google.maps.Map | null,
   _projectId: number,
-  queryClient: any,
+  markers: google.maps.marker.AdvancedMarkerElement[],
+  setMarkers: React.Dispatch<google.maps.marker.AdvancedMarkerElement[]>,
+  objectivesFetchedAfterMount: boolean,
 ) {
+  const DEFAULT_ON_CREATION_ID = -1;
+
+  function createNewMarker(latitude: number, longitude: number, id: number) {
+    return new google.maps.marker.AdvancedMarkerElement({
+      position: { lat: latitude, lng: longitude },
+      map: mapObject,
+      title: id.toString(),
+      gmpDraggable: true,
+    });
+  }
+
+  // on the objectives change, synchronize the markers in
+  // a declarative way
+  useEffect(() => {
+    console.log("objectives", objectives);
+    console.log("markers", markers);
+    let markersToSet: Array<google.maps.marker.AdvancedMarkerElement> = [];
+
+    objectives?.forEach((obj) => {
+      const correspondingMarker = markers.find(
+        (marker) => marker.title === obj.id.toString(),
+      );
+
+      if (correspondingMarker === undefined) {
+        const newMarker = createNewMarker(obj.latitude, obj.longitude, obj.id);
+        markersToSet.push(newMarker);
+        console.log("created new marker id :", newMarker.title);
+        return;
+      }
+
+      if (
+        correspondingMarker.position?.lat !== obj.latitude ||
+        correspondingMarker.position?.lng !== obj.longitude
+      ) {
+        correspondingMarker.position = {
+          lat: obj.latitude,
+          lng: obj.longitude,
+        };
+        console.log("changed coordinates");
+      }
+
+      markersToSet.push(correspondingMarker);
+    });
+
+    markers.forEach((previousMarker) => {
+      let check = true;
+      objectives?.forEach((obj) => {
+        if (obj.id.toString() === previousMarker.title) check = false;
+        console.log("check got put to false");
+      });
+      if (check) {
+        console.log("removed a marker id : ", previousMarker.title);
+        previousMarker.map = null;
+      }
+    });
+
+    console.log(
+      "markersToSet : ",
+      markersToSet.map((mark) => mark.title),
+    );
+    setMarkers(markersToSet);
+  }, [objectives]);
+
+  // On objectives and map load, set the first markers based on existing objectives
+  // in the project
+  useEffect(() => {
+    if (mapObject === null || objectives === undefined) return;
+
+    const _markers = objectives.map((obj) => {
+      return createNewMarker(obj.latitude, obj.longitude, obj.id);
+    });
+
+    setMarkers(_markers);
+  }, [mapObject, objectivesFetchedAfterMount]);
+
   // Add new objective, with a click on the map.
   // step 1 : create listener on the map, to get the click
   // step 2 : listener triggers callback, place a marker, pans the map to the point
@@ -17,7 +94,9 @@ export const useMarkers = function (
   const currentListener: MutableRefObject<google.maps.MapsEventListener | null> =
     useRef(null);
 
-  function addMarkerOnClickListener(mapObject: google.maps.Map | null) {
+  function addObjectiveAndMarkerOnClickListener(
+    mapObject: google.maps.Map | null,
+  ) {
     if (mapObject === null) return;
     const cssButtonClasses = ["animate-pulse", "outline", "outline-blue-200"];
 
@@ -38,13 +117,9 @@ export const useMarkers = function (
         }, 1);
       }
 
-      let newMarker = placeMarkerAndPanTo(
-        e.latLng,
-        mapObject,
-        orderOfNewObjective,
-      );
+      mapObject.panTo(e.latLng);
 
-      updateObjectivesWithNewMarker(newMarker, e.latLng, orderOfNewObjective);
+      callCreateNewObjectiveApi(e.latLng, orderOfNewObjective);
 
       document
         .getElementById("button-add-objective")
@@ -55,25 +130,8 @@ export const useMarkers = function (
     });
   }
 
-  function placeMarkerAndPanTo(
-    latLng: google.maps.LatLng,
-    map: google.maps.Map,
-    order: number,
-  ) {
-    const _marker = new google.maps.marker.AdvancedMarkerElement({
-      position: latLng,
-      map: map,
-      title: order.toString(),
-    });
-
-    map.panTo(latLng);
-
-    return _marker;
-  }
-
   const apiUtils = api.useUtils();
 
-  const queryKey = getQueryKey(api.projects);
   const creationApiCall = api.objectives.create.useMutation({
     onMutate: (newObjective) => {
       const previousObjectives =
@@ -86,8 +144,8 @@ export const useMarkers = function (
         newData = [
           ...previousObjectives,
           {
-            id: 9999999999999999,
-            projectid: 99999999999999,
+            id: DEFAULT_ON_CREATION_ID,
+            projectid: DEFAULT_ON_CREATION_ID,
             latitude: newObjective.latitude,
             longitude: newObjective.longitude,
             order: newObjective.order,
@@ -99,20 +157,41 @@ export const useMarkers = function (
 
       return { previousObjectives };
     },
-    onError: (err, newTodo, context) => {
+    onError: (err, newObjective, context) => {
       apiUtils.projects.fetchProjectObjectives.setData(
         _projectId,
         context?.previousObjectives,
       );
       console.error(err);
     },
-    onSettled: () => {
+    onSettled: (res, ret, input, sth) => {
+      /*
+      setMarkers(
+        // @ts-ignore
+        (previousMarkers: google.maps.marker.AdvancedMarkerElement[]) => {
+          let _markers = [...previousMarkers];
+          console.log("in setMarkers", _markers);
+
+          _markers.forEach((marker) => {
+            if (marker.title === DEFAULT_ON_CREATION_ID.toString()) {
+              const newId = objectives
+                ?.find((obj) => obj.order === input.order)
+                ?.id.toString();
+
+              marker.title = newId ? newId.toString() : (1).toString();
+            }
+          });
+
+          return _markers;
+        },
+      );
+      */
+
       apiUtils.projects.fetchProjectObjectives.invalidate();
     },
   });
 
-  function updateObjectivesWithNewMarker(
-    _marker: google.maps.marker.AdvancedMarkerElement,
+  function callCreateNewObjectiveApi(
     latLng: google.maps.LatLng,
     _order: number,
   ) {
@@ -124,7 +203,9 @@ export const useMarkers = function (
     });
   }
 
-  // Delete an objective
+  // Delete an objective, its marker
+  // and changes the order of the objectives accordingly
+
   const deleteMutationCall = api.objectives.delete.useMutation({
     onMutate: (variables) => {
       const previousObjectives =
@@ -145,11 +226,12 @@ export const useMarkers = function (
 
       return { previousObjectives };
     },
-    onError: (err, newTodo, context) => {
+    onError: (err, variables, context) => {
       apiUtils.projects.fetchProjectObjectives.setData(
         _projectId,
         context?.previousObjectives,
       );
+
       console.error(err);
     },
     onSettled: () => {
@@ -157,13 +239,13 @@ export const useMarkers = function (
     },
   });
 
-  function deleteObjective(_order: number, _projectid: number) {
+  function deleteObjective(_order: number) {
     deleteMutationCall.mutate({ projectId: _projectId, order: _order });
   }
 
   // Change the order of objectives
   const orderChangeMutationCall = api.objectives.changeOrder.useMutation({
-    onSettled: () => {
+    onSettled: (data) => {
       apiUtils.projects.fetchProjectObjectives.invalidate();
     },
   });
@@ -224,8 +306,12 @@ export const useMarkers = function (
     polylineRef.current = polyline;
   }
 
+  useEffect(() => {
+    updatePolyline();
+  }, [objectives]);
+
   return {
-    addMarkerOnClickListener,
+    addObjectiveAndMarkerOnClickListener,
     deleteObjective,
     changeObjectiveOrder,
     updatePolyline,

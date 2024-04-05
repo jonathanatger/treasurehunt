@@ -1,13 +1,10 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useGMapImports } from "~/lib/useImportGMapAPI";
 import { useIpLocation } from "~/lib/useLocation";
-import { useMarkers } from "~/lib/useMarkers";
 
 export function MapComponent({
-  mapObject,
   setMap,
 }: {
-  mapObject: google.maps.Map | null;
   setMap: React.Dispatch<SetStateAction<google.maps.Map | null>>;
 }) {
   const userLocation: google.maps.LatLngLiteral = useIpLocation();

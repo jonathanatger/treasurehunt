@@ -3,37 +3,25 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
 } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
-import { useEffect, SetStateAction, useRef } from "react";
-import { simplifiedProjectObjective } from "./page";
-import { useMarkers } from "~/lib/useMarkers";
-import { useContext } from "react";
-import { QueryClientContext } from "@tanstack/react-query";
 import { ProjectObjective } from "~/server/db/schema";
 
 export function ProjectObjectivesComponent({
   objectives,
   mapObject,
-  projectId,
+  deleteObjective,
+  changeObjectiveOrder,
+  addObjectiveAndMarkerOnClickListener,
 }: {
   objectives: ProjectObjective[] | undefined;
   mapObject: google.maps.Map | null;
-  projectId: number;
+  deleteObjective: (order: number) => void;
+  changeObjectiveOrder: (currentOrder: number, newOrder: number) => void;
+  addObjectiveAndMarkerOnClickListener: (
+    mapObject: google.maps.Map | null,
+  ) => void;
 }) {
-  const queryClient = useContext(QueryClientContext);
-  const {
-    deleteObjective,
-    addMarkerOnClickListener,
-    changeObjectiveOrder,
-    updatePolyline,
-  } = useMarkers(objectives, mapObject, projectId, queryClient);
-
-  useEffect(() => {
-    updatePolyline();
-  }, [objectives]);
-
   return (
     <>
       <div className="px-2 py-8">
@@ -57,7 +45,7 @@ export function ProjectObjectivesComponent({
             className="h-32"
             id="button-add-objective"
             onClick={() => {
-              addMarkerOnClickListener(mapObject);
+              addObjectiveAndMarkerOnClickListener(mapObject);
             }}
           >
             Ajouter un objectif
@@ -76,8 +64,8 @@ function ObjectiveCard({
   longitude,
 }: {
   order: number;
-  deleteObjective: Function;
-  changeObjectiveOrder: Function;
+  deleteObjective: (order: number) => void;
+  changeObjectiveOrder: (currentOrder: number, newOrder: number) => void;
   latitude: number;
   longitude: number;
 }) {

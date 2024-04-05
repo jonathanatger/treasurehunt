@@ -3,23 +3,34 @@ import { useEffect, useState, useRef } from "react";
 import { MapComponent } from "./mapComponent";
 import { ProjectObjectivesComponent } from "./projectObjectivesComponent";
 import { api } from "~/trpc/client";
-
-export type simplifiedProjectObjective = {
-  latitude: number;
-  longitude: number;
-  order: number;
-  marker: google.maps.marker.AdvancedMarkerElement;
-};
+import { useMarkers } from "~/lib/useMarkers";
 
 export default function Page({ params }: { params: { projectid: string } }) {
-  const [map, setMap] = useState<google.maps.Map | null>(null);
+  const [mapObject, setMapObject] = useState<google.maps.Map | null>(null);
+  const [markers, setMarkers] = useState<
+    google.maps.marker.AdvancedMarkerElement[]
+  >([]);
 
   // fetch data to initialize the component
   const {
     data: objectives,
     error,
     isLoading,
+    isFetchedAfterMount: objectivesFetchedAfterMount,
   } = api.projects.fetchProjectObjectives.useQuery(Number(params.projectid));
+
+  const {
+    deleteObjective,
+    addObjectiveAndMarkerOnClickListener,
+    changeObjectiveOrder,
+  } = useMarkers(
+    objectives,
+    mapObject,
+    Number(params.projectid),
+    markers,
+    setMarkers,
+    objectivesFetchedAfterMount,
+  );
 
   return (
     <>
@@ -28,12 +39,16 @@ export default function Page({ params }: { params: { projectid: string } }) {
           <div className="h-full w-64 overflow-auto">
             <ProjectObjectivesComponent
               objectives={objectives}
-              mapObject={map}
-              projectId={Number(params.projectid)}
+              mapObject={mapObject}
+              deleteObjective={deleteObjective}
+              changeObjectiveOrder={changeObjectiveOrder}
+              addObjectiveAndMarkerOnClickListener={
+                addObjectiveAndMarkerOnClickListener
+              }
             />
           </div>
           <div className="grow bg-white">
-            <MapComponent mapObject={map} setMap={setMap} />
+            <MapComponent setMap={setMapObject} />
           </div>
         </section>
       </main>
