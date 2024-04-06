@@ -16,6 +16,12 @@ export const useSyncClientAndServerState = function (
   useEffect(() => {
     let markersToSet: Array<google.maps.marker.AdvancedMarkerElement> = [];
 
+    // console.log("objective before update with useEffect : ", objectives);
+    // console.log(
+    //   "markers before update with useEffect : ",
+    //   markersToSet.map((marker, index) => marker.title),
+    // );
+
     objectives?.forEach((obj) => {
       const correspondingMarker = markers.find(
         (marker) => marker.title === obj.id.toString(),
@@ -63,7 +69,10 @@ export const useSyncClientAndServerState = function (
       }
     });
 
-    console.log(markersToSet);
+    // console.log(
+    //   "markersToSet: ",
+    //   markersToSet.map((marker, index) => marker.title),
+    // );
 
     setMarkers(markersToSet);
   }, [objectives]);

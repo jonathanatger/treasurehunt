@@ -86,14 +86,15 @@ export const useMarkers = function (
       if (previousObjectives === undefined) newData = [];
       else {
         const tempId = previousObjectives.reduce(
-          (acc, value) => (value.id < acc ? (acc = value.id - 1) : acc),
+          (acc, value) =>
+            value.id === acc || value.id < acc ? (acc = value.id - 1) : acc,
           -1,
         );
 
         newData = [
           ...previousObjectives,
           {
-            id: DEFAULT_ON_CREATION_ID,
+            id: tempId,
             projectid: _projectId,
             latitude: newObjective.latitude,
             longitude: newObjective.longitude,
