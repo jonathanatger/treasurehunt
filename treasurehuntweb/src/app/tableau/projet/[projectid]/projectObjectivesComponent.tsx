@@ -17,7 +17,10 @@ export function ProjectObjectivesComponent({
   objectives: ProjectObjective[] | undefined;
   mapObject: google.maps.Map | null;
   deleteObjective: (order: number) => void;
-  changeObjectiveOrder: (currentOrder: number, newOrder: number) => void;
+  changeObjectiveOrder: (
+    firstProjectOrder: number,
+    secondProjectOrder: number,
+  ) => void;
   addObjectiveAndMarkerOnClickListener: (
     mapObject: google.maps.Map | null,
   ) => void;
@@ -75,7 +78,7 @@ function ObjectiveCard({
         <Button
           className="m-1 flex-1 bg-slate-700"
           onClick={() => {
-            changeObjectiveOrder(order, order - 1);
+            changeObjectiveOrder(order - 1, order);
           }}
         >
           Up

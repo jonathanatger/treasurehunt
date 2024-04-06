@@ -24,7 +24,8 @@ export const useMarkers = function (
   }
 
   // on the objectives change, synchronize the markers in
-  // a declarative way
+  // a declarative way :
+  // creation/mutation/deletion and save in `markers` state
   useEffect(() => {
     console.log("objectives", objectives);
     console.log("markers", markers);
@@ -38,9 +39,9 @@ export const useMarkers = function (
       if (correspondingMarker === undefined) {
         const newMarker = createNewMarker(obj.latitude, obj.longitude, obj.id);
         markersToSet.push(newMarker);
-        console.log("created new marker id :", newMarker.title);
         return;
       }
+      //
 
       if (
         correspondingMarker.position?.lat !== obj.latitude ||
@@ -50,7 +51,6 @@ export const useMarkers = function (
           lat: obj.latitude,
           lng: obj.longitude,
         };
-        console.log("changed coordinates");
       }
 
       markersToSet.push(correspondingMarker);
@@ -58,34 +58,23 @@ export const useMarkers = function (
 
     markers.forEach((previousMarker) => {
       let check = true;
-      objectives?.forEach((obj) => {
+
+      if (objectives === undefined || objectives.length === 0) {
+        previousMarker.map = null;
+        return;
+      }
+
+      objectives.forEach((obj) => {
         if (obj.id.toString() === previousMarker.title) check = false;
-        console.log("check got put to false");
       });
+
       if (check) {
-        console.log("removed a marker id : ", previousMarker.title);
         previousMarker.map = null;
       }
     });
 
-    console.log(
-      "markersToSet : ",
-      markersToSet.map((mark) => mark.title),
-    );
     setMarkers(markersToSet);
   }, [objectives]);
-
-  // On objectives and map load, set the first markers based on existing objectives
-  // in the project
-  useEffect(() => {
-    if (mapObject === null || objectives === undefined) return;
-
-    const _markers = objectives.map((obj) => {
-      return createNewMarker(obj.latitude, obj.longitude, obj.id);
-    });
-
-    setMarkers(_markers);
-  }, [mapObject, objectivesFetchedAfterMount]);
 
   // Add new objective, with a click on the map.
   // step 1 : create listener on the map, to get the click
@@ -119,7 +108,12 @@ export const useMarkers = function (
 
       mapObject.panTo(e.latLng);
 
-      callCreateNewObjectiveApi(e.latLng, orderOfNewObjective);
+      objectiveCreationApiCall.mutate({
+        projectId: _projectId,
+        order: orderOfNewObjective,
+        latitude: e.latLng.lat(),
+        longitude: e.latLng.lng(),
+      });
 
       document
         .getElementById("button-add-objective")
@@ -132,7 +126,7 @@ export const useMarkers = function (
 
   const apiUtils = api.useUtils();
 
-  const creationApiCall = api.objectives.create.useMutation({
+  const objectiveCreationApiCall = api.objectives.create.useMutation({
     onMutate: (newObjective) => {
       const previousObjectives =
         apiUtils.projects.fetchProjectObjectives.getData(_projectId);
@@ -165,43 +159,9 @@ export const useMarkers = function (
       console.error(err);
     },
     onSettled: (res, ret, input, sth) => {
-      /*
-      setMarkers(
-        // @ts-ignore
-        (previousMarkers: google.maps.marker.AdvancedMarkerElement[]) => {
-          let _markers = [...previousMarkers];
-          console.log("in setMarkers", _markers);
-
-          _markers.forEach((marker) => {
-            if (marker.title === DEFAULT_ON_CREATION_ID.toString()) {
-              const newId = objectives
-                ?.find((obj) => obj.order === input.order)
-                ?.id.toString();
-
-              marker.title = newId ? newId.toString() : (1).toString();
-            }
-          });
-
-          return _markers;
-        },
-      );
-      */
-
       apiUtils.projects.fetchProjectObjectives.invalidate();
     },
   });
-
-  function callCreateNewObjectiveApi(
-    latLng: google.maps.LatLng,
-    _order: number,
-  ) {
-    creationApiCall.mutate({
-      projectId: _projectId,
-      order: _order,
-      latitude: latLng.lat(),
-      longitude: latLng.lng(),
-    });
-  }
 
   // Delete an objective, its marker
   // and changes the order of the objectives accordingly
@@ -244,33 +204,69 @@ export const useMarkers = function (
   }
 
   // Change the order of objectives
-  const orderChangeMutationCall = api.objectives.changeOrder.useMutation({
+  const orderChangeApiCall = api.objectives.changeOrder.useMutation({
+    onMutate: async (variables) => {
+      const previousObjectives =
+        apiUtils.projects.fetchProjectObjectives.getData(_projectId);
+
+      if (previousObjectives !== undefined) {
+        const firstObjectiveToChange = previousObjectives.find(
+          (obj) => obj.id === variables.firstProject.id,
+        );
+        const secondObjectiveToChange = previousObjectives.find(
+          (obj) => obj.id === variables.secondProject.id,
+        );
+
+        if (
+          firstObjectiveToChange !== undefined &&
+          secondObjectiveToChange !== undefined
+        ) {
+          firstObjectiveToChange.order = variables.secondProject.order;
+          secondObjectiveToChange.order = variables.firstProject.order;
+        }
+
+        apiUtils.projects.fetchProjectObjectives.setData(
+          _projectId,
+          previousObjectives,
+        );
+      }
+
+      return { previousObjectives };
+    },
     onSettled: (data) => {
       apiUtils.projects.fetchProjectObjectives.invalidate();
     },
   });
 
-  function changeObjectiveOrder(currentOrder: number, newOrder: number) {
+  function changeObjectiveOrder(
+    firstProjectOrder: number,
+    secondProjectOrder: number,
+  ) {
     if (objectives === undefined) return;
     let objectivesList = [...objectives];
 
     const firstObjectiveToChange = objectivesList.find(
-      (obj) => obj.order === currentOrder,
+      (obj) => obj.order === firstProjectOrder,
     );
     const secondObjectiveToChange = objectivesList.find(
-      (obj) => obj.order === newOrder,
+      (obj) => obj.order === secondProjectOrder,
     );
 
     if (
-      firstObjectiveToChange === undefined ||
-      secondObjectiveToChange === undefined
-    )
-      return;
-
-    orderChangeMutationCall.mutate({
-      firstProject: { id: firstObjectiveToChange.id, order: newOrder },
-      secondProject: { id: secondObjectiveToChange.id, order: currentOrder },
-    });
+      firstObjectiveToChange !== undefined &&
+      secondObjectiveToChange !== undefined
+    ) {
+      orderChangeApiCall.mutate({
+        firstProject: {
+          id: firstObjectiveToChange.id,
+          order: firstProjectOrder,
+        },
+        secondProject: {
+          id: secondObjectiveToChange.id,
+          order: secondProjectOrder,
+        },
+      });
+    }
   }
 
   // Create and update a polyline between objectives

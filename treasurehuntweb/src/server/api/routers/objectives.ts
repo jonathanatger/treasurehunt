@@ -46,11 +46,11 @@ export const objectivesRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       await ctx.db
         .update(projectObjectives)
-        .set({ order: input.firstProject.order })
+        .set({ order: input.secondProject.order })
         .where(eq(projectObjectives.id, input.firstProject.id));
       await ctx.db
         .update(projectObjectives)
-        .set({ order: input.secondProject.order })
+        .set({ order: input.firstProject.order })
         .where(eq(projectObjectives.id, input.secondProject.id));
     }),
 });
