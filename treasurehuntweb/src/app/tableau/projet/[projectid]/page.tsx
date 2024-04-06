@@ -4,6 +4,7 @@ import { MapComponent } from "./mapComponent";
 import { ProjectObjectivesComponent } from "./projectObjectivesComponent";
 import { api } from "~/trpc/client";
 import { useMarkers } from "~/lib/useMarkers";
+import { useSyncClientAndServerState } from "~/lib/useSyncClientServer";
 
 export default function Page({ params }: { params: { projectid: string } }) {
   const [mapObject, setMapObject] = useState<google.maps.Map | null>(null);
@@ -19,6 +20,15 @@ export default function Page({ params }: { params: { projectid: string } }) {
     isFetchedAfterMount: objectivesFetchedAfterMount,
   } = api.projects.fetchProjectObjectives.useQuery(Number(params.projectid));
 
+  const { updatePolyline, debouncedObjectivesDataCacheInvalidation } =
+    useSyncClientAndServerState(
+      objectives,
+      mapObject,
+      Number(params.projectid),
+      markers,
+      setMarkers,
+    );
+
   const {
     deleteObjective,
     addObjectiveAndMarkerOnClickListener,
@@ -27,9 +37,8 @@ export default function Page({ params }: { params: { projectid: string } }) {
     objectives,
     mapObject,
     Number(params.projectid),
-    markers,
-    setMarkers,
-    objectivesFetchedAfterMount,
+    updatePolyline,
+    debouncedObjectivesDataCacheInvalidation,
   );
 
   return (
