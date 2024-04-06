@@ -22,7 +22,7 @@ export default function Page({ params }: { params: { projectid: string } }) {
   const {
     deleteObjective,
     addObjectiveAndMarkerOnClickListener,
-    changeObjectiveOrder,
+    switchObjectiveOrder,
   } = useMarkers(
     objectives,
     mapObject,
@@ -41,7 +41,7 @@ export default function Page({ params }: { params: { projectid: string } }) {
               objectives={objectives}
               mapObject={mapObject}
               deleteObjective={deleteObjective}
-              changeObjectiveOrder={changeObjectiveOrder}
+              switchObjectiveOrder={switchObjectiveOrder}
               addObjectiveAndMarkerOnClickListener={
                 addObjectiveAndMarkerOnClickListener
               }

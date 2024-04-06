@@ -11,13 +11,13 @@ export function ProjectObjectivesComponent({
   objectives,
   mapObject,
   deleteObjective,
-  changeObjectiveOrder,
+  switchObjectiveOrder,
   addObjectiveAndMarkerOnClickListener,
 }: {
   objectives: ProjectObjective[] | undefined;
   mapObject: google.maps.Map | null;
   deleteObjective: (order: number) => void;
-  changeObjectiveOrder: (
+  switchObjectiveOrder: (
     firstProjectOrder: number,
     secondProjectOrder: number,
   ) => void;
@@ -37,9 +37,10 @@ export function ProjectObjectivesComponent({
               .map((objective) => (
                 <ObjectiveCard
                   key={objective.order.toString()}
+                  id={objective.id}
                   order={objective.order}
                   deleteObjective={deleteObjective}
-                  changeObjectiveOrder={changeObjectiveOrder}
+                  switchObjectiveOrder={switchObjectiveOrder}
                   latitude={objective.latitude}
                   longitude={objective.longitude}
                 />
@@ -60,15 +61,17 @@ export function ProjectObjectivesComponent({
 }
 
 function ObjectiveCard({
+  id,
   order,
   deleteObjective,
-  changeObjectiveOrder,
+  switchObjectiveOrder,
   latitude,
   longitude,
 }: {
+  id: number;
   order: number;
   deleteObjective: (order: number) => void;
-  changeObjectiveOrder: (currentOrder: number, newOrder: number) => void;
+  switchObjectiveOrder: (currentId: number, displacement: number) => void;
   latitude: number;
   longitude: number;
 }) {
@@ -78,7 +81,7 @@ function ObjectiveCard({
         <Button
           className="m-1 flex-1 bg-slate-700"
           onClick={() => {
-            changeObjectiveOrder(order - 1, order);
+            switchObjectiveOrder(id, -1);
           }}
         >
           Up
@@ -86,7 +89,7 @@ function ObjectiveCard({
         <Button
           className="m-1 flex-1 bg-slate-700"
           onClick={() => {
-            changeObjectiveOrder(order, order + 1);
+            switchObjectiveOrder(id, 1);
           }}
         >
           Down

@@ -27,8 +27,6 @@ export const useMarkers = function (
   // a declarative way :
   // creation/mutation/deletion and save in `markers` state
   useEffect(() => {
-    console.log("objectives", objectives);
-    console.log("markers", markers);
     let markersToSet: Array<google.maps.marker.AdvancedMarkerElement> = [];
 
     objectives?.forEach((obj) => {
@@ -217,6 +215,8 @@ export const useMarkers = function (
           (obj) => obj.id === variables.secondProject.id,
         );
 
+        console.log("previousObjectives", previousObjectives);
+        console.log("firstObjectiveToChange", firstObjectiveToChange);
         if (
           firstObjectiveToChange !== undefined &&
           secondObjectiveToChange !== undefined
@@ -229,6 +229,8 @@ export const useMarkers = function (
           _projectId,
           previousObjectives,
         );
+
+        updatePolyline();
       }
 
       return { previousObjectives };
@@ -238,32 +240,34 @@ export const useMarkers = function (
     },
   });
 
-  function changeObjectiveOrder(
-    firstProjectOrder: number,
-    secondProjectOrder: number,
-  ) {
+  function switchObjectiveOrder(objectiveId: number, displacement: number) {
     if (objectives === undefined) return;
-    let objectivesList = [...objectives];
+    let objectivesList = [...objectives].sort(
+      (a, b) => a.order - b.order,
+    ) as ProjectObjective[];
 
     const firstObjectiveToChange = objectivesList.find(
-      (obj) => obj.order === firstProjectOrder,
-    );
-    const secondObjectiveToChange = objectivesList.find(
-      (obj) => obj.order === secondProjectOrder,
+      (obj) => obj.id === objectiveId,
     );
 
-    if (
-      firstObjectiveToChange !== undefined &&
-      secondObjectiveToChange !== undefined
-    ) {
+    if (firstObjectiveToChange === undefined) return;
+    const firstObjectiveIndex = objectivesList.indexOf(firstObjectiveToChange);
+    console.log("firstObjectiveToChange", firstObjectiveToChange);
+
+    const secondObjectiveToChange =
+      objectivesList[firstObjectiveIndex + displacement];
+
+    console.log("secondObjectiveToChange", secondObjectiveToChange);
+
+    if (secondObjectiveToChange !== undefined) {
       orderChangeApiCall.mutate({
         firstProject: {
           id: firstObjectiveToChange.id,
-          order: firstProjectOrder,
+          order: firstObjectiveToChange.order,
         },
         secondProject: {
           id: secondObjectiveToChange.id,
-          order: secondProjectOrder,
+          order: secondObjectiveToChange.order,
         },
       });
     }
@@ -309,7 +313,7 @@ export const useMarkers = function (
   return {
     addObjectiveAndMarkerOnClickListener,
     deleteObjective,
-    changeObjectiveOrder,
+    switchObjectiveOrder,
     updatePolyline,
   };
 };
