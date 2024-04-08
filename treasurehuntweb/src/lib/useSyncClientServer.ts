@@ -19,7 +19,7 @@ export const useSyncClientAndServerState = function (
       listener: google.maps.MapsEventListener | null;
     }[]
   >,
-  markerContent: (title: string) => HTMLDivElement,
+  markerContent: (title: string, isHighlighted: boolean) => HTMLDivElement,
 ) {
   const DEFAULT_ON_CREATION_CLIENT_ID = 1;
 
@@ -147,7 +147,7 @@ export const useSyncClientAndServerState = function (
       map: _map,
       title: markerTitle,
       gmpDraggable: true,
-      content: markerContent(markerTitle),
+      content: markerContent(markerTitle, false),
     });
     draggableMarker.addListener("dragstart", (event: any) => {
       clearTimeout(debouncedObjectivesDataCacheInvalidationTimeout.current);

@@ -9,12 +9,19 @@ import { ProjectObjective } from "~/server/db/schema";
 
 export function ProjectObjectivesComponent({
   objectives,
+  markers,
   mapObject,
   deleteObjective,
   switchObjectiveOrder,
   addObjectiveAndMarkerOnClickListener,
+  markerContent,
 }: {
   objectives: ProjectObjective[] | undefined;
+  markers: {
+    clientId: number;
+    marker: google.maps.marker.AdvancedMarkerElement;
+    listener: google.maps.MapsEventListener | null;
+  }[];
   mapObject: google.maps.Map | null;
   deleteObjective: (order: number) => void;
   switchObjectiveOrder: (
@@ -24,6 +31,7 @@ export function ProjectObjectivesComponent({
   addObjectiveAndMarkerOnClickListener: (
     mapObject: google.maps.Map | null,
   ) => void;
+  markerContent: (title: string, isHighlighted: boolean) => HTMLDivElement;
 }) {
   return (
     <>
@@ -37,6 +45,7 @@ export function ProjectObjectivesComponent({
               .map((objective) => (
                 <ObjectiveCard
                   key={"objective-card-" + objective.clientId.toString()}
+                  markers={markers}
                   clientId={objective.clientId}
                   title={objective.title}
                   order={objective.order}
@@ -44,6 +53,7 @@ export function ProjectObjectivesComponent({
                   switchObjectiveOrder={switchObjectiveOrder}
                   latitude={objective.latitude}
                   longitude={objective.longitude}
+                  markerContent={markerContent}
                 />
               ))}
           <Button
@@ -62,6 +72,7 @@ export function ProjectObjectivesComponent({
 }
 
 function ObjectiveCard({
+  markers,
   clientId,
   title,
   order,
@@ -69,7 +80,13 @@ function ObjectiveCard({
   switchObjectiveOrder,
   latitude,
   longitude,
+  markerContent,
 }: {
+  markers: {
+    clientId: number;
+    marker: google.maps.marker.AdvancedMarkerElement;
+    listener: google.maps.MapsEventListener | null;
+  }[];
   clientId: number;
   title: string;
   order: number;
@@ -77,13 +94,31 @@ function ObjectiveCard({
   switchObjectiveOrder: (currentId: number, displacement: number) => void;
   latitude: number;
   longitude: number;
+  markerContent: (title: string, isHighlighted: boolean) => HTMLDivElement;
 }) {
+  function highlightMarker(isHighlighted: boolean) {
+    const correspondingMarker = markers.find(
+      (marker) => marker.clientId === clientId,
+    )?.marker;
+
+    if (correspondingMarker === undefined) return;
+
+    correspondingMarker.content = markerContent(title, isHighlighted);
+
+    // console.log("did it");
+  }
+
   return (
-    <Card className="mb-2 flex w-full flex-row">
+    <Card
+      className="mb-2 flex w-full flex-row"
+      onMouseEnter={() => highlightMarker(true)}
+      onMouseLeave={() => highlightMarker(false)}
+    >
       <div className="flex w-12 flex-col ">
         <Button
           className="m-1 flex-1 bg-slate-700"
           onClick={() => {
+            highlightMarker(false);
             switchObjectiveOrder(clientId, -1);
           }}
         >
@@ -92,6 +127,7 @@ function ObjectiveCard({
         <Button
           className="m-1 flex-1 bg-slate-700"
           onClick={() => {
+            highlightMarker(false);
             switchObjectiveOrder(clientId, 1);
           }}
         >
