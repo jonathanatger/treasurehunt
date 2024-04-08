@@ -20,14 +20,17 @@ export default function Page({ params }: { params: { projectid: string } }) {
     isFetchedAfterMount: objectivesFetchedAfterMount,
   } = api.projects.fetchProjectObjectives.useQuery(Number(params.projectid));
 
-  const { updatePolyline, debouncedObjectivesDataCacheInvalidation } =
-    useSyncClientAndServerState(
-      objectives,
-      mapObject,
-      Number(params.projectid),
-      markers,
-      setMarkers,
-    );
+  const {
+    updatePolyline,
+    debouncedObjectivesDataCacheInvalidation,
+    generateClientId,
+  } = useSyncClientAndServerState(
+    objectives,
+    mapObject,
+    Number(params.projectid),
+    markers,
+    setMarkers,
+  );
 
   const {
     deleteObjective,
@@ -37,8 +40,9 @@ export default function Page({ params }: { params: { projectid: string } }) {
     objectives,
     mapObject,
     Number(params.projectid),
-    updatePolyline,
     debouncedObjectivesDataCacheInvalidation,
+    updatePolyline,
+    generateClientId,
   );
 
   return (

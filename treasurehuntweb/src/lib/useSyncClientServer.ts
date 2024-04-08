@@ -1,6 +1,5 @@
 import { useEffect, useRef, MutableRefObject } from "react";
 import { ProjectObjective } from "~/server/db/schema";
-import { createNewMarker } from "./useMarkers";
 import { api } from "~/trpc/client";
 
 export const useSyncClientAndServerState = function (
@@ -10,18 +9,79 @@ export const useSyncClientAndServerState = function (
   markers: google.maps.marker.AdvancedMarkerElement[],
   setMarkers: React.Dispatch<google.maps.marker.AdvancedMarkerElement[]>,
 ) {
+  function createNewMarker(
+    _latitude: number,
+    _longitude: number,
+    _clientId: number,
+    _map: google.maps.Map,
+  ) {
+    const draggableMarker = new google.maps.marker.AdvancedMarkerElement({
+      position: { lat: _latitude, lng: _longitude },
+      map: _map,
+      title: _clientId.toString(),
+      gmpDraggable: true,
+    });
+
+    draggableMarker.addListener("dragend", (event: any) => {
+      const position = draggableMarker.position as google.maps.LatLngLiteral;
+      objectivePositionChangeApiCall.mutate({
+        clientId: _clientId,
+        projectId: _projectId,
+        latitude: position.lat,
+        longitude: position.lng,
+      });
+    });
+    return draggableMarker;
+  }
+
+  const objectivePositionChangeApiCall =
+    api.objectives.changePosition.useMutation({
+      onMutate: async (variables) => {
+        const previousObjectives = objectives;
+        const newObjectives = structuredClone(objectives as ProjectObjective[]);
+
+        const associateObjective = newObjectives.find(
+          (obj) => obj.clientId === variables.clientId,
+        );
+
+        if (associateObjective === undefined) return;
+        associateObjective.latitude = variables.latitude;
+        associateObjective.longitude = variables.longitude;
+
+        apiUtils.projects.fetchProjectObjectives.setData(
+          _projectId,
+          newObjectives,
+        );
+
+        return { previousObjectives };
+      },
+      onError: (err, variables, context) => {
+        apiUtils.projects.fetchProjectObjectives.setData(
+          _projectId,
+          context?.previousObjectives,
+        );
+
+        console.error(err);
+      },
+      onSettled: () => {
+        debouncedObjectivesDataCacheInvalidation.current();
+      },
+    });
+
+  const generateClientId = (objectives: ProjectObjective[]) => {
+    return objectives.reduce<number>((acc, value) => {
+      return value.clientId === acc || value.clientId > acc
+        ? (acc = value.clientId + 1)
+        : acc;
+    }, 0);
+  };
   // on the objectives change, synchronize the markers in
   // a declarative way :
   // creation/mutation/deletion and save in `markers` state
   useEffect(() => {
     let markersToSet: Array<google.maps.marker.AdvancedMarkerElement> = [];
 
-    console.log("objective before update with useEffect : ", objectives);
-    console.log(
-      "markers before update with useEffect : ",
-      markersToSet.map((marker, index) => marker.title),
-    );
-
+    // create markers when a new objective appears
     objectives?.forEach((obj) => {
       const correspondingMarker = markers.find(
         (marker) => marker.title === obj.clientId.toString(),
@@ -52,6 +112,7 @@ export const useSyncClientAndServerState = function (
       markersToSet.push(correspondingMarker);
     });
 
+    // check if some markers are left without an objective
     markers.forEach((previousMarker) => {
       let check = true;
 
@@ -71,6 +132,24 @@ export const useSyncClientAndServerState = function (
 
     setMarkers(markersToSet);
   }, [objectives]);
+
+  // Debouncing the cache invalidation to not have old server data appear in the middle
+  // of multiple client state changes
+  const apiUtils = api.useUtils();
+
+  const debouncedObjectivesDataCacheInvalidation = useRef(
+    constructorDebouncedObjectivesDataCacheInvalidation(),
+  );
+
+  function constructorDebouncedObjectivesDataCacheInvalidation() {
+    let timeout: string | number | NodeJS.Timeout | undefined;
+    return () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        apiUtils.projects.fetchProjectObjectives.invalidate();
+      }, 3000);
+    };
+  }
 
   // Create and update a polyline between objectives
   const polylineRef: MutableRefObject<google.maps.Polyline | undefined> =
@@ -109,22 +188,9 @@ export const useSyncClientAndServerState = function (
     updatePolyline();
   }, [objectives]);
 
-  // Debouncing the cache invalidation to not have old server data appear in the middle
-  // of multiple client state changes
-  const apiUtils = api.useUtils();
-
-  const debouncedObjectivesDataCacheInvalidation = useRef(
-    constructorDebouncedObjectivesDataCacheInvalidation(),
-  );
-
-  function constructorDebouncedObjectivesDataCacheInvalidation() {
-    let timeout: string | number | NodeJS.Timeout | undefined;
-    return () => {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => {
-        apiUtils.projects.fetchProjectObjectives.invalidate();
-      }, 3000);
-    };
-  }
-  return { updatePolyline, debouncedObjectivesDataCacheInvalidation };
+  return {
+    updatePolyline,
+    debouncedObjectivesDataCacheInvalidation,
+    generateClientId,
+  };
 };

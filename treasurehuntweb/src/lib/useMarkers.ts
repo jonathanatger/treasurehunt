@@ -3,26 +3,13 @@ import { MutableRefObject } from "react";
 import { api } from "~/trpc/client";
 import { ProjectObjective, projectObjectives } from "~/server/db/schema";
 
-export function createNewMarker(
-  latitude: number,
-  longitude: number,
-  clientId: number,
-  _map: google.maps.Map,
-) {
-  return new google.maps.marker.AdvancedMarkerElement({
-    position: { lat: latitude, lng: longitude },
-    map: _map,
-    title: clientId.toString(),
-    gmpDraggable: true,
-  });
-}
-
 export const useMarkers = function (
   objectives: ProjectObjective[] | undefined,
   mapObject: google.maps.Map | null,
   _projectId: number,
-  updatePolyline: () => void,
   debouncedObjectivesDataCacheInvalidation: MutableRefObject<() => void>,
+  updatePolyline: () => void,
+  generateClientId: (objectives: ProjectObjective[]) => number,
 ) {
   const DEFAULT_ON_CREATION_ID = -1;
 
@@ -30,16 +17,9 @@ export const useMarkers = function (
   // step 1 : create listener on the map, to get the click
   // step 2 : listener triggers callback, place a marker, pans the map to the point
   // step 3 : db call, with optimistic state update and correction should there be a problem
-  const currentListener: MutableRefObject<google.maps.MapsEventListener | null> =
-    useRef(null);
 
-  const generateClientId = (objectives: ProjectObjective[]) => {
-    return objectives.reduce<number>((acc, value) => {
-      return value.clientId === acc || value.clientId > acc
-        ? (acc = value.clientId + 1)
-        : acc;
-    }, 0);
-  };
+  const currentMapsEventListener: MutableRefObject<google.maps.MapsEventListener | null> =
+    useRef(null);
 
   function addObjectiveAndMarkerOnClickListener(
     mapObject: google.maps.Map | null,
@@ -51,42 +31,48 @@ export const useMarkers = function (
       .getElementById("button-add-objective")
       ?.classList.add(...cssButtonClasses);
 
-    currentListener.current = mapObject?.addListener("click", (e: any) => {
-      let orderOfNewObjective: number;
-      let _clientIdOfNewObjective: number;
-      if (objectives === undefined) {
-        orderOfNewObjective = 0;
-        _clientIdOfNewObjective = 0;
-      } else {
-        orderOfNewObjective = objectives.reduce<number>((acc, value) => {
-          if (value.order >= acc) {
-            return value.order + 1;
-          } else {
-            return acc;
-          }
-        }, 1);
+    currentMapsEventListener.current = mapObject?.addListener(
+      "click",
+      (e: any) => {
+        let orderOfNewObjective: number;
+        let _clientIdOfNewObjective: number;
 
-        _clientIdOfNewObjective = generateClientId(objectives);
-      }
+        if (objectives === undefined) {
+          orderOfNewObjective = 0;
+          _clientIdOfNewObjective = 0;
+        } else {
+          orderOfNewObjective = objectives.reduce<number>((acc, value) => {
+            if (value.order >= acc) {
+              return value.order + 1;
+            } else {
+              return acc;
+            }
+          }, 1);
 
-      mapObject.panTo(e.latLng);
+          _clientIdOfNewObjective = generateClientId(objectives);
+        }
 
-      objectiveCreationApiCall.mutate({
-        projectId: _projectId,
-        clientId: _clientIdOfNewObjective,
-        order: orderOfNewObjective,
-        latitude: e.latLng.lat(),
-        longitude: e.latLng.lng(),
-      });
+        mapObject.panTo(e.latLng);
 
-      document
-        .getElementById("button-add-objective")
-        ?.classList.remove(...cssButtonClasses);
+        objectiveCreationApiCall.mutate({
+          projectId: _projectId,
+          clientId: _clientIdOfNewObjective,
+          order: orderOfNewObjective,
+          latitude: e.latLng.lat(),
+          longitude: e.latLng.lng(),
+        });
 
-      if (currentListener.current)
-        google.maps.event.removeListener(currentListener.current);
-    });
+        document
+          .getElementById("button-add-objective")
+          ?.classList.remove(...cssButtonClasses);
+
+        if (currentMapsEventListener.current)
+          google.maps.event.removeListener(currentMapsEventListener.current);
+      },
+    );
   }
+
+  //
 
   const apiUtils = api.useUtils();
 
@@ -153,6 +139,7 @@ export const useMarkers = function (
 
       return { previousObjectives };
     },
+
     onError: (err, variables, context) => {
       apiUtils.projects.fetchProjectObjectives.setData(
         _projectId,
@@ -161,6 +148,7 @@ export const useMarkers = function (
 
       console.error(err);
     },
+
     onSettled: () => {
       debouncedObjectivesDataCacheInvalidation.current();
     },
@@ -240,6 +228,7 @@ export const useMarkers = function (
 
     if (secondObjectiveToChange === undefined) return;
     orderChangeApiCall.mutate({
+      projectId: _projectId,
       firstProject: {
         clientId: firstObjectiveToChange.clientId,
         order: firstObjectiveToChange.order,
@@ -255,5 +244,6 @@ export const useMarkers = function (
     addObjectiveAndMarkerOnClickListener,
     deleteObjective,
     switchObjectiveOrder,
+    updatePolyline,
   };
 };
