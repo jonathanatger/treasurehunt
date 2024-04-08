@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useState } from "react";
 import { MapComponent } from "./mapComponent";
 import { ProjectObjectivesComponent } from "./projectObjectivesComponent";
 import { api } from "~/trpc/client";
@@ -9,7 +9,11 @@ import { useSyncClientAndServerState } from "~/lib/useSyncClientServer";
 export default function Page({ params }: { params: { projectid: string } }) {
   const [mapObject, setMapObject] = useState<google.maps.Map | null>(null);
   const [markers, setMarkers] = useState<
-    google.maps.marker.AdvancedMarkerElement[]
+    {
+      clientId: number;
+      marker: google.maps.marker.AdvancedMarkerElement;
+      listener: google.maps.MapsEventListener | null;
+    }[]
   >([]);
 
   // fetch data to initialize the component
@@ -30,6 +34,7 @@ export default function Page({ params }: { params: { projectid: string } }) {
     Number(params.projectid),
     markers,
     setMarkers,
+    markerContent,
   );
 
   const {
@@ -67,4 +72,17 @@ export default function Page({ params }: { params: { projectid: string } }) {
       </main>
     </>
   );
+}
+
+function markerContent(title: string) {
+  const newHtmlElement = document.createElement("div");
+  newHtmlElement.innerHTML = `
+  <div class="flex flex-col justify-center items-center">
+    <div class="p-2 min-h-16 bg-white text-black font-bold flex flex-col items-center justify-center rounded-md shadow-md">
+    ${title}
+    </div>
+    <div class="w-0 h-0 border-l-8 border-l-transparent border-r-8 border-r-transparent border-t-8 border-t-white shadow-md">
+    </div>
+  </div>`;
+  return newHtmlElement;
 }

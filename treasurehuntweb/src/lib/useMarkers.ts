@@ -12,6 +12,7 @@ export const useMarkers = function (
   generateClientId: (objectives: ProjectObjective[]) => number,
 ) {
   const DEFAULT_ON_CREATION_ID = -1;
+  const DEFAULT_ON_CREATION_ORDER = 1;
 
   // Add new objective, with a click on the map.
   // step 1 : create listener on the map, to get the click
@@ -47,7 +48,7 @@ export const useMarkers = function (
             } else {
               return acc;
             }
-          }, 1);
+          }, DEFAULT_ON_CREATION_ORDER);
 
           _clientIdOfNewObjective = generateClientId(objectives);
         }
@@ -57,6 +58,7 @@ export const useMarkers = function (
         objectiveCreationApiCall.mutate({
           projectId: _projectId,
           clientId: _clientIdOfNewObjective,
+          title: "Objectif " + _clientIdOfNewObjective.toString(),
           order: orderOfNewObjective,
           latitude: e.latLng.lat(),
           longitude: e.latLng.lng(),
@@ -71,8 +73,6 @@ export const useMarkers = function (
       },
     );
   }
-
-  //
 
   const apiUtils = api.useUtils();
 
@@ -92,7 +92,8 @@ export const useMarkers = function (
           {
             id: DEFAULT_ON_CREATION_ID,
             clientId: tempId,
-            projectid: _projectId,
+            projectid: newObjective.projectId,
+            title: newObjective.title,
             latitude: newObjective.latitude,
             longitude: newObjective.longitude,
             order: newObjective.order,

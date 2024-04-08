@@ -6,33 +6,93 @@ export const useSyncClientAndServerState = function (
   objectives: ProjectObjective[] | undefined,
   mapObject: google.maps.Map | null,
   _projectId: number,
-  markers: google.maps.marker.AdvancedMarkerElement[],
-  setMarkers: React.Dispatch<google.maps.marker.AdvancedMarkerElement[]>,
+  markers: {
+    clientId: number;
+    marker: google.maps.marker.AdvancedMarkerElement;
+    listener: google.maps.MapsEventListener | null;
+  }[],
+  setMarkers: React.Dispatch<
+    {
+      clientId: number;
+      marker: google.maps.marker.AdvancedMarkerElement;
+      listener: google.maps.MapsEventListener | null;
+    }[]
+  >,
+  markerContent: (title: string) => HTMLDivElement,
 ) {
-  function createNewMarker(
-    _latitude: number,
-    _longitude: number,
-    _clientId: number,
-    _map: google.maps.Map,
-  ) {
-    const draggableMarker = new google.maps.marker.AdvancedMarkerElement({
-      position: { lat: _latitude, lng: _longitude },
-      map: _map,
-      title: _clientId.toString(),
-      gmpDraggable: true,
+  const DEFAULT_ON_CREATION_CLIENT_ID = 1;
+  // on the objectives change, synchronize the markers in
+  // a declarative way :
+  // creation/mutation/deletion and save in `markers` state
+  useEffect(() => {
+    let markersToSet: Array<{
+      clientId: number;
+      marker: google.maps.marker.AdvancedMarkerElement;
+      listener: google.maps.MapsEventListener | null;
+    }> = [];
+
+    // create markers when a new objective appears
+    objectives?.forEach((obj) => {
+      const correspondingMarker = markers.find(
+        (marker) => marker.clientId === obj.clientId,
+      );
+
+      if (correspondingMarker === undefined) {
+        const newMarker = createNewMarker(
+          obj.latitude,
+          obj.longitude,
+          obj.clientId,
+          mapObject as google.maps.Map,
+        );
+        markersToSet.push({
+          clientId: obj.clientId,
+          marker: newMarker,
+          listener: null,
+        });
+        return;
+      }
+
+      if (
+        correspondingMarker.marker.position?.lat !== obj.latitude ||
+        correspondingMarker.marker.position?.lng !== obj.longitude
+      ) {
+        correspondingMarker.marker.position = {
+          lat: obj.latitude,
+          lng: obj.longitude,
+        };
+      }
+
+      markersToSet.push(correspondingMarker);
     });
 
-    draggableMarker.addListener("dragend", (event: any) => {
-      const position = draggableMarker.position as google.maps.LatLngLiteral;
-      objectivePositionChangeApiCall.mutate({
-        clientId: _clientId,
-        projectId: _projectId,
-        latitude: position.lat,
-        longitude: position.lng,
+    // check if some markers are left without an objective
+    markers.forEach((previousMarker) => {
+      let check = true;
+
+      if (objectives === undefined || objectives.length === 0) {
+        previousMarker.marker.map = null;
+        return;
+      }
+
+      objectives.forEach((obj) => {
+        if (obj.clientId === previousMarker.clientId) check = false;
       });
+
+      if (check) {
+        previousMarker.marker.map = null;
+      }
     });
-    return draggableMarker;
-  }
+
+    setMarkers(markersToSet);
+  }, [objectives]);
+
+  const generateClientId = (objectives: ProjectObjective[]) => {
+    return objectives.reduce<number>((acc, value) => {
+      return value.clientId === acc || value.clientId > acc
+        ? (acc = value.clientId + 1)
+        : acc;
+    }, DEFAULT_ON_CREATION_CLIENT_ID);
+  };
 
   const objectivePositionChangeApiCall =
     api.objectives.changePosition.useMutation({
@@ -68,86 +128,87 @@ export const useSyncClientAndServerState = function (
       },
     });
 
-  const generateClientId = (objectives: ProjectObjective[]) => {
-    return objectives.reduce<number>((acc, value) => {
-      return value.clientId === acc || value.clientId > acc
-        ? (acc = value.clientId + 1)
-        : acc;
-    }, 0);
-  };
-  // on the objectives change, synchronize the markers in
-  // a declarative way :
-  // creation/mutation/deletion and save in `markers` state
-  useEffect(() => {
-    let markersToSet: Array<google.maps.marker.AdvancedMarkerElement> = [];
-
-    // create markers when a new objective appears
-    objectives?.forEach((obj) => {
-      const correspondingMarker = markers.find(
-        (marker) => marker.title === obj.clientId.toString(),
-      );
-
-      if (correspondingMarker === undefined) {
-        const newMarker = createNewMarker(
-          obj.latitude,
-          obj.longitude,
-          obj.clientId,
-          mapObject as google.maps.Map,
-        );
-        markersToSet.push(newMarker);
-        return;
-      }
-      //
-
-      if (
-        correspondingMarker.position?.lat !== obj.latitude ||
-        correspondingMarker.position?.lng !== obj.longitude
-      ) {
-        correspondingMarker.position = {
-          lat: obj.latitude,
-          lng: obj.longitude,
-        };
-      }
-
-      markersToSet.push(correspondingMarker);
+  function createNewMarker(
+    _latitude: number,
+    _longitude: number,
+    _clientId: number,
+    _map: google.maps.Map,
+  ) {
+    const markerTitle = "Objectif " + _clientId.toString();
+    const draggableMarker = new google.maps.marker.AdvancedMarkerElement({
+      position: { lat: _latitude, lng: _longitude },
+      map: _map,
+      title: markerTitle,
+      gmpDraggable: true,
+      content: markerContent(markerTitle),
+    });
+    draggableMarker.addListener("dragstart", (event: any) => {
+      clearTimeout(debouncedObjectivesDataCacheInvalidationTimeout.current);
     });
 
-    // check if some markers are left without an objective
-    markers.forEach((previousMarker) => {
-      let check = true;
+    addDragListener(draggableMarker, _clientId);
 
-      if (objectives === undefined || objectives.length === 0) {
-        previousMarker.map = null;
-        return;
-      }
+    function addDragListener(
+      _marker: google.maps.marker.AdvancedMarkerElement,
+      markerClientId: number,
+    ) {
+      _marker.addListener("drag", (event: any) => {
+        const position = _marker.position as google.maps.LatLngLiteral;
+        const correspondingObjective = objectives?.find(
+          (obj) => obj.clientId === markerClientId,
+        );
+        if (correspondingObjective === undefined) return;
+        correspondingObjective.latitude = position.lat;
+        correspondingObjective.longitude = position.lng;
 
-      objectives.forEach((obj) => {
-        if (obj.clientId.toString() === previousMarker.title) check = false;
+        updatePolyline();
+      });
+    }
+
+    draggableMarker.addListener("dragend", (event: any) => {
+      const position = draggableMarker.position as google.maps.LatLngLiteral;
+      objectivePositionChangeApiCall.mutate({
+        clientId: _clientId,
+        projectId: _projectId,
+        latitude: position.lat,
+        longitude: position.lng,
       });
 
-      if (check) {
-        previousMarker.map = null;
-      }
+      // refresh the eventlisteners, as each listener saves the current positions of
+      // other markers when it is declared
+      markers.forEach((marker) => {
+        if (marker.listener !== null) {
+          marker.listener.remove();
+        }
+
+        addDragListener(marker.marker, marker.clientId);
+      });
     });
 
-    setMarkers(markersToSet);
-  }, [objectives]);
+    return draggableMarker;
+  }
 
   // Debouncing the cache invalidation to not have old server data appear in the middle
   // of multiple client state changes
   const apiUtils = api.useUtils();
+
+  const debouncedObjectivesDataCacheInvalidationTimeout: MutableRefObject<
+    string | number | NodeJS.Timeout | undefined
+  > = useRef(0);
 
   const debouncedObjectivesDataCacheInvalidation = useRef(
     constructorDebouncedObjectivesDataCacheInvalidation(),
   );
 
   function constructorDebouncedObjectivesDataCacheInvalidation() {
-    let timeout: string | number | NodeJS.Timeout | undefined;
     return () => {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => {
-        apiUtils.projects.fetchProjectObjectives.invalidate();
-      }, 3000);
+      clearTimeout(debouncedObjectivesDataCacheInvalidationTimeout.current);
+      debouncedObjectivesDataCacheInvalidationTimeout.current = setTimeout(
+        () => {
+          apiUtils.projects.fetchProjectObjectives.invalidate();
+        },
+        3000,
+      );
     };
   }
 

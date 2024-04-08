@@ -38,6 +38,7 @@ export function ProjectObjectivesComponent({
                 <ObjectiveCard
                   key={"objective-card-" + objective.clientId.toString()}
                   clientId={objective.clientId}
+                  title={objective.title}
                   order={objective.order}
                   deleteObjective={deleteObjective}
                   switchObjectiveOrder={switchObjectiveOrder}
@@ -62,6 +63,7 @@ export function ProjectObjectivesComponent({
 
 function ObjectiveCard({
   clientId,
+  title,
   order,
   deleteObjective,
   switchObjectiveOrder,
@@ -69,6 +71,7 @@ function ObjectiveCard({
   longitude,
 }: {
   clientId: number;
+  title: string;
   order: number;
   deleteObjective: (order: number) => void;
   switchObjectiveOrder: (currentId: number, displacement: number) => void;
@@ -97,7 +100,7 @@ function ObjectiveCard({
       </div>
       <div>
         <CardHeader className="flex flex-row items-center justify-between ">
-          <div className="h-8">Objectif {order.toString()}</div>
+          <div className="h-8">{title}</div>
           <Button
             className="h-8 w-4 bg-red-500"
             onClick={() => deleteObjective(clientId)}

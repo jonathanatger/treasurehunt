@@ -23,6 +23,7 @@ export const objectivesRouter = createTRPCRouter({
       z.object({
         projectId: z.number(),
         clientId: z.number(),
+        title: z.string(),
         order: z.number(),
         latitude: z.number(),
         longitude: z.number(),
@@ -32,6 +33,7 @@ export const objectivesRouter = createTRPCRouter({
       await ctx.db.insert(projectObjectives).values({
         projectid: input.projectId,
         clientId: input.clientId,
+        title: input.title,
         order: input.order,
         latitude: input.latitude,
         longitude: input.longitude,
