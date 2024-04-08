@@ -1,3 +1,4 @@
+import { linkSync } from "fs";
 import { useEffect, useRef, MutableRefObject } from "react";
 import { ProjectObjective } from "~/server/db/schema";
 import { api } from "~/trpc/client";
@@ -21,9 +22,12 @@ export const useSyncClientAndServerState = function (
   markerContent: (title: string) => HTMLDivElement,
 ) {
   const DEFAULT_ON_CREATION_CLIENT_ID = 1;
+
   // on the objectives change, synchronize the markers in
   // a declarative way :
-  // creation/mutation/deletion and save in `markers` state
+  // creation/mutation/deletion and save in `markers` state.
+  // Additionnally, update the listeners of the markers to take
+  // the new coordinates into account and update the polyline
   useEffect(() => {
     let markersToSet: Array<{
       clientId: number;
@@ -78,12 +82,13 @@ export const useSyncClientAndServerState = function (
         if (obj.clientId === previousMarker.clientId) check = false;
       });
 
-      if (check) {
-        previousMarker.marker.map = null;
-      }
+      if (check) previousMarker.marker.map = null;
     });
 
     setMarkers(markersToSet);
+
+    updatePolyline();
+    refreshMarkerListeners();
   }, [objectives]);
 
   const generateClientId = (objectives: ProjectObjective[]) => {
@@ -128,6 +133,8 @@ export const useSyncClientAndServerState = function (
       },
     });
 
+  // create a new Marker. Listeners are added to each state of a drag and drop
+  // event, as to update the coordinates correctly
   function createNewMarker(
     _latitude: number,
     _longitude: number,
@@ -148,23 +155,6 @@ export const useSyncClientAndServerState = function (
 
     addDragListener(draggableMarker, _clientId);
 
-    function addDragListener(
-      _marker: google.maps.marker.AdvancedMarkerElement,
-      markerClientId: number,
-    ) {
-      _marker.addListener("drag", (event: any) => {
-        const position = _marker.position as google.maps.LatLngLiteral;
-        const correspondingObjective = objectives?.find(
-          (obj) => obj.clientId === markerClientId,
-        );
-        if (correspondingObjective === undefined) return;
-        correspondingObjective.latitude = position.lat;
-        correspondingObjective.longitude = position.lng;
-
-        updatePolyline();
-      });
-    }
-
     draggableMarker.addListener("dragend", (event: any) => {
       const position = draggableMarker.position as google.maps.LatLngLiteral;
       objectivePositionChangeApiCall.mutate({
@@ -173,19 +163,40 @@ export const useSyncClientAndServerState = function (
         latitude: position.lat,
         longitude: position.lng,
       });
-
-      // refresh the eventlisteners, as each listener saves the current positions of
-      // other markers when it is declared
-      markers.forEach((marker) => {
-        if (marker.listener !== null) {
-          marker.listener.remove();
-        }
-
-        addDragListener(marker.marker, marker.clientId);
-      });
     });
 
     return draggableMarker;
+  }
+
+  function addDragListener(
+    _marker: google.maps.marker.AdvancedMarkerElement,
+    markerClientId: number,
+  ) {
+    const listener = _marker.addListener("drag", (event: any) => {
+      const position = _marker.position as google.maps.LatLngLiteral;
+      const correspondingObjective = objectives?.find(
+        (obj) => obj.clientId === markerClientId,
+      );
+      if (correspondingObjective === undefined) return;
+      correspondingObjective.latitude = position.lat;
+      correspondingObjective.longitude = position.lng;
+
+      updatePolyline();
+    });
+
+    return listener;
+  }
+
+  function refreshMarkerListeners() {
+    // refresh the eventlisteners, as each listener saves the current positions of
+    // other markers when it is declared
+    markers.forEach((marker) => {
+      if (marker.listener !== null) {
+        marker.listener.remove();
+      }
+
+      marker.listener = addDragListener(marker.marker, marker.clientId);
+    });
   }
 
   // Debouncing the cache invalidation to not have old server data appear in the middle
@@ -244,10 +255,6 @@ export const useSyncClientAndServerState = function (
     polyline.setMap(mapObject);
     polylineRef.current = polyline;
   }
-
-  useEffect(() => {
-    updatePolyline();
-  }, [objectives]);
 
   return {
     updatePolyline,
