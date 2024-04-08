@@ -1,5 +1,5 @@
 import { ProjectDashboard } from "./projectDashboard";
-import { Project } from "~/server/db/schema";
+import type { Project } from "~/server/db/schema";
 import { api } from "~/trpc/server";
 
 export default async function Page() {

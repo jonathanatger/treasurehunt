@@ -36,8 +36,8 @@ export function ProjectObjectivesComponent({
               })
               .map((objective) => (
                 <ObjectiveCard
-                  key={objective.order.toString()}
-                  id={objective.id}
+                  key={"objective-card-" + objective.clientId.toString()}
+                  clientId={objective.clientId}
                   order={objective.order}
                   deleteObjective={deleteObjective}
                   switchObjectiveOrder={switchObjectiveOrder}
@@ -61,14 +61,14 @@ export function ProjectObjectivesComponent({
 }
 
 function ObjectiveCard({
-  id,
+  clientId,
   order,
   deleteObjective,
   switchObjectiveOrder,
   latitude,
   longitude,
 }: {
-  id: number;
+  clientId: number;
   order: number;
   deleteObjective: (order: number) => void;
   switchObjectiveOrder: (currentId: number, displacement: number) => void;
@@ -81,7 +81,7 @@ function ObjectiveCard({
         <Button
           className="m-1 flex-1 bg-slate-700"
           onClick={() => {
-            switchObjectiveOrder(id, -1);
+            switchObjectiveOrder(clientId, -1);
           }}
         >
           Up
@@ -89,7 +89,7 @@ function ObjectiveCard({
         <Button
           className="m-1 flex-1 bg-slate-700"
           onClick={() => {
-            switchObjectiveOrder(id, 1);
+            switchObjectiveOrder(clientId, 1);
           }}
         >
           Down
@@ -100,7 +100,7 @@ function ObjectiveCard({
           <div className="h-8">Objectif {order.toString()}</div>
           <Button
             className="h-8 w-4 bg-red-500"
-            onClick={() => deleteObjective(order)}
+            onClick={() => deleteObjective(clientId)}
           >
             X
           </Button>

@@ -16,22 +16,22 @@ export const useSyncClientAndServerState = function (
   useEffect(() => {
     let markersToSet: Array<google.maps.marker.AdvancedMarkerElement> = [];
 
-    // console.log("objective before update with useEffect : ", objectives);
-    // console.log(
-    //   "markers before update with useEffect : ",
-    //   markersToSet.map((marker, index) => marker.title),
-    // );
+    console.log("objective before update with useEffect : ", objectives);
+    console.log(
+      "markers before update with useEffect : ",
+      markersToSet.map((marker, index) => marker.title),
+    );
 
     objectives?.forEach((obj) => {
       const correspondingMarker = markers.find(
-        (marker) => marker.title === obj.id.toString(),
+        (marker) => marker.title === obj.clientId.toString(),
       );
 
       if (correspondingMarker === undefined) {
         const newMarker = createNewMarker(
           obj.latitude,
           obj.longitude,
-          obj.id,
+          obj.clientId,
           mapObject as google.maps.Map,
         );
         markersToSet.push(newMarker);
@@ -61,18 +61,13 @@ export const useSyncClientAndServerState = function (
       }
 
       objectives.forEach((obj) => {
-        if (obj.id.toString() === previousMarker.title) check = false;
+        if (obj.clientId.toString() === previousMarker.title) check = false;
       });
 
       if (check) {
         previousMarker.map = null;
       }
     });
-
-    // console.log(
-    //   "markersToSet: ",
-    //   markersToSet.map((marker, index) => marker.title),
-    // );
 
     setMarkers(markersToSet);
   }, [objectives]);

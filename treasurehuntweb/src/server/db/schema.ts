@@ -26,6 +26,7 @@ export const projects = createTable("projects", {
 
 export const projectObjectives = createTable("projectObjectives", {
   id: serial("id").primaryKey(),
+  clientId: integer("clientId").notNull(),
   projectid: integer("projectId").notNull(),
   order: integer("order").notNull(),
   latitude: doublePrecision("latitude").notNull(),

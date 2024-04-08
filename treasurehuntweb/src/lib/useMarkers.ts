@@ -6,13 +6,13 @@ import { ProjectObjective, projectObjectives } from "~/server/db/schema";
 export function createNewMarker(
   latitude: number,
   longitude: number,
-  id: number,
+  clientId: number,
   _map: google.maps.Map,
 ) {
   return new google.maps.marker.AdvancedMarkerElement({
     position: { lat: latitude, lng: longitude },
     map: _map,
-    title: id.toString(),
+    title: clientId.toString(),
     gmpDraggable: true,
   });
 }
@@ -33,6 +33,14 @@ export const useMarkers = function (
   const currentListener: MutableRefObject<google.maps.MapsEventListener | null> =
     useRef(null);
 
+  const generateClientId = (objectives: ProjectObjective[]) => {
+    return objectives.reduce<number>((acc, value) => {
+      return value.clientId === acc || value.clientId > acc
+        ? (acc = value.clientId + 1)
+        : acc;
+    }, 0);
+  };
+
   function addObjectiveAndMarkerOnClickListener(
     mapObject: google.maps.Map | null,
   ) {
@@ -45,8 +53,11 @@ export const useMarkers = function (
 
     currentListener.current = mapObject?.addListener("click", (e: any) => {
       let orderOfNewObjective: number;
-      if (objectives === undefined) orderOfNewObjective = 1;
-      else {
+      let _clientIdOfNewObjective: number;
+      if (objectives === undefined) {
+        orderOfNewObjective = 0;
+        _clientIdOfNewObjective = 0;
+      } else {
         orderOfNewObjective = objectives.reduce<number>((acc, value) => {
           if (value.order >= acc) {
             return value.order + 1;
@@ -54,12 +65,15 @@ export const useMarkers = function (
             return acc;
           }
         }, 1);
+
+        _clientIdOfNewObjective = generateClientId(objectives);
       }
 
       mapObject.panTo(e.latLng);
 
       objectiveCreationApiCall.mutate({
         projectId: _projectId,
+        clientId: _clientIdOfNewObjective,
         order: orderOfNewObjective,
         latitude: e.latLng.lat(),
         longitude: e.latLng.lng(),
@@ -85,16 +99,13 @@ export const useMarkers = function (
 
       if (previousObjectives === undefined) newData = [];
       else {
-        const tempId = previousObjectives.reduce(
-          (acc, value) =>
-            value.id === acc || value.id < acc ? (acc = value.id - 1) : acc,
-          -1,
-        );
+        const tempId = generateClientId(previousObjectives);
 
         newData = [
           ...previousObjectives,
           {
-            id: tempId,
+            id: DEFAULT_ON_CREATION_ID,
+            clientId: tempId,
             projectid: _projectId,
             latitude: newObjective.latitude,
             longitude: newObjective.longitude,
@@ -132,7 +143,7 @@ export const useMarkers = function (
       const filteredObjectives = previousObjectives.filter(
         (obj) =>
           obj.projectid === variables.projectId &&
-          obj.order !== variables.order,
+          obj.clientId !== variables.clientId,
       );
 
       apiUtils.projects.fetchProjectObjectives.setData(
@@ -155,8 +166,20 @@ export const useMarkers = function (
     },
   });
 
-  function deleteObjective(_order: number) {
-    deleteMutationCall.mutate({ projectId: _projectId, order: _order });
+  function deleteObjective(clientId: number) {
+    const objectiveToDelete = objectives?.find(
+      (obj) => obj.clientId === clientId,
+    );
+
+    if (objectiveToDelete === undefined) {
+      console.error("No objective with that clientId number");
+      return;
+    }
+
+    deleteMutationCall.mutate({
+      projectId: _projectId,
+      clientId: objectiveToDelete.clientId,
+    });
   }
 
   // Change the order of objectives
@@ -167,10 +190,10 @@ export const useMarkers = function (
 
       if (previousObjectives !== undefined) {
         const firstObjectiveToChange = previousObjectives.find(
-          (obj) => obj.id === variables.firstProject.id,
+          (obj) => obj.clientId === variables.firstProject.clientId,
         );
         const secondObjectiveToChange = previousObjectives.find(
-          (obj) => obj.id === variables.secondProject.id,
+          (obj) => obj.clientId === variables.secondProject.clientId,
         );
 
         if (
@@ -196,14 +219,17 @@ export const useMarkers = function (
     },
   });
 
-  function switchObjectiveOrder(objectiveId: number, displacement: number) {
+  function switchObjectiveOrder(
+    objectiveClientId: number,
+    displacement: number,
+  ) {
     if (objectives === undefined) return;
     let objectivesList = [...objectives].sort(
       (a, b) => a.order - b.order,
     ) as ProjectObjective[];
 
     const firstObjectiveToChange = objectivesList.find(
-      (obj) => obj.id === objectiveId,
+      (obj) => obj.clientId === objectiveClientId,
     );
 
     if (firstObjectiveToChange === undefined) return;
@@ -215,11 +241,11 @@ export const useMarkers = function (
     if (secondObjectiveToChange === undefined) return;
     orderChangeApiCall.mutate({
       firstProject: {
-        id: firstObjectiveToChange.id,
+        clientId: firstObjectiveToChange.clientId,
         order: firstObjectiveToChange.order,
       },
       secondProject: {
-        id: secondObjectiveToChange.id,
+        clientId: secondObjectiveToChange.clientId,
         order: secondObjectiveToChange.order,
       },
     });
