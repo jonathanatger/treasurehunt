@@ -81,6 +81,9 @@ const config = {
       fontFamily: {
         sans: ["var(--font-sans)"],
         title: ["var(--font-title)"],
+        velvendachill: ["var(--font-velvenda-chill)"],
+        velvendacooler: ["var(--font-velvenda-cooler)"],
+        velvendablac: ["var(--font-velvenda-black)"],
       },
     },
   },
