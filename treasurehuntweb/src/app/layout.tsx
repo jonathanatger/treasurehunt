@@ -45,18 +45,15 @@ export default function RootLayout({
               </Link>
             </div>
             <div>
-              <NavbarButton title="Carte" route="/tableau/projet/1/carte" />
-              <NavbarButton
-                title="Lancement"
-                route="/tableau/projet/1/lancement"
-              />
+              <NavbarButton title="Carte" route="/projets/1/carte" />
+              <NavbarButton title="Lancement" route="/projets/1/lancement" />
               <NavbarButton
                 title="Participants"
-                route="/tableau/projet/1/participants"
+                route="/projets/1/participants"
               />
             </div>
             <div>
-              <NavbarButton title="Projets" route="/tableau" />
+              <NavbarButton title="Projets" route="/projets" />
               <NavbarButton title="Connection" route="/connection" />
             </div>
           </div>
