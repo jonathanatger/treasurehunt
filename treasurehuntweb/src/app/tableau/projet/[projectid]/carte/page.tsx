@@ -17,12 +17,8 @@ export default function Page({ params }: { params: { projectid: string } }) {
   >([]);
 
   // fetch data to initialize the component
-  const {
-    data: objectives,
-    error,
-    isLoading,
-    isFetchedAfterMount: objectivesFetchedAfterMount,
-  } = api.projects.fetchProjectObjectives.useQuery(Number(params.projectid));
+  const { data: objectives, error } =
+    api.projects.fetchProjectObjectives.useQuery(Number(params.projectid));
 
   const {
     updatePolyline,

@@ -21,7 +21,7 @@ export function ProjectDashboard({
 
   p: return (
     <div className="h-full rounded-md outline outline-slate-700">
-      <div className="font-title py-8 text-3xl">VOS PROJETS</div>
+      <div className="py-8 font-title text-3xl">VOS PROJETS</div>
       <div className="flex flex-row flex-wrap pb-8">
         {userprojects &&
           userprojects.map((prj) => (
@@ -53,7 +53,7 @@ function ProjectCard({
 }) {
   return (
     <Card className="mb-8 mr-8 w-64 cursor-pointer hover:scale-[1.05]">
-      <Link href={`/tableau/projet/${id}`}>
+      <Link href={`/tableau/projet/${id}/carte`}>
         <div
           className={cn(
             "h-8 w-full rounded-lg ",

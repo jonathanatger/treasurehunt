@@ -32,7 +32,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          "bg-background flex min-h-screen flex-col bg-slate-800 font-sans text-white antialiased",
+          "flex min-h-screen flex-col bg-background bg-slate-900 font-sans text-white antialiased",
           fontSans.variable,
           fontTitle.variable,
         )}
@@ -44,9 +44,19 @@ export default function RootLayout({
                 TREASURIO
               </Link>
             </div>
-            <div className="flex flex-row">
-              <NavbarButton title="Tableau de bord" route="/tableau" />
-              <NavbarButton title="Prix" route="/prix" />
+            <div>
+              <NavbarButton title="Carte" route="/tableau/projet/1/carte" />
+              <NavbarButton
+                title="Lancement"
+                route="/tableau/projet/1/lancement"
+              />
+              <NavbarButton
+                title="Participants"
+                route="/tableau/projet/1/participants"
+              />
+            </div>
+            <div>
+              <NavbarButton title="Projets" route="/tableau" />
               <NavbarButton title="Connection" route="/connection" />
             </div>
           </div>

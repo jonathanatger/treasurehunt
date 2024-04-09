@@ -102,10 +102,7 @@ function ObjectiveCard({
     )?.marker;
 
     if (correspondingMarker === undefined) return;
-
     correspondingMarker.content = markerContent(title, isHighlighted);
-
-    // console.log("did it");
   }
 
   return (

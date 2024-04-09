@@ -85,11 +85,13 @@ export const useSyncClientAndServerState = function (
       if (check) previousMarker.marker.map = null;
     });
 
+    markersToSet.forEach((marker) => (marker.marker.map = mapObject));
+
     setMarkers(markersToSet);
 
     updatePolyline();
     refreshMarkerListeners();
-  }, [objectives]);
+  }, [objectives, mapObject]);
 
   const generateClientId = (objectives: ProjectObjective[]) => {
     return objectives.reduce<number>((acc, value) => {
