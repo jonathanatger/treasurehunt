@@ -97,6 +97,7 @@ export const useMarkers = function (
             latitude: newObjective.latitude,
             longitude: newObjective.longitude,
             order: newObjective.order,
+            message: "",
           },
         ];
       }
@@ -203,6 +204,14 @@ export const useMarkers = function (
 
       return { previousObjectives };
     },
+    onError: (err, variables, context) => {
+      apiUtils.projects.fetchProjectObjectives.setData(
+        _projectId,
+        context?.previousObjectives,
+      );
+
+      console.error(err);
+    },
     onSettled: (data) => {
       debouncedObjectivesDataCacheInvalidation.current();
     },
@@ -241,10 +250,56 @@ export const useMarkers = function (
     });
   }
 
+  // Change the order of objectives
+  const clueMessageChangeApiCall = api.objectives.changeClueMessage.useMutation(
+    {
+      onMutate: async (variables) => {
+        const previousObjectives =
+          apiUtils.projects.fetchProjectObjectives.getData(_projectId);
+
+        if (previousObjectives === undefined) return;
+        const ObjectiveToChange = previousObjectives.find(
+          (obj) => obj.clientId === variables.clientId,
+        );
+
+        if (ObjectiveToChange) ObjectiveToChange.message = variables.text;
+
+        apiUtils.projects.fetchProjectObjectives.setData(
+          _projectId,
+          previousObjectives,
+        );
+
+        return { previousObjectives };
+      },
+      onError: (err, variables, context) => {
+        apiUtils.projects.fetchProjectObjectives.setData(
+          _projectId,
+          context?.previousObjectives,
+        );
+
+        console.error(err);
+      },
+
+      onSettled: (data) => {
+        debouncedObjectivesDataCacheInvalidation.current();
+      },
+    },
+  );
+
+  function changeClueMessage(objectiveClientId: number, _text: string) {
+    if (objectiveClientId !== undefined && _text !== undefined)
+      clueMessageChangeApiCall.mutate({
+        projectId: _projectId,
+        clientId: objectiveClientId,
+        text: _text,
+      });
+  }
+
   return {
     addObjectiveAndMarkerOnClickListener,
     deleteObjective,
     switchObjectiveOrder,
     updatePolyline,
+    changeClueMessage,
   };
 };

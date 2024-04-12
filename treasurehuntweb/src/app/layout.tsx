@@ -26,7 +26,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={cn(
-          "flex min-h-screen flex-col bg-background bg-slate-900 font-sans text-white antialiased",
+          "flex min-h-screen flex-col bg-background font-sans text-black antialiased",
           fontSans.variable,
           fontTitle.variable,
           fontVelvendaChill.variable,
@@ -36,7 +36,7 @@ export default function RootLayout({
       >
         <Navbar />
         <TRPCReactProvider>
-          <div className="absolute top-16 h-[calc(100%-4rem)] w-full overflow-auto">
+          <div className="absolute top-16 h-[calc(100%-4rem)] w-full overflow-auto p-8">
             {children}
           </div>
         </TRPCReactProvider>

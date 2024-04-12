@@ -1,12 +1,13 @@
-import { Inter, Outfit } from "next/font/google";
+import { Inter, Oswald, Outfit, Roboto } from "next/font/google";
 import localFont from "next/font/local";
 
-export const fontSans = Inter({
+export const fontSans = Roboto({
   subsets: ["latin"],
+  weight: ["100", "300", "400", "500", "700", "900"],
   variable: "--font-sans",
 });
 
-export const fontTitle = Outfit({
+export const fontTitle = Oswald({
   subsets: ["latin"],
   variable: "--font-title",
 });

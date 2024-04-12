@@ -1,6 +1,9 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useContext, SetStateAction, useEffect } from "react";
+import { Plus } from "lucide-react";
 import { useGMapImports } from "~/lib/useImportGMapAPI";
 import { useIpLocation } from "~/lib/useLocation";
+import { Button } from "~/components/ui/button";
+import { ObjectivesContext } from "./page";
 
 export function MapComponent({
   setMap,
@@ -9,6 +12,9 @@ export function MapComponent({
 }) {
   const userLocation: google.maps.LatLngLiteral = useIpLocation();
   const apiImportsAreLoading: boolean = useGMapImports();
+  const mapObject = useContext(ObjectivesContext)?.mapObject;
+  const addObjectiveAndMarkerOnClickListener =
+    useContext(ObjectivesContext)?.addObjectiveAndMarkerOnClickListener;
 
   useEffect(() => {
     if (apiImportsAreLoading === true) return;
@@ -17,7 +23,7 @@ export function MapComponent({
       center: { lat: userLocation.lat, lng: userLocation.lng },
       zoom: 6,
       mapId: "ff0e486cd3e262db",
-      zoomControl: true,
+      zoomControl: false,
       mapTypeControl: false,
       scaleControl: false,
       streetViewControl: false,
@@ -34,13 +40,29 @@ export function MapComponent({
   }, [apiImportsAreLoading]);
 
   return (
-    <>
+    <div className="relative h-[calc(100%+24px)] w-full">
       {apiImportsAreLoading ? (
         <LoadingComponent />
       ) : (
-        <div className="h-full w-full" id="map-container" />
+        <div className="h-full w-full" id="map-container"></div>
       )}
-    </>
+      <div className="absolute bottom-0 z-50 flex w-full justify-center ">
+        <Button
+          className="m-8 h-24 w-64 bg-secondary text-lg font-bold shadow-lg"
+          id="button-add-objective"
+          onClick={() => {
+            if (
+              addObjectiveAndMarkerOnClickListener === undefined ||
+              mapObject === undefined
+            )
+              return;
+            addObjectiveAndMarkerOnClickListener(mapObject);
+          }}
+        >
+          <Plus className="mr-4 h-12 w-12" /> Ajouter un objectif
+        </Button>
+      </div>
+    </div>
   );
 }
 

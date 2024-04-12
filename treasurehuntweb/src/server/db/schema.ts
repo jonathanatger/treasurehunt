@@ -32,6 +32,7 @@ export const projectObjectives = createTable("projectObjectives", {
   order: integer("order").notNull(),
   latitude: doublePrecision("latitude").notNull(),
   longitude: doublePrecision("longitude").notNull(),
+  message: varchar("clue-message"),
 });
 
 export const projectObjectivesRelations = relations(projects, ({ many }) => ({
