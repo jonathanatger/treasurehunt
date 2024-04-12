@@ -44,9 +44,11 @@ function ObjectiveCard({
 }: {
   clientId: number;
   title: string;
-  message: string;
+  message: string | null;
 }) {
-  const [clientMessage, setClientMessage] = useState("");
+  const [clientMessage, setClientMessage] = useState<string | undefined>(
+    undefined,
+  );
 
   const contextData = useContext(ObjectivesContext);
   const markers = contextData?.markers;
@@ -127,18 +129,14 @@ function ObjectiveClueMessageInput({
   setClientMessage,
   clientId,
 }: {
-  message: string;
-  clientMessage: string;
-  setClientMessage: React.Dispatch<SetStateAction<string>>;
+  message: string | null;
+  clientMessage: string | undefined;
+  setClientMessage: React.Dispatch<SetStateAction<string | undefined>>;
   clientId: number;
 }) {
-  // useEffect(() => {
-  //   const textarea = document.getElementById(
-  //     "clue-message-" + clientId.toString(),
-  //   ) as HTMLTextAreaElement;
-  //   if (!textarea) return;
-  //   textarea.value = message;
-  // }, [message]);
+  useEffect(() => {
+    if (message) setClientMessage(message);
+  }, [message]);
 
   const changeClueMessage = useContext(ObjectivesContext)?.changeClueMessage;
 
@@ -146,18 +144,19 @@ function ObjectiveClueMessageInput({
     string | number | NodeJS.Timeout | undefined
   > = useRef(0);
 
-  function debouncedChangeClueMessage() {
+  function debouncedChangeClueMessageApiCall(_message: string) {
     clearTimeout(debouncedTimeout.current);
-    if (changeClueMessage === undefined) return;
+
+    if (changeClueMessage === undefined || clientMessage === undefined) return;
     debouncedTimeout.current = setTimeout(() => {
-      changeClueMessage(clientId, clientMessage);
+      changeClueMessage(clientId, _message);
     }, 3000);
   }
 
   function changeHeightAndSetMessage(elem: any) {
     elem.target.style.height = `${elem.target.scrollHeight}px`;
     setClientMessage(elem.target.value);
-    debouncedChangeClueMessage();
+    debouncedChangeClueMessageApiCall(elem.target.value);
   }
 
   return (
@@ -169,7 +168,7 @@ function ObjectiveClueMessageInput({
             key={"clue-message-" + clientId.toString()}
             className="h-full min-h-24 w-full resize-none text-wrap bg-background outline-none"
             placeholder="Vous devez trouver la plus haute tour de la ville..."
-            onInput={changeHeightAndSetMessage}
+            onChange={changeHeightAndSetMessage}
             value={clientMessage}
           ></textarea>
         </form>
