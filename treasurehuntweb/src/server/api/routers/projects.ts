@@ -5,7 +5,7 @@ import { createTRPCRouter, publicProcedure } from "../trpc";
 import { projectObjectives, projects } from "../../db/schema";
 
 export const projectsRouter = createTRPCRouter({
-  fetchUserProjects: publicProcedure.query(async ({ ctx }) => {
+  fetchUserProjects: publicProcedure.query(async ({ ctx, input }) => {
     const projectsData = ctx.db.query.projects.findMany({
       orderBy: (projects, { asc }) => [asc(projects.createdAt)],
     });
@@ -43,5 +43,19 @@ export const projectsRouter = createTRPCRouter({
         orderBy: (projectObjectives, { asc }) => [asc(projectObjectives.order)],
       });
       return projectObjectivesInfo;
+    }),
+
+  changeTitle: publicProcedure
+    .input(
+      z.object({
+        projectId: z.number(),
+        title: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const created = await ctx.db
+        .update(projects)
+        .set({ name: input.title })
+        .where(eq(projects.id, input.projectId));
     }),
 });

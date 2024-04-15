@@ -6,8 +6,6 @@ import {
   text,
   varchar,
   integer,
-  jsonb,
-  boolean,
   doublePrecision,
 } from "drizzle-orm/pg-core";
 
