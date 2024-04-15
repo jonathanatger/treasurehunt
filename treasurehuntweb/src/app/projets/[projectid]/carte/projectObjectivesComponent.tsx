@@ -4,14 +4,12 @@ import { ArrowDown, ArrowUp, CircleX, X } from "lucide-react";
 import {
   useContext,
   useRef,
-  MutableRefObject,
+    MutableRefObject,
   useState,
-  use,
   useEffect,
   SetStateAction,
 } from "react";
 import { ObjectivesContext } from "./page";
-import { unescape } from "querystring";
 
 export function ProjectObjectivesComponent() {
   const objectives = useContext(ObjectivesContext)?.objectives;
@@ -165,6 +163,7 @@ function ObjectiveClueMessageInput({
         <h4 className="text-light pr-2 pt-2  italic">Indice : </h4>
         <form className="h-full grow rounded-3xl bg-background p-2 text-foreground">
           <textarea
+            id={"clue-message-" + clientId.toString()}
             key={"clue-message-" + clientId.toString()}
             className="h-full min-h-24 w-full resize-none text-wrap bg-background outline-none"
             placeholder="Vous devez trouver la plus haute tour de la ville..."

@@ -70,6 +70,7 @@ export default function Page({ params }: { params: { projectid: string } }) {
             changeClueMessage: changeClueMessage,
             markerContent: markerContent,
             cluesVisible: cluesVisible,
+            
           }}
         >
           <div
