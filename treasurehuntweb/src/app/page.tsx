@@ -15,7 +15,7 @@ export default function HomePage() {
               BOUGER ENSEMBLE, TROUVER ENSEMBLE
             </h2>
             <h3 className="text-balance pb-8 text-2xl font-light">
-              Organisez une chasse au trésor sans vous prendre la tête
+              Organisez un jeu de piste sans vous prendre la tête
             </h3>
             <Button className="max-w-64 font-sans text-2xl shadow-lg">
               <h3 className="w-full text-left">Par ici !</h3>
