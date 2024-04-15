@@ -15,8 +15,8 @@ export function Navbar() {
         </div>
         <div className="flex flex-row items-center justify-between rounded-3xl py-1 shadow-md outline outline-1 outline-slate-500">
           <NavbarButton title="Carte" route="/pistes/1/carte" />
-          <NavbarButton title="Lancement" route="/pistes/1/lancement" />
-          <NavbarButton title="Participants" route="/pistes/1/participants" />
+          <NavbarButton title="Partage" route="/pistes/1/partage" />
+          <NavbarButton title="Suivi" route="/pistes/1/suivi/classement" />
         </div>
         <div>
           <NavbarButton title="Vos pistes" route="/pistes" />

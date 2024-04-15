@@ -9,3 +9,7 @@ export async function revalidate(path: string) {
   "use server";
   revalidatePath(path);
 }
+
+export async function launchGame() {
+  console.log("launched");
+}
