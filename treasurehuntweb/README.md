@@ -16,4 +16,6 @@
 - [ ] Changer le nom des objectifs
 
 - [ ] Authentification
-  - [ ] [Lien vers un guide pas à pas avec Lucia](https://www.robinwieruch.de/next-authentication/?ck_subscriber_id=2623512042&utm_source=convertkit&utm_medium=email&utm_campaign=%E2%9A%9B%EF%B8%8F%20This%20Week%20In%20React%20#180:%20Transitions,%20Drag%20&%20Drop,%20Metadata%20APIs,%20React%20name,%20Next.js%20Auth,%20useOptimistic,%20Cally,%20Docusaurus,%20New%20Architecture,%20Gesture%20Handler,%20Server%20Components,%20Privacy%20Manifest,%20Bun,%20xz,%20TypeScript,%20Signals...%20-%2013529181)
+- [ ] Rediriger les pages lorsqu'on est pas authentifié
+- [ ] Changer le nom du bouton signin
+- [ ] Rediriger vers le site en cas de sign out OU de visite du site sans etre authentifié ? redirige constamment vers la page de signin
