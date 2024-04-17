@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ReactElement } from "react";
+import NavLink from "~/components/ui/NavLink";
 
 export function Navbar() {
   return (
@@ -13,12 +14,15 @@ export function Navbar() {
             TREASURIO
           </Link>
         </div>
-        <div className="flex flex-row items-center justify-between rounded-3xl py-1 shadow-md outline outline-1 outline-slate-500">
-          <NavbarButton title="Carte" route="/pistes/1/carte" />
-          <NavbarButton title="Partage" route="/pistes/1/partage" />
-          <NavbarButton title="Suivi" route="/pistes/1/suivi/classement" />
+        <div className="flex h-8 flex-row items-center justify-between rounded-3xl shadow-md outline outline-1 outline-secondary">
+          <NavbarProjectButton title="Carte" route="/pistes/1/carte" />
+          <NavbarProjectButton title="Partage" route="/pistes/1/partage" />
+          <NavbarProjectButton
+            title="Suivi"
+            route="/pistes/1/suivi/classement"
+          />
         </div>
-        <div>
+        <div className="flex h-8 flex-row">
           <NavbarButton title="Vos pistes" route="/pistes" />
           <NavbarButton title="Connection" route="/connection" />
         </div>
@@ -32,8 +36,28 @@ const NavbarButton = function (props: {
   route: string;
 }): ReactElement {
   return (
-    <Link href={`${props.route}`} className="text-md px-4 text-primary">
+    <NavLink
+      href={`${props.route}`}
+      activeClassName="outline-primary outline outline-1"
+      className="text-md flex h-full items-center justify-center rounded-full px-4 text-primary"
+    >
       {props.title}
-    </Link>
+    </NavLink>
+  );
+};
+
+const NavbarProjectButton = function (props: {
+  title: string;
+  route: string;
+}): ReactElement {
+  return (
+    <NavLink
+      href={`${props.route}`}
+      activeClassName="bg-secondary text-secondary-foreground"
+      nonActiveClassName="hover:bg-orange-100"
+      className="text-md flex h-full items-center justify-center rounded-full px-12 font-bold text-secondary"
+    >
+      {props.title}
+    </NavLink>
   );
 };

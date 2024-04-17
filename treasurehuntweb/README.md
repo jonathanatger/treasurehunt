@@ -1,29 +1,24 @@
-# Create T3 App
+# TREASURIO
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+### To-List Dev
 
-## What's next? How do I make an app with this?
+- [ ] Déplacer le bouton Ajouter un objectif
+  - [ ] Changer la geule de la souris ?
+- [ ] Changer la geule du menu de sélection des objectifs
+  - [ ] Enlever les boutons haut et bas des objectifs qui sont aux extrémités
+- [ ] Drag and drop ?
+  - [ ] [Lien vers une solution qui fonctionne avec React](https://github.com/atlassian/pragmatic-drag-and-drop?ck_subscriber_id=2623512042&utm_source=convertkit&utm_medium=email&utm_campaign=%E2%9A%9B%EF%B8%8F%20This%20Week%20In%20React%20#180:%20Transitions,%20Drag%20&%20Drop,%20Metadata%20APIs,%20React%20name,%20Next.js%20Auth,%20useOptimistic,%20Cally,%20Docusaurus,%20New%20Architecture,%20Gesture%20Handler,%20Server%20Components,%20Privacy%20Manifest,%20Bun,%20xz,%20TypeScript,%20Signals...%20-%2013529181)
+- [ ] Styliser la carte
+- [ ] Zoom a l’arrivée sur la carte
+- [ ] Grossir les markers des objectifs !
+  - [ ] Ajouter un icône qui montre qu’on peut déplacer les markers
+- [ ] Zoom controls ne marche pas sur la carte ? apres click pour objectif ?
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+- [ ] Interface d’édition des objectifs
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+  - [ ] Changer le nom des objectifs
+  - [ ] Indice
+  - [ ] Question avec réponse
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
-
-## Learn More
-
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
-
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
-
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
-
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+- [ ] Authentification
+  - [ ] [Lien vers un guide pas à pas avec Lucia](https://www.robinwieruch.de/next-authentication/?ck_subscriber_id=2623512042&utm_source=convertkit&utm_medium=email&utm_campaign=%E2%9A%9B%EF%B8%8F%20This%20Week%20In%20React%20#180:%20Transitions,%20Drag%20&%20Drop,%20Metadata%20APIs,%20React%20name,%20Next.js%20Auth,%20useOptimistic,%20Cally,%20Docusaurus,%20New%20Architecture,%20Gesture%20Handler,%20Server%20Components,%20Privacy%20Manifest,%20Bun,%20xz,%20TypeScript,%20Signals...%20-%2013529181)
