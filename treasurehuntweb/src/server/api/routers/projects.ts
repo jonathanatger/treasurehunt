@@ -1,41 +1,56 @@
 import { z } from "zod";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { projectObjectives, projects } from "../../db/schema";
 
 export const projectsRouter = createTRPCRouter({
-  fetchUserProjects: publicProcedure.query(async ({ ctx, input }) => {
+  fetchUserProjects: protectedProcedure.query(async ({ ctx, input }) => {
     const projectsData = ctx.db.query.projects.findMany({
+      where: eq(projects.userId, ctx.user.userId as string),
       orderBy: (projects, { asc }) => [asc(projects.createdAt)],
     });
 
     return projectsData;
   }),
 
-  create: publicProcedure
+  create: protectedProcedure
     .input(
       z.object({
         name: z.string().min(1),
-        userId: z.number(),
         description: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const created = await ctx.db.insert(projects).values({
         name: input.name,
-        userId: input.userId,
+        userId: ctx.user.userId as string,
         description: input.description,
       });
     }),
 
-  delete: publicProcedure
+  delete: protectedProcedure
     .input(z.object({ projectId: z.number() }))
     .mutation(async ({ ctx, input }) => {
-      await ctx.db.delete(projects).where(eq(projects.id, input.projectId));
+      await ctx.db
+        .delete(projects)
+        .where(
+          and(
+            eq(projects.id, input.projectId),
+            eq(projects.userId, ctx.user.userId as string),
+          ),
+        );
+      await ctx.db
+        .delete(projectObjectives)
+        .where(
+          and(
+            eq(projectObjectives.projectid, input.projectId),
+            eq(projects.userId, ctx.user.userId as string),
+          ),
+        );
     }),
 
-  fetchProjectObjectives: publicProcedure
+  fetchProjectObjectives: protectedProcedure
     .input(z.number())
     .query(async ({ ctx, input }) => {
       const projectObjectivesInfo = ctx.db.query.projectObjectives.findMany({
@@ -45,7 +60,7 @@ export const projectsRouter = createTRPCRouter({
       return projectObjectivesInfo;
     }),
 
-  changeTitle: publicProcedure
+  changeTitle: protectedProcedure
     .input(
       z.object({
         projectId: z.number(),
@@ -56,6 +71,11 @@ export const projectsRouter = createTRPCRouter({
       const created = await ctx.db
         .update(projects)
         .set({ name: input.title })
-        .where(eq(projects.id, input.projectId));
+        .where(
+          and(
+            eq(projects.id, input.projectId),
+            eq(projects.userId, ctx.user.userId as string),
+          ),
+        );
     }),
 });

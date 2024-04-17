@@ -23,7 +23,7 @@ export function Navbar() {
             route="/pistes/1/suivi/classement"
           />
         </div>
-        <div className="flex h-8 flex-row">
+        <div className="flex h-8 flex-row space-x-4">
           <NavbarButton title="Vos pistes" route="/pistes" />
           <SignedIn>
             <UserButton />

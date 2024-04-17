@@ -1,13 +1,16 @@
-import { initTRPC } from "@trpc/server";
+import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { db } from "../db";
+import { auth } from "@clerk/nextjs/server";
 
 //define what is available in the requests
 export const createTRPCContext = async (opts: { headers: Headers }) => {
+  const user = auth();
   return {
     db,
+    user,
     ...opts,
   };
 };
@@ -36,3 +39,14 @@ export const createTRPCRouter = t.router;
 
 // create new trpc procedures
 export const publicProcedure = t.procedure;
+
+export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
+  if (!ctx.user) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+  return next({
+    ctx: {
+      user: ctx.user,
+    },
+  });
+});

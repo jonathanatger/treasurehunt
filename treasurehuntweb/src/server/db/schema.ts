@@ -19,7 +19,7 @@ export const projects = createTable("projects", {
     .notNull(),
   updatedAt: timestamp("updatedAt"),
   description: text("projectDescription"),
-  userId: integer("userId"),
+  userId: varchar("userId").notNull(),
 });
 
 export const projectObjectives = createTable("projectObjectives", {

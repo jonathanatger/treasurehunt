@@ -1,11 +1,11 @@
 import { z } from "zod";
 import { eq, and } from "drizzle-orm";
 
-import { createTRPCRouter, publicProcedure } from "../trpc";
-import { projectObjectives, projects } from "../../db/schema";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { projectObjectives } from "../../db/schema";
 
 export const objectivesRouter = createTRPCRouter({
-  delete: publicProcedure
+  delete: protectedProcedure
     .input(z.object({ projectId: z.number(), clientId: z.number() }))
     .mutation(async ({ ctx, input }) => {
       await ctx.db
@@ -18,7 +18,7 @@ export const objectivesRouter = createTRPCRouter({
         );
     }),
 
-  create: publicProcedure
+  create: protectedProcedure
     .input(
       z.object({
         projectId: z.number(),
@@ -40,7 +40,7 @@ export const objectivesRouter = createTRPCRouter({
       });
     }),
 
-  changeOrder: publicProcedure
+  changeOrder: protectedProcedure
     .input(
       z.object({
         projectId: z.number(),
@@ -52,14 +52,18 @@ export const objectivesRouter = createTRPCRouter({
       await ctx.db
         .update(projectObjectives)
         .set({ order: input.secondProject.order })
-        .where(eq(projectObjectives.clientId, input.firstProject.clientId));
+        .where(
+          and(eq(projectObjectives.clientId, input.firstProject.clientId)),
+        );
       await ctx.db
         .update(projectObjectives)
         .set({ order: input.firstProject.order })
-        .where(eq(projectObjectives.clientId, input.secondProject.clientId));
+        .where(
+          and(eq(projectObjectives.clientId, input.secondProject.clientId)),
+        );
     }),
 
-  changePosition: publicProcedure
+  changePosition: protectedProcedure
     .input(
       z.object({
         projectId: z.number(),
@@ -80,7 +84,7 @@ export const objectivesRouter = createTRPCRouter({
         );
     }),
 
-  changeClueMessage: publicProcedure
+  changeClueMessage: protectedProcedure
     .input(
       z.object({
         projectId: z.number(),
