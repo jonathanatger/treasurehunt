@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ReactElement } from "react";
 import NavLink from "~/components/ui/NavLink";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 
 export function Navbar() {
   return (
@@ -24,7 +25,13 @@ export function Navbar() {
         </div>
         <div className="flex h-8 flex-row">
           <NavbarButton title="Vos pistes" route="/pistes" />
-          <NavbarButton title="Connection" route="/connection" />
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
+
+          <SignedOut>
+            <SignInButton />
+          </SignedOut>
         </div>
       </div>
     </nav>
