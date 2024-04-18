@@ -29,6 +29,9 @@ export function useProjects(projectId: number) {
 
       console.error(err);
     },
+    onSettled: () => {
+      apiUtils.projects.fetchUserProjects.refetch();
+    },
   });
 
   const debouncedTimeout: MutableRefObject<

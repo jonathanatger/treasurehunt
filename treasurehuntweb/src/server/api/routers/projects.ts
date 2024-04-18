@@ -5,7 +5,7 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { projectObjectives, projects } from "../../db/schema";
 
 export const projectsRouter = createTRPCRouter({
-  fetchUserProjects: protectedProcedure.query(async ({ ctx, input }) => {
+  fetchUserProjects: protectedProcedure.query(async ({ ctx }) => {
     const projectsData = ctx.db.query.projects.findMany({
       where: eq(projects.userId, ctx.user.userId as string),
       orderBy: (projects, { asc }) => [asc(projects.createdAt)],
@@ -42,12 +42,7 @@ export const projectsRouter = createTRPCRouter({
         );
       await ctx.db
         .delete(projectObjectives)
-        .where(
-          and(
-            eq(projectObjectives.projectid, input.projectId),
-            eq(projects.userId, ctx.user.userId as string),
-          ),
-        );
+        .where(and(eq(projectObjectives.projectid, input.projectId)));
     }),
 
   fetchProjectObjectives: protectedProcedure
