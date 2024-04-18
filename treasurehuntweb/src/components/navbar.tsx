@@ -24,9 +24,11 @@ export function Navbar() {
           </SignedIn>
 
           <SignedOut>
-            <SignInButton redirectUrl="/pistes">
+            <SignInButton>
               <div className="flex flex-col justify-center">
-                <h3 className="h-fit text-primary">Connection</h3>
+                <h3 className="h-fit cursor-pointer text-primary hover:text-primary/80">
+                  Connection
+                </h3>
               </div>
             </SignInButton>
           </SignedOut>

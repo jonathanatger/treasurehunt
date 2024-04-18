@@ -67,7 +67,7 @@ function ProjectCard({
 
 function NewProjectCard() {
   const newProject = api.projects.create.useMutation();
-  const { isLoaded, userId, sessionId, getToken } = useAuth();
+  const { isLoaded } = useAuth();
 
   function handleNewProjectClick(e: any) {
     if (!isLoaded) throw new Error("User not authenticated");
@@ -76,7 +76,6 @@ function NewProjectCard() {
         name: "nouvo projet",
         description: "souper proje",
       },
-
       {
         onError() {
           console.error("An error occured");
