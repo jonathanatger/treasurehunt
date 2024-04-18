@@ -8,8 +8,8 @@ export default async function Page() {
 
   return (
     <>
-      <main className="top-12 h-[100svh] w-[100vw] overflow-auto">
-        <section className="box-border h-[calc(100%-3rem)] w-full p-4">
+      <main className="top-12 h-[100svh] w-[100%] overflow-auto">
+        <section className="box-border h-[calc(100%-3rem)] ">
           <SignedIn>
             <ProjectDashboard userprojects={userprojects} />
           </SignedIn>
