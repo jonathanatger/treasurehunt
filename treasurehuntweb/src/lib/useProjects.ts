@@ -30,6 +30,7 @@ export function useProjects(projectId: number) {
       console.error(err);
     },
     onSettled: () => {
+      apiUtils.projects.fetchUserProjects.invalidate();
       apiUtils.projects.fetchUserProjects.refetch();
     },
   });

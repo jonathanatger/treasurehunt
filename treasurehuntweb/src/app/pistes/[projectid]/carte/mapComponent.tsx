@@ -59,7 +59,7 @@ export function MapComponent({
             addObjectiveAndMarkerOnClickListener(mapObject);
           }}
         >
-          <Plus className="mr-4 h-12 w-12" />{" "}
+          <Plus className="mr-4 h-12 w-12" />
           <h3 className="text-wrap">Ajouter un objectif sur la carte</h3>
         </Button>
       </div>

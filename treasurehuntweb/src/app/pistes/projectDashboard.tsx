@@ -13,13 +13,15 @@ import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
 import { CirclePlus } from "lucide-react";
 import { Button } from "~/components/ui/button";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { cn } from "~/lib/utils";
 
 export function ProjectDashboard({
   userprojects,
 }: {
   userprojects: Project[];
 }) {
-  const { isLoaded } = useAuth();
   return (
     <div className="h-full w-full rounded-md ">
       <div className="py-8 font-title text-3xl font-bold text-primary underline">
@@ -32,41 +34,17 @@ export function ProjectDashboard({
               title={prj.name ? prj.name : "projet sans titre"}
               id={prj.id}
               key={prj.id}
-              isLoaded={isLoaded}
             />
           ))}
-        <NewProjectCard isLoaded={isLoaded} />
+        <NewProjectCard />
       </div>
     </div>
   );
 }
 
-function ProjectCard({
-  title,
-  id,
-  isLoaded,
-}: {
-  title: string;
-  id: number;
-  isLoaded: boolean;
-}) {
-  const apiUtils = api.useUtils();
-  const apiCall = api.projects.delete.useMutation();
+function ProjectCard({ title, id }: { title: string; id: number }) {
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  function deleteProject() {
-    if (!isLoaded) throw new Error("User not authenticated");
-    apiCall.mutate(
-      { projectId: id },
-      {
-        onError(err) {
-          console.error(err);
-        },
-        onSuccess() {
-          revalidate("/pistes");
-        },
-      },
-    );
-  }
   return (
     <Card className="relative flex h-40 w-64 flex-col justify-between p-1">
       <Link
@@ -78,20 +56,78 @@ function ProjectCard({
         </CardHeader>
       </Link>
       <Button
-        onClick={deleteProject}
+        onClick={() => {
+          setIsDeleting((prev) => !prev);
+          console.log("click", isDeleting);
+        }}
         className="absolute bottom-2 right-2 h-fit bg-transparent px-2 py-0 font-light hover:font-bold"
       >
         Supprimer
       </Button>
+      {isDeleting && (
+        <ProjectDeletionPage id={id} setIsDeleting={setIsDeleting} />
+      )}
     </Card>
   );
 }
 
-function NewProjectCard({ isLoaded }: { isLoaded: boolean }) {
+function ProjectDeletionPage({
+  setIsDeleting,
+  id,
+}: {
+  setIsDeleting: React.Dispatch<React.SetStateAction<boolean>>;
+  id: number;
+}) {
+  function close() {
+    setIsDeleting((prev) => !prev);
+  }
+
+  const apiCall = api.projects.delete.useMutation();
+
+  function deleteProject() {
+    apiCall.mutate(
+      { projectId: id },
+      {
+        onError(err) {
+          console.error(err);
+        },
+        onSuccess() {
+          revalidate("/pistes");
+          setIsDeleting((prev) => !prev);
+        },
+      },
+    );
+  }
+  return (
+    <dialog
+      open
+      className="fixed left-0 top-0 z-50 flex h-[100vh] w-[100vw] items-center justify-center bg-zinc-500/50"
+    >
+      <div onClick={close} className="absolute h-full w-full bg-transparent" />
+      <div className="z-50 flex h-[200px] w-[300px] flex-col justify-between text-balance rounded-3xl bg-background p-4 text-center font-title">
+        Etes vous certain de vouloir supprimer la piste ?
+        <div className="flex flex-row justify-end space-x-4">
+          <Button
+            className="active:animate-wiggle"
+            onClick={() => {
+              deleteProject();
+            }}
+          >
+            Supprimer
+          </Button>
+          <Button onClick={close} className="bg-primary">
+            Ne pas toucher à la piste
+          </Button>
+        </div>
+      </div>
+    </dialog>
+  );
+}
+
+function NewProjectCard() {
   const newProject = api.projects.create.useMutation();
 
   function handleNewProjectClick(e: any) {
-    if (!isLoaded) throw new Error("User not authenticated");
     newProject.mutate(
       {
         name: "Nouveau",
