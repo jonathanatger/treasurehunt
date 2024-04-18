@@ -1,6 +1,12 @@
 import { Card } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
-import { ArrowDown, ArrowUp, X } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowDownLeft,
+  ArrowDownRight,
+  ArrowUp,
+  X,
+} from "lucide-react";
 import {
   useContext,
   useRef,
@@ -30,6 +36,13 @@ export function ProjectObjectivesComponent() {
                 message={objective.message}
               />
             ))}
+        {objectives?.length === 0 ? (
+          <h3 className="m-1 rounded-3xl p-2 text-center text-zinc-400 outline outline-1 outline-zinc-400">
+            Vous pouvez commencer à ajouter des objectifs sur la carte
+          </h3>
+        ) : (
+          <></>
+        )}
       </div>
     </>
   );
@@ -74,7 +87,7 @@ function ObjectiveCard({
     >
       <div className="flex w-12 flex-col items-center justify-between rounded-3xl bg-primary">
         <Button
-          className="m-1 bg-transparent"
+          className="m-1 h-fit w-fit bg-transparent p-1"
           onClick={() => {
             if (switchObjectiveOrder === undefined) return;
             highlightMarker(false);
@@ -84,7 +97,7 @@ function ObjectiveCard({
           <ArrowUp size={32} />
         </Button>
         <Button
-          className="m-1 bg-transparent"
+          className="m-1 w-fit bg-transparent p-1"
           onClick={() => {
             if (switchObjectiveOrder === undefined) return;
             highlightMarker(false);
@@ -100,7 +113,7 @@ function ObjectiveCard({
             {title}
           </div>
           <Button
-            className="bg-transparent"
+            className="m-1 bg-transparent p-1"
             onClick={() => {
               if (deleteObjective === undefined) return;
               deleteObjective(clientId);

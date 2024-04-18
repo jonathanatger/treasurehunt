@@ -249,9 +249,9 @@ export const useSyncClientAndServerState = function (
     const polyline: google.maps.Polyline = new google.maps.Polyline({
       path: coordinates,
       geodesic: true,
-      strokeColor: "#FF0000",
+      strokeColor: "#c03f0c",
       strokeOpacity: 1.0,
-      strokeWeight: 2,
+      strokeWeight: 3,
     });
 
     polyline.setMap(mapObject);

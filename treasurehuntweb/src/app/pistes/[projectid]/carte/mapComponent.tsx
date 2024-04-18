@@ -46,9 +46,9 @@ export function MapComponent({
       ) : (
         <div className="h-full w-full" id="map-container"></div>
       )}
-      <div className="absolute bottom-0 z-50 flex w-full justify-center ">
+      <div className="absolute top-0 z-50 flex w-full justify-center ">
         <Button
-          className="m-8 h-24 w-64 bg-secondary text-lg font-bold shadow-lg"
+          className="m-4 h-24 w-64 bg-secondary text-lg font-bold shadow-lg"
           id="button-add-objective"
           onClick={() => {
             if (

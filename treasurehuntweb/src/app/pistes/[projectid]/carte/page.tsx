@@ -108,13 +108,14 @@ export default function Page({ params }: { params: { projectid: string } }) {
 
 function markerContent(title: string, isHighlighted: boolean) {
   const newHtmlElement = document.createElement("div");
-  const bgColor = isHighlighted ? "bg-slate-300" : "bg-white";
-  const borderColor = isHighlighted ? "border-t-slate-300" : "border-t-white";
+  const bgColor = isHighlighted ? "bg-secondary" : "bg-primary";
+  const borderColor = isHighlighted ? "border-secondary" : "border-t-primary";
 
   newHtmlElement.innerHTML = `
-  <div class="flex flex-col justify-center items-center">
-    <div class="p-2 min-h-8 ${bgColor} text-black font-bold flex flex-col items-center justify-center rounded-md shadow-md">
-    ${title}
+  <div class="flex flex-col justify-center items-center text-primary-foreground">
+    <div class="p-2 min-h-12 min-w-16 ${bgColor} font-bold flex flex-col items-start space-y-2 justify-center rounded-md shadow-md">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-move"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/><line x1="2" x2="22" y1="12" y2="12"/><line x1="12" x2="12" y1="2" y2="22"/></svg>
+    <h3 class="text-lg">${title}</h3>
     </div>
     <div class="w-0 h-0 border-l-8 border-l-transparent border-r-8 border-r-transparent border-t-8 ${borderColor} shadow-md">
     </div>
