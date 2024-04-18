@@ -43,8 +43,9 @@ const NavbarButton = function (props: {
   return (
     <NavLink
       href={`${props.route}`}
-      activeClassName="outline-primary outline outline-1"
-      className="text-md flex h-full items-center justify-center rounded-full px-4 text-primary"
+      nonActiveClassName="outline-primary outline outline-1 text-primary"
+      activeClassName="bg-primary text-primary-foreground"
+      className="text-md flex h-full items-center justify-center rounded-full px-4 font-bold"
     >
       {props.title}
     </NavLink>
