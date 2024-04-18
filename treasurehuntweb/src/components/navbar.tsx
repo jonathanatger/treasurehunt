@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ReactElement } from "react";
 import NavLink from "~/components/ui/NavLink";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import { InProjectNavLinks } from "./navbarClienside";
 
 export function Navbar() {
   return (
@@ -15,22 +16,19 @@ export function Navbar() {
             TREASURIO
           </Link>
         </div>
-        <div className="flex h-8 flex-row items-center justify-between rounded-3xl shadow-md outline outline-1 outline-secondary">
-          <NavbarProjectButton title="Carte" route="/pistes/1/carte" />
-          <NavbarProjectButton title="Partage" route="/pistes/1/partage" />
-          <NavbarProjectButton
-            title="Suivi"
-            route="/pistes/1/suivi/classement"
-          />
-        </div>
+        <InProjectNavLinks />
         <div className="flex h-8 flex-row space-x-4">
-          <NavbarButton title="Vos pistes" route="/pistes" />
           <SignedIn>
+            <NavbarButton title="Vos pistes" route="/pistes" />
             <UserButton />
           </SignedIn>
 
           <SignedOut>
-            <SignInButton />
+            <SignInButton redirectUrl="/pistes">
+              <div className="flex flex-col justify-center">
+                <h3 className="h-fit text-primary">Connection</h3>
+              </div>
+            </SignInButton>
           </SignedOut>
         </div>
       </div>
@@ -53,7 +51,7 @@ const NavbarButton = function (props: {
   );
 };
 
-const NavbarProjectButton = function (props: {
+export const NavbarProjectButton = function (props: {
   title: string;
   route: string;
 }): ReactElement {

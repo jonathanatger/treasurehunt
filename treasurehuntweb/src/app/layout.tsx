@@ -8,7 +8,7 @@ import {
   fontVelvendaChill,
   fontVelvendaCooler,
 } from "./fonts/fonts";
-import { Navbar } from "./navbar";
+import { Navbar } from "../components/navbar";
 import { ClerkProvider } from "@clerk/nextjs";
 
 export const metadata = {

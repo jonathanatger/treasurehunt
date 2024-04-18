@@ -53,7 +53,7 @@ function ProjectCard({
 }) {
   return (
     <Card className="mb-8 mr-8 w-64 cursor-pointer hover:scale-[1.05]">
-      <Link href={`/tableau/projet/${id}/carte`}>
+      <Link href={`/pistes/${id}/partage`}>
         <div
           className={cn(
             "h-8 w-full rounded-lg ",
