@@ -20,6 +20,7 @@ export const useSyncClientAndServerState = function (
     }[]
   >,
   markerContent: (title: string, isHighlighted: boolean) => HTMLDivElement,
+  areMarkersDraggable: boolean,
 ) {
   const DEFAULT_ON_CREATION_CLIENT_ID = 1;
 
@@ -47,6 +48,7 @@ export const useSyncClientAndServerState = function (
           obj.longitude,
           obj.clientId,
           mapObject as google.maps.Map,
+          areMarkersDraggable,
         );
         markersToSet.push({
           clientId: obj.clientId,
@@ -142,13 +144,14 @@ export const useSyncClientAndServerState = function (
     _longitude: number,
     _clientId: number,
     _map: google.maps.Map,
+    areMarkersDraggable: boolean,
   ) {
     const markerTitle = "Objectif " + _clientId.toString();
     const draggableMarker = new google.maps.marker.AdvancedMarkerElement({
       position: { lat: _latitude, lng: _longitude },
       map: _map,
       title: markerTitle,
-      gmpDraggable: true,
+      gmpDraggable: areMarkersDraggable,
       content: markerContent(markerTitle, false),
     });
     draggableMarker.addListener("dragstart", (event: any) => {

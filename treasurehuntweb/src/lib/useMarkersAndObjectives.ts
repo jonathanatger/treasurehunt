@@ -26,7 +26,7 @@ export const useMarkers = function (
     mapObject: google.maps.Map | null,
   ) {
     if (mapObject === null) return;
-    const cssButtonClasses = ["animate-pulse", "outline", "outline-blue-200"];
+    const cssButtonClasses = ["animate-pulse"];
 
     document
       .getElementById("button-add-objective")

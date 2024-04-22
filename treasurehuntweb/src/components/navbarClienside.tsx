@@ -21,8 +21,8 @@ export function InProjectNavLinks() {
     return (
       <div className="flex h-8 flex-row items-center justify-between rounded-3xl shadow-md outline outline-1 outline-secondary">
         <NavbarProjectButton
-          title="Carte"
-          route={`/pistes/${idOfProject}/carte`}
+          title="Objectifs"
+          route={`/pistes/${idOfProject}/objectifs`}
         />
         <NavbarProjectButton
           title="Partage"

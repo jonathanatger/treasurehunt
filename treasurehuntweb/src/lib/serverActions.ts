@@ -7,7 +7,6 @@ import { revalidatePath } from "next/cache";
 import { api } from "~/trpc/server";
 
 export async function revalidate(path: string) {
-  "use server";
   revalidatePath(path);
 }
 
