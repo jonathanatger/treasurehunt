@@ -9,9 +9,9 @@
 - [ ] Drag and drop ?
 - [ ] Styliser la carte
 - [ ] Zoom a l’arrivée sur la carte
-- [ ] Grossir les markers des objectifs !
-  - [ ] Ajouter un icône qui montre qu’on peut déplacer les markers
-- [ ] Zoom controls ne marche pas sur la carte ? apres click pour objectif ?
+- [x] Grossir les markers des objectifs !
+  - [x] Ajouter un icône qui montre qu’on peut déplacer les markers
+- [x] Zoom controls ne marche pas sur la carte ? apres click pour objectif ?
 - [x] Menu selection des pistes a mettre a jour
 - [ ] Ajouter la carte avec le suivi des joueurs
 

@@ -24,7 +24,7 @@ export function Navbar() {
           </SignedIn>
 
           <SignedOut>
-            <SignInButton>
+            <SignInButton afterSignInUrl="localhost:3000/pistes">
               <div className="flex flex-col justify-center">
                 <h3 className="h-fit cursor-pointer text-primary hover:text-primary/80">
                   Connection

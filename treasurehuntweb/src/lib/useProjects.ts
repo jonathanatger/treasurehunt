@@ -1,5 +1,7 @@
 import { api } from "~/trpc/client";
 import { useRef, MutableRefObject } from "react";
+import { Router } from "next/router";
+import { revalidate } from "./serverActions";
 
 export function useProjects(projectId: number) {
   const apiUtils = api.useUtils();
@@ -31,6 +33,7 @@ export function useProjects(projectId: number) {
     },
     onSettled: () => {
       apiUtils.projects.fetchUserProjects.invalidate();
+      revalidate("/pistes");
     },
   });
 

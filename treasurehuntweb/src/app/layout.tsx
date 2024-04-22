@@ -26,23 +26,23 @@ export default function RootLayout({
   return (
     <html lang="en">
       <ClerkProvider>
-        <body
-          className={cn(
-            "flex min-h-screen flex-col bg-background font-sans text-black antialiased",
-            fontSans.variable,
-            fontTitle.variable,
-            fontVelvendaChill.variable,
-            fontVelvendaCooler.variable,
-            fontVelvendaBlack.variable,
-          )}
-        >
-          <Navbar />
-          <TRPCReactProvider>
+        <TRPCReactProvider>
+          <body
+            className={cn(
+              "flex min-h-screen flex-col bg-background font-sans text-black antialiased",
+              fontSans.variable,
+              fontTitle.variable,
+              fontVelvendaChill.variable,
+              fontVelvendaCooler.variable,
+              fontVelvendaBlack.variable,
+            )}
+          >
+            <Navbar />
             <div className="absolute top-16 h-[calc(100%-4rem)] w-full overflow-auto p-8">
               {children}
             </div>
-          </TRPCReactProvider>
-        </body>
+          </body>
+        </TRPCReactProvider>
       </ClerkProvider>
     </html>
   );
