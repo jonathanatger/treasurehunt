@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useState } from "react";
+import { Dispatch, SetStateAction, createContext, useState } from "react";
 import { MapComponent } from "./mapComponent";
 import { ProjectObjectivesComponent } from "./projectObjectivesComponent";
 import { api } from "~/trpc/client";
@@ -140,6 +140,7 @@ type objectiveContextType = {
   deleteObjective: (order: number) => void;
   addObjectiveAndMarkerOnClickListener: (
     mapObject: google.maps.Map | null,
+    setButtonMessage: Dispatch<SetStateAction<string>>,
   ) => void;
   switchObjectiveOrder: (currentId: number, displacement: number) => void;
   changeClueMessage: (clientId: number, text: string) => void;

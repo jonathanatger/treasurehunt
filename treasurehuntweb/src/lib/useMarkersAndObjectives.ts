@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { SetStateAction, useRef } from "react";
 import { MutableRefObject } from "react";
 import { api } from "~/trpc/client";
 import { ProjectObjective, projectObjectives } from "~/server/db/schema";
@@ -24,13 +24,19 @@ export const useMarkersAndObjectives = function (
 
   function addObjectiveAndMarkerOnClickListener(
     mapObject: google.maps.Map | null,
+    setButtonMessage: React.Dispatch<SetStateAction<string>>,
   ) {
     if (mapObject === null) return;
-    const cssButtonClasses = ["animate-pulse"];
+    const cssButtonClasses = ["animate-pulse", "hover:bg-secondary"];
+    const buttonToModify = document.getElementById("button-add-objective");
 
-    document
-      .getElementById("button-add-objective")
-      ?.classList.add(...cssButtonClasses);
+    buttonToModify?.classList.add(...cssButtonClasses);
+
+    mapObject.setOptions({
+      draggableCursor: "crosshair",
+    });
+
+    setButtonMessage("Cliquez sur la carte");
 
     currentMapsEventListener.current = mapObject?.addListener(
       "click",

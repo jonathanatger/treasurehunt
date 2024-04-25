@@ -1,21 +1,27 @@
-import { useContext, SetStateAction, useEffect } from "react";
+import { useContext, SetStateAction, useEffect, useState } from "react";
 import { Plus } from "lucide-react";
 import { useGMapImports } from "~/lib/useImportGMapAPI";
 import { useIpLocation } from "~/lib/useLocation";
 import { Button } from "~/components/ui/button";
 import { ObjectivesContext } from "./page";
-import { api } from "~/trpc/client";
 
 export function MapComponent({
   setMap,
 }: {
   setMap: React.Dispatch<SetStateAction<google.maps.Map | null>>;
 }) {
-  const userLocation: google.maps.LatLngLiteral = useIpLocation();
+  const objectives = useContext(ObjectivesContext)?.objectives;
   const apiImportsAreLoading: boolean = useGMapImports();
   const mapObject = useContext(ObjectivesContext)?.mapObject;
+  const userLocation: google.maps.LatLngLiteral = useIpLocation(
+    objectives,
+    mapObject,
+  );
   const addObjectiveAndMarkerOnClickListener =
     useContext(ObjectivesContext)?.addObjectiveAndMarkerOnClickListener;
+  const [buttonMessage, setButtonMessage] = useState(
+    "Ajouter un objectif sur la carte",
+  );
 
   useEffect(() => {
     if (apiImportsAreLoading === true) return;
@@ -24,7 +30,11 @@ export function MapComponent({
       center: { lat: userLocation.lat, lng: userLocation.lng },
       zoom: 6,
       mapId: "ff0e486cd3e262db",
-      zoomControl: false,
+      zoomControl: true,
+      zoomControlOptions: {
+        style: google.maps.ZoomControlStyle.SMALL,
+        position: google.maps.ControlPosition.RIGHT_CENTER,
+      },
       mapTypeControl: false,
       scaleControl: false,
       streetViewControl: false,

@@ -24,12 +24,13 @@ export function ProjectObjectivesComponent() {
             .sort((a, b) => {
               return a.order - b.order;
             })
-            .map((objective) => (
+            .map((objective, index) => (
               <ObjectiveCard
                 key={"objective-card-" + objective.clientId.toString()}
                 clientId={objective.clientId}
                 title={objective.title}
                 message={objective.message}
+                index={index}
               />
             ))}
         {objectives?.length === 0 ? (
@@ -49,10 +50,12 @@ function ObjectiveCard({
   clientId,
   title,
   message,
+  index,
 }: {
   clientId: number;
   title: string;
   message: string | null;
+  index: number;
 }) {
   const [clientMessage, setClientMessage] = useState<string | undefined>(
     undefined,
@@ -81,9 +84,17 @@ function ObjectiveCard({
       onMouseEnter={() => highlightMarker(true)}
       onMouseLeave={() => highlightMarker(false)}
     >
-      <div className="flex w-12 flex-col items-center justify-between rounded-3xl">
+      <div
+        className={cn(
+          "flex w-12 flex-col items-center rounded-3xl",
+          index === 0 ? " justify-end" : "justify-between",
+        )}
+      >
         <Button
-          className="m-1 h-fit w-fit bg-transparent p-1"
+          className={cn(
+            "m-1 h-fit w-fit bg-transparent p-1",
+            index === 0 ? "hidden" : "",
+          )}
           onClick={() => {
             if (switchObjectiveOrder === undefined) return;
             highlightMarker(false);
@@ -241,7 +252,7 @@ function ObjectiveTitle({
       {editingTitle ? (
         <div
           className={cn(
-            "flex pr-2 pt-2 font-title text-xl font-bold",
+            "flex py-2 pr-2 font-title text-xl font-bold",
             cluesVisible ? "flex-row space-x-2" : "flex-col space-y-2",
           )}
         >
@@ -254,12 +265,8 @@ function ObjectiveTitle({
             id={"titleChangeBox-" + clientId.toString()}
             className="text-md resize-none text-wrap rounded-3xl bg-background px-4 font-normal text-foreground"
           />
-          <Button onClick={switchDisplay} className="bg-transparent">
-            <Check
-              onClick={switchDisplay}
-              className=" min-h-8 pb-2"
-              size={24}
-            />
+          <Button onClick={switchDisplay} className="mb-2 bg-transparent">
+            <Check onClick={switchDisplay} className="min-h-8" size={24} />
           </Button>
         </div>
       ) : (

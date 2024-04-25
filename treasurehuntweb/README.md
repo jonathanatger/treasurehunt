@@ -2,12 +2,14 @@
 
 ### To-Do-List Dev
 
+- [ ] Rendre le site responsive !
+
 - [x] Déplacer le bouton Ajouter un objectif
-  - [ ] Changer la geule de la souris ?
+  - [x] Changer la geule de la souris ?
 - [x] Changer la geule du menu de sélection des objectifs
-  - [ ] Enlever les boutons haut et bas des objectifs qui sont aux extrémités
-- [ ] Styliser la carte
-- [ ] Zoom a l’arrivée sur la carte
+  - [x] Enlever les boutons haut et bas des objectifs qui sont aux extrémités
+- [x] Styliser la carte
+- [x] Zoom a l’arrivée sur la carte
 - [x] Grossir les markers des objectifs !
   - [x] Ajouter un icône qui montre qu’on peut déplacer les markers
 - [x] Zoom controls ne marche pas sur la carte ? apres click pour objectif ?
@@ -21,7 +23,7 @@
 - [ ] Erreurs qui s' affiche a l'ecran quand les requetes ne passent pas
 - [ ] Changer les couleurs de Clerk : on doir pouvoir passer des couleurs aux Components ?
 
-- [ ] Pouvoir changer le nom des objectifs
+- [x] Pouvoir changer le nom des objectifs
 
 - [x] Authentification
 - [x] Rediriger les pages lorsqu'on est pas authentifié
