@@ -103,4 +103,24 @@ export const objectivesRouter = createTRPCRouter({
           ),
         );
     }),
+
+  changeTitle: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.number(),
+        title: z.string(),
+        clientId: z.number(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db
+        .update(projectObjectives)
+        .set({ title: input.title })
+        .where(
+          and(
+            eq(projectObjectives.projectid, input.projectId),
+            eq(projectObjectives.clientId, input.clientId),
+          ),
+        );
+    }),
 });

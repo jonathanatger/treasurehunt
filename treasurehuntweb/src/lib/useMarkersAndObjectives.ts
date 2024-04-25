@@ -3,7 +3,7 @@ import { MutableRefObject } from "react";
 import { api } from "~/trpc/client";
 import { ProjectObjective, projectObjectives } from "~/server/db/schema";
 
-export const useMarkers = function (
+export const useMarkersAndObjectives = function (
   objectives: ProjectObjective[] | undefined,
   mapObject: google.maps.Map | null,
   _projectId: number,
@@ -250,7 +250,7 @@ export const useMarkers = function (
     });
   }
 
-  // Change the order of objectives
+  // Change the clue message of objectives
   const clueMessageChangeApiCall = api.objectives.changeClueMessage.useMutation(
     {
       onMutate: async (variables) => {
@@ -295,11 +295,56 @@ export const useMarkers = function (
       });
   }
 
+  // change the title of an objective ---------------
+  const changeObjectiveTitleApiCall = api.objectives.changeTitle.useMutation({
+    onMutate: async (variables) => {
+      const previousObjectives =
+        apiUtils.projects.fetchProjectObjectives.getData(_projectId);
+
+      if (previousObjectives === undefined) return;
+      const ObjectiveToChange = previousObjectives.find(
+        (obj) => obj.clientId === variables.clientId,
+      );
+
+      if (ObjectiveToChange) ObjectiveToChange.title = variables.title;
+
+      apiUtils.projects.fetchProjectObjectives.setData(
+        _projectId,
+        previousObjectives,
+      );
+
+      return { previousObjectives };
+    },
+    onError: (err, variables, context) => {
+      apiUtils.projects.fetchProjectObjectives.setData(
+        _projectId,
+        context?.previousObjectives,
+      );
+
+      console.error(err);
+    },
+
+    onSettled: (data) => {
+      debouncedObjectivesDataCacheInvalidation.current();
+    },
+  });
+
+  function changeTitleOfObjective(objectiveClientId: number, _title: string) {
+    if (objectiveClientId !== undefined && _title !== undefined) {
+      changeObjectiveTitleApiCall.mutate({
+        title: _title,
+        clientId: objectiveClientId,
+        projectId: _projectId,
+      });
+    }
+  }
+
   return {
     addObjectiveAndMarkerOnClickListener,
     deleteObjective,
     switchObjectiveOrder,
     updatePolyline,
     changeClueMessage,
+    changeTitleOfObjective,
   };
 };

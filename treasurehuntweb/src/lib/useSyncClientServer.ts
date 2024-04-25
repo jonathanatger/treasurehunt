@@ -48,6 +48,7 @@ export const useSyncClientAndServerState = function (
           obj.longitude,
           obj.clientId,
           mapObject as google.maps.Map,
+          obj.title,
           areMarkersDraggable,
         );
         markersToSet.push({
@@ -144,15 +145,15 @@ export const useSyncClientAndServerState = function (
     _longitude: number,
     _clientId: number,
     _map: google.maps.Map,
+    _title: string,
     areMarkersDraggable: boolean,
   ) {
-    const markerTitle = "Objectif " + _clientId.toString();
     const draggableMarker = new google.maps.marker.AdvancedMarkerElement({
       position: { lat: _latitude, lng: _longitude },
       map: _map,
-      title: markerTitle,
+      title: _title,
       gmpDraggable: areMarkersDraggable,
-      content: markerContent(markerTitle, false),
+      content: markerContent(_title, false),
     });
     draggableMarker.addListener("dragstart", (event: any) => {
       clearTimeout(debouncedObjectivesDataCacheInvalidationTimeout.current);
