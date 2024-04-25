@@ -9,8 +9,7 @@ import {
   useEffect,
   SetStateAction,
 } from "react";
-import { ObjectivesContext } from "./page";
-import { doc } from "prettier";
+import { ObjectivesContext } from "./objectivesContext";
 import { cn } from "~/lib/utils";
 
 export function ProjectObjectivesComponent() {
@@ -184,7 +183,9 @@ function ObjectiveClueMessageInput({
     }, 3000);
   }
 
-  function changeHeightAndSetMessage(elem: any) {
+  function changeHeightAndSetMessage(
+    elem: React.ChangeEvent<HTMLTextAreaElement>,
+  ) {
     elem.target.style.height = `${elem.target.scrollHeight}px`;
     setClientMessage(elem.target.value);
     debouncedChangeClueMessageApiCall(elem.target.value);

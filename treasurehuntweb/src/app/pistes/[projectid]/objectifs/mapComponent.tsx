@@ -3,7 +3,7 @@ import { Plus } from "lucide-react";
 import { useGMapImports } from "~/lib/useImportGMapAPI";
 import { useLocation } from "~/lib/useLocation";
 import { Button } from "~/components/ui/button";
-import { ObjectivesContext } from "./page";
+import { ObjectivesContext } from "./objectivesContext";
 
 export function MapComponent({
   setMap,
@@ -43,7 +43,7 @@ export function MapComponent({
     };
 
     const _map = new google.maps.Map(
-      document.getElementById("map-container") as HTMLElement,
+      document.getElementById("map-container")!,
       mapOptions,
     );
 

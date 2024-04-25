@@ -31,9 +31,9 @@ export function useProjects(projectId: number) {
 
       console.error(err);
     },
-    onSettled: () => {
-      apiUtils.projects.fetchUserProjects.invalidate();
-      revalidate("/pistes");
+    onSettled: async () => {
+      await apiUtils.projects.fetchUserProjects.invalidate();
+      await revalidate("/pistes");
     },
   });
 

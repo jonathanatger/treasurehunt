@@ -1,5 +1,5 @@
 "use client";
-import { Dispatch, SetStateAction, createContext, useState } from "react";
+import { useState } from "react";
 import { MapComponent } from "./mapComponent";
 import { ProjectObjectivesComponent } from "./projectObjectivesComponent";
 import { api } from "~/trpc/client";
@@ -8,9 +8,7 @@ import { useSyncClientAndServerState } from "~/lib/useSyncClientServer";
 import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { ProjectObjective } from "~/server/db/schema";
-
-export const ObjectivesContext = createContext<objectiveContextType>(null);
+import { ObjectivesContext } from "./objectivesContext";
 
 export default function Page({ params }: { params: { projectid: string } }) {
   const [mapObject, setMapObject] = useState<google.maps.Map | null>(null);
@@ -127,24 +125,3 @@ function markerContent(title: string, isHighlighted: boolean) {
   </div>`;
   return newHtmlElement;
 }
-
-type objectiveContextType = {
-  mapObject: google.maps.Map | null;
-  objectives: ProjectObjective[] | undefined;
-  markers: {
-    clientId: number;
-    marker: google.maps.marker.AdvancedMarkerElement;
-    listener: google.maps.MapsEventListener | null;
-  }[];
-  updatePolyline: () => void;
-  deleteObjective: (order: number) => void;
-  addObjectiveAndMarkerOnClickListener: (
-    mapObject: google.maps.Map | null,
-    setButtonMessage: Dispatch<SetStateAction<string>>,
-  ) => void;
-  switchObjectiveOrder: (currentId: number, displacement: number) => void;
-  changeClueMessage: (clientId: number, text: string) => void;
-  markerContent: (title: string, isHighlighted: boolean) => HTMLDivElement;
-  cluesVisible: boolean;
-  changeTitleOfObjective: (clientId: number, title: string) => void;
-} | null;

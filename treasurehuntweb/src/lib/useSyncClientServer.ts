@@ -30,7 +30,7 @@ export const useSyncClientAndServerState = function (
   // Additionnally, update the listeners of the markers to take
   // the new coordinates into account and update the polyline
   useEffect(() => {
-    let markersToSet: Array<{
+    const markersToSet: Array<{
       clientId: number;
       marker: google.maps.marker.AdvancedMarkerElement;
       listener: google.maps.MapsEventListener | null;
@@ -47,7 +47,7 @@ export const useSyncClientAndServerState = function (
           obj.latitude,
           obj.longitude,
           obj.clientId,
-          mapObject as google.maps.Map,
+          mapObject!,
           obj.title,
           areMarkersDraggable,
         );
@@ -108,7 +108,7 @@ export const useSyncClientAndServerState = function (
     api.objectives.changePosition.useMutation({
       onMutate: async (variables) => {
         const previousObjectives = objectives;
-        const newObjectives = structuredClone(objectives as ProjectObjective[]);
+        const newObjectives = structuredClone(objectives!);
 
         const associateObjective = newObjectives.find(
           (obj) => obj.clientId === variables.clientId,
@@ -155,21 +155,27 @@ export const useSyncClientAndServerState = function (
       gmpDraggable: areMarkersDraggable,
       content: markerContent(_title, false),
     });
-    draggableMarker.addListener("dragstart", (event: any) => {
-      clearTimeout(debouncedObjectivesDataCacheInvalidationTimeout.current);
-    });
+    draggableMarker.addListener(
+      "dragstart",
+      (event: google.maps.MapMouseEvent) => {
+        clearTimeout(debouncedObjectivesDataCacheInvalidationTimeout.current);
+      },
+    );
 
     addDragListener(draggableMarker, _clientId);
 
-    draggableMarker.addListener("dragend", (event: any) => {
-      const position = draggableMarker.position as google.maps.LatLngLiteral;
-      objectivePositionChangeApiCall.mutate({
-        clientId: _clientId,
-        projectId: _projectId,
-        latitude: position.lat,
-        longitude: position.lng,
-      });
-    });
+    draggableMarker.addListener(
+      "dragend",
+      (event: google.maps.MapMouseEvent) => {
+        const position = draggableMarker.position as google.maps.LatLngLiteral;
+        objectivePositionChangeApiCall.mutate({
+          clientId: _clientId,
+          projectId: _projectId,
+          latitude: position.lat,
+          longitude: position.lng,
+        });
+      },
+    );
 
     return draggableMarker;
   }
@@ -178,17 +184,20 @@ export const useSyncClientAndServerState = function (
     _marker: google.maps.marker.AdvancedMarkerElement,
     markerClientId: number,
   ) {
-    const listener = _marker.addListener("drag", (event: any) => {
-      const position = _marker.position as google.maps.LatLngLiteral;
-      const correspondingObjective = objectives?.find(
-        (obj) => obj.clientId === markerClientId,
-      );
-      if (correspondingObjective === undefined) return;
-      correspondingObjective.latitude = position.lat;
-      correspondingObjective.longitude = position.lng;
+    const listener = _marker.addListener(
+      "drag",
+      (event: google.maps.MapMouseEvent) => {
+        const position = _marker.position as google.maps.LatLngLiteral;
+        const correspondingObjective = objectives?.find(
+          (obj) => obj.clientId === markerClientId,
+        );
+        if (correspondingObjective === undefined) return;
+        correspondingObjective.latitude = position.lat;
+        correspondingObjective.longitude = position.lng;
 
-      updatePolyline();
-    });
+        updatePolyline();
+      },
+    );
 
     return listener;
   }
@@ -221,8 +230,9 @@ export const useSyncClientAndServerState = function (
     return () => {
       clearTimeout(debouncedObjectivesDataCacheInvalidationTimeout.current);
       debouncedObjectivesDataCacheInvalidationTimeout.current = setTimeout(
-        () => {
-          apiUtils.projects.fetchProjectObjectives.invalidate();
+        async () => {
+          await apiUtils.projects.fetchProjectObjectives.invalidate();
+          return;
         },
         3000,
       );

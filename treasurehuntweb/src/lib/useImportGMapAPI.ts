@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
-import { useIpLocation } from "./useLocation";
 
 export const useGMapImports = function () {
   const [apiImportsAreLoading, setApiImportsAreLoading] = useState(true);

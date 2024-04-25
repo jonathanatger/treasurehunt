@@ -20,7 +20,7 @@ export function TitleChange({ projectId }: { projectId: number }) {
 
   const { debouncedSetTitleApiCall } = useProjects(projectId);
 
-  function changeAndSetTitle(elem: any) {
+  function changeAndSetTitle(elem: React.ChangeEvent<HTMLInputElement>) {
     setClientTitle(elem.target.value);
     debouncedSetTitleApiCall(elem.target.value);
   }
@@ -38,11 +38,11 @@ export function TitleChange({ projectId }: { projectId: number }) {
 
 export function LinkToClipboardCard({ projectId }: { projectId: string }) {
   const link = `www.treasurio.com/rejoindre/${projectId}`;
-  function copyLink(e: any) {
-    navigator.clipboard.writeText(link);
-    const textElement = document.getElementById(
-      "clipboard-link",
-    ) as HTMLElement;
+  async function copyLink(e: React.FormEvent<HTMLButtonElement>) {
+    await navigator.clipboard
+      .writeText(link)
+      .catch((err) => console.error(err));
+    const textElement = document.getElementById("clipboard-link")!;
     textElement.innerHTML = "Copié !";
     textElement.classList.add("font-bold");
   }

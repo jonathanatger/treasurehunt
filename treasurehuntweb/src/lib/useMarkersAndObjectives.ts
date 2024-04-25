@@ -40,7 +40,7 @@ export const useMarkersAndObjectives = function (
 
     currentMapsEventListener.current = mapObject?.addListener(
       "click",
-      (e: any) => {
+      (e: google.maps.MapMouseEvent) => {
         let orderOfNewObjective: number;
         let _clientIdOfNewObjective: number;
 
@@ -58,6 +58,8 @@ export const useMarkersAndObjectives = function (
 
           _clientIdOfNewObjective = generateClientId(objectives);
         }
+
+        if (!e.latLng) return;
 
         mapObject.panTo(e.latLng);
         mapObject.setOptions({ draggableCursor: "" });
@@ -231,9 +233,7 @@ export const useMarkersAndObjectives = function (
     displacement: number,
   ) {
     if (objectives === undefined) return;
-    let objectivesList = [...objectives].sort(
-      (a, b) => a.order - b.order,
-    ) as ProjectObjective[];
+    const objectivesList = [...objectives].sort((a, b) => a.order - b.order);
 
     const firstObjectiveToChange = objectivesList.find(
       (obj) => obj.clientId === objectiveClientId,

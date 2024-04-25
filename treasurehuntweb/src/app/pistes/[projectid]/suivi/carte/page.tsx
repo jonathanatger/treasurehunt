@@ -12,7 +12,7 @@ import { useGMapImports } from "~/lib/useImportGMapAPI";
 import { useLocation } from "~/lib/useLocation";
 import { useSyncClientAndServerState } from "~/lib/useSyncClientServer";
 import { api } from "~/trpc/client";
-import { ObjectivesContext } from "../../objectifs/page";
+import { ObjectivesContext } from "../../objectifs/objectivesContext";
 
 export default function Page({ params }: { params: { projectid: string } }) {
   const apiImportsAreLoading: boolean = useGMapImports();
@@ -59,7 +59,7 @@ export default function Page({ params }: { params: { projectid: string } }) {
     };
 
     const _map = new google.maps.Map(
-      document.getElementById("map-container") as HTMLElement,
+      document.getElementById("map-container")!,
       mapOptions,
     );
 

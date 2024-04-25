@@ -91,8 +91,8 @@ function ProjectDeletionPage({
         onError(err) {
           console.error(err);
         },
-        onSuccess() {
-          revalidate("/pistes");
+        async onSuccess() {
+          await revalidate("/pistes").catch((err) => console.error(err));
           setIsDeleting((prev) => !prev);
         },
       },
@@ -130,7 +130,9 @@ function ProjectDeletionPage({
 function NewProjectCard() {
   const newProject = api.projects.create.useMutation();
 
-  function handleNewProjectClick(e: any) {
+  function handleNewProjectClick(
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+  ) {
     newProject.mutate(
       {
         name: "Nouveau",
@@ -140,8 +142,8 @@ function NewProjectCard() {
         onError() {
           console.error("An error occured");
         },
-        onSuccess() {
-          revalidate("/pistes");
+        async onSuccess() {
+          await revalidate("/pistes");
         },
       },
     );
