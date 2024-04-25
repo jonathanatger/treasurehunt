@@ -14,7 +14,7 @@ export default async function Page({
   return (
     <>
       <main className="h-full w-full">
-        <section className="flex h-full w-full flex-row overflow-clip rounded-3xl shadow-lg  outline outline-1">
+        <section className="flex h-full w-full flex-row overflow-clip rounded-3xl shadow-lg outline outline-1 outline-primary">
           <div className="flex h-full flex-1 flex-col  items-center justify-center">
             <div className="container flex flex-col space-y-4">
               <Card className="flex flex-row items-center justify-around rounded-full bg-primary p-2 font-title">

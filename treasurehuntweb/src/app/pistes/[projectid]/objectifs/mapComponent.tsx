@@ -57,7 +57,7 @@ export function MapComponent({
       ) : (
         <div className="h-full w-full" id="map-container"></div>
       )}
-      <div className=" pointer-events-none absolute top-0 z-50 flex w-full justify-center ">
+      <div className=" pointer-events-none absolute top-2 z-50 flex w-full justify-center ">
         <Button
           className="pointer-events-auto m-4 h-24 w-64 bg-secondary text-lg font-bold shadow-lg hover:bg-primary/100 active:outline active:outline-1 active:outline-white"
           id="button-add-objective"

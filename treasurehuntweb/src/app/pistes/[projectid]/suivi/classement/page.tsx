@@ -15,12 +15,12 @@ export default async function Page({
 }) {
   return (
     <>
-      <Table className="grow overflow-auto">
-        <TableCaption>
+      <Table className="grow overflow-auto text-primary">
+        <TableCaption className="text-muted">
           L'avancement des participants sera mis à jour ici lors de la partie.
         </TableCaption>
-        <TableHeader className="outline outline-1 outline-muted">
-          <TableRow>
+        <TableHeader className="outline outline-1 outline-foreground">
+          <TableRow className="text-foreground">
             <TableHead className="w-[100px]">Classement</TableHead>
             <TableHead>Equipe</TableHead>
             <TableHead>Nom</TableHead>
@@ -29,7 +29,7 @@ export default async function Page({
             </TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody className="">
+        <TableBody className="text-foreground">
           <TableRow></TableRow>
         </TableBody>
       </Table>
