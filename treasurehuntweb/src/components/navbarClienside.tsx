@@ -31,6 +31,7 @@ export function InProjectNavLinks() {
         <NavbarProjectButton
           title="Suivi"
           route={`/pistes/${idOfProject}/suivi/classement`}
+          alternateRoute={`/pistes/${idOfProject}/suivi/carte`}
         />
       </div>
     );

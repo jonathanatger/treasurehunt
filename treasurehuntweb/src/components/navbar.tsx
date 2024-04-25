@@ -41,6 +41,7 @@ export function Navbar() {
 const NavbarButton = function (props: {
   title: string;
   route: string;
+  alternateRoute?: string;
 }): ReactElement {
   return (
     <NavLink
@@ -57,6 +58,7 @@ const NavbarButton = function (props: {
 export const NavbarProjectButton = function (props: {
   title: string;
   route: string;
+  alternateRoute?: string;
 }): ReactElement {
   return (
     <NavLink
@@ -64,6 +66,7 @@ export const NavbarProjectButton = function (props: {
       activeClassName="bg-secondary text-secondary-foreground"
       nonActiveClassName="hover:bg-orange-100"
       className="text-md flex h-full items-center justify-center rounded-full px-12 font-bold text-secondary"
+      alternativeActivePath={props.alternateRoute}
     >
       {props.title}
     </NavLink>

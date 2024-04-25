@@ -7,6 +7,7 @@ const NavLink = ({
   activeClassName,
   nonActiveClassName,
   className,
+  alternativeActivePath,
   ...rest
 }: {
   children?: React.ReactNode;
@@ -14,11 +15,17 @@ const NavLink = ({
   activeClassName?: string;
   nonActiveClassName?: string;
   className?: string;
+  alternativeActivePath?: string;
 }) => {
   const pathname = usePathname();
+  const isOnAlternatePath = alternativeActivePath
+    ? pathname.endsWith(alternativeActivePath) ||
+      (href.includes(alternativeActivePath) && pathname !== "/")
+    : false;
   const isActive =
-    // pathname.endsWith(href) || (href.includes(pathname) && pathname !== "/");
-    pathname.endsWith(href) && pathname !== "/";
+    pathname.endsWith(href) ||
+    (href.includes(pathname) && pathname !== "/") ||
+    isOnAlternatePath;
   const newClassName = `${isActive ? activeClassName : nonActiveClassName} ${className}`;
   return (
     <Link href={href} className={newClassName} {...rest}>

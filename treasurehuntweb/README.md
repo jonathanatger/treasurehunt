@@ -12,13 +12,14 @@
   - [x] Ajouter un icône qui montre qu’on peut déplacer les markers
 - [x] Zoom controls ne marche pas sur la carte ? apres click pour objectif ?
 - [x] Menu selection des pistes a mettre a jour
-- [ ] Ajouter la carte avec le suivi des joueurs
-- [ ] Navbar ne fonctionne pas pour onglet Carte
+- [x] Ajouter la carte avec le suivi des joueurs
+- [x] Navbar ne fonctionne pas pour onglet Carte
 - [ ] Changer les illustrations
 - [ ] Changer la page d'acceuil pour en faire quelque chose de plus Pro
 - [ ] Rendre Navbar plus jolie
-- [ ] Pouvoir lancer la partier et lock les objectifs
+- [ ] Pouvoir lancer la partie et lock les objectifs
 - [ ] Erreurs qui s' affiche a l'ecran quand les requetes ne passent pas
+- [ ] Changer les couleurs de Clerk : on doir pouvoir passer des couleurs aux Components ?
 
 - [ ] Pouvoir changer le nom des objectifs
 
