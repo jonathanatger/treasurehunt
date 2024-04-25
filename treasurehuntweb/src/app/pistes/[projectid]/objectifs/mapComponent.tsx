@@ -51,7 +51,7 @@ export function MapComponent({
   }, [apiImportsAreLoading]);
 
   return (
-    <div className="relative h-[calc(100%+24px)] w-full">
+    <div className="relative flex h-[calc(100%+24px)] w-[calc(100%+4px)] ">
       {apiImportsAreLoading ? (
         <LoadingComponent />
       ) : (
@@ -67,11 +67,12 @@ export function MapComponent({
               mapObject === undefined
             )
               return;
-            addObjectiveAndMarkerOnClickListener(mapObject);
+
+            addObjectiveAndMarkerOnClickListener(mapObject, setButtonMessage);
           }}
         >
           <Plus className="mr-4 h-12 w-12" />
-          <h3 className="text-wrap">Ajouter un objectif sur la carte</h3>
+          <h3 className="text-wrap">{buttonMessage}</h3>
         </Button>
       </div>
     </div>

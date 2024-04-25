@@ -60,6 +60,7 @@ export const useMarkersAndObjectives = function (
         }
 
         mapObject.panTo(e.latLng);
+        mapObject.setOptions({ draggableCursor: "" });
 
         objectiveCreationApiCall.mutate({
           projectId: _projectId,
@@ -69,6 +70,8 @@ export const useMarkersAndObjectives = function (
           latitude: e.latLng.lat(),
           longitude: e.latLng.lng(),
         });
+
+        setButtonMessage("Ajouter un objectif sur la carte");
 
         document
           .getElementById("button-add-objective")
