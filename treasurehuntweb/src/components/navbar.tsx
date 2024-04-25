@@ -11,7 +11,7 @@ export function Navbar() {
         <div>
           <Link
             href={"/"}
-            className="font-velvendachill text-3xl font-normal text-secondary"
+            className="font-velvendachill text-3xl font-normal text-primary"
           >
             TREASURIO
           </Link>

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -9,13 +9,13 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import { useGMapImports } from "~/lib/useImportGMapAPI";
-import { useIpLocation } from "~/lib/useLocation";
+import { useLocation } from "~/lib/useLocation";
 import { useSyncClientAndServerState } from "~/lib/useSyncClientServer";
 import { api } from "~/trpc/client";
+import { ObjectivesContext } from "../../objectifs/page";
 
 export default function Page({ params }: { params: { projectid: string } }) {
   const apiImportsAreLoading: boolean = useGMapImports();
-  const userLocation: google.maps.LatLngLiteral = useIpLocation();
   const [mapObject, setMapObject] = useState<google.maps.Map | null>(null);
   const [markers, setMarkers] = useState<
     {
@@ -27,6 +27,10 @@ export default function Page({ params }: { params: { projectid: string } }) {
   const { data: objectives, error } =
     api.projects.fetchProjectObjectives.useQuery(Number(params.projectid));
 
+  const userLocation: google.maps.LatLngLiteral = useLocation(
+    objectives,
+    mapObject,
+  );
   const areMarkersDraggable = false;
 
   const {} = useSyncClientAndServerState(

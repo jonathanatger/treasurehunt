@@ -16,6 +16,7 @@
 - [x] Menu selection des pistes a mettre a jour
 - [x] Ajouter la carte avec le suivi des joueurs
 - [x] Navbar ne fonctionne pas pour onglet Carte
+- [ ] Faire disparaitre les bordures de la carte
 - [ ] Changer les illustrations
 - [ ] Changer la page d'acceuil pour en faire quelque chose de plus Pro
 - [ ] Rendre Navbar plus jolie

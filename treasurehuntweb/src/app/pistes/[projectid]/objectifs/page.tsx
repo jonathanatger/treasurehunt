@@ -102,7 +102,7 @@ export default function Page({ params }: { params: { projectid: string } }) {
               </h3>
             </Button>
           </div>
-          <div className="flex grow items-center justify-center overflow-clip rounded-3xl">
+          <div className="flex grow items-center justify-start overflow-clip rounded-3xl ">
             <MapComponent setMap={setMapObject} />
           </div>
         </ObjectivesContext.Provider>

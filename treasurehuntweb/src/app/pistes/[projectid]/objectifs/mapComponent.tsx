@@ -1,7 +1,7 @@
 import { useContext, SetStateAction, useEffect, useState } from "react";
 import { Plus } from "lucide-react";
 import { useGMapImports } from "~/lib/useImportGMapAPI";
-import { useIpLocation } from "~/lib/useLocation";
+import { useLocation } from "~/lib/useLocation";
 import { Button } from "~/components/ui/button";
 import { ObjectivesContext } from "./page";
 
@@ -13,7 +13,7 @@ export function MapComponent({
   const objectives = useContext(ObjectivesContext)?.objectives;
   const apiImportsAreLoading: boolean = useGMapImports();
   const mapObject = useContext(ObjectivesContext)?.mapObject;
-  const userLocation: google.maps.LatLngLiteral = useIpLocation(
+  const userLocation: google.maps.LatLngLiteral = useLocation(
     objectives,
     mapObject,
   );
@@ -51,7 +51,7 @@ export function MapComponent({
   }, [apiImportsAreLoading]);
 
   return (
-    <div className="relative flex h-[calc(100%+24px)] w-[calc(100%+4px)] ">
+    <div className="relative top-2  flex h-[calc(100%+36px)] w-[calc(100%+2px)] ">
       {apiImportsAreLoading ? (
         <LoadingComponent />
       ) : (

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ProjectObjective } from "~/server/db/schema";
 
-export const useIpLocation = function (
+export const useLocation = function (
   objectives: ProjectObjective[] | undefined,
   mapObject: google.maps.Map | null | undefined,
 ) {
