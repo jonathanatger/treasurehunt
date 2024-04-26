@@ -1,8 +1,10 @@
 # TREASURIO
 
-### To-Do-List Dev
+### To-Do-List Important
 
 - [ ] Rendre le site responsive !
+
+### To-Do-List Dev
 
 - [x] Déplacer le bouton Ajouter un objectif
   - [x] Changer la geule de la souris ?
@@ -16,7 +18,7 @@
 - [x] Menu selection des pistes a mettre a jour
 - [x] Ajouter la carte avec le suivi des joueurs
 - [x] Navbar ne fonctionne pas pour onglet Carte
-- [ ] Faire disparaitre les bordures de la carte
+- [x] Faire disparaitre les bordures de la carte
 - [ ] Changer les illustrations
 - [ ] Changer la page d'acceuil pour en faire quelque chose de plus Pro
 - [ ] Rendre Navbar plus jolie
@@ -24,6 +26,7 @@
 - [ ] Erreurs qui s' affiche a l'ecran quand les requetes ne passent pas
 - [ ] Changer les couleurs de Clerk : on doir pouvoir passer des couleurs aux Components ?
 - [ ] Error Boundary pour ne pas effrayer le visiteur du site ?
+- [ ] Faire marcher les liens du footer
 
 - [x] Pouvoir changer le nom des objectifs
 
@@ -32,7 +35,7 @@
 - [x] Changer le nom du bouton signin
 - [x] Rediriger vers le site en cas de sign out OU de visite du site sans etre authentifié ? redirige constamment vers la page de signin
 
-## Serait sympa
+### Serait sympa
 
 - [ ] Drag and drop ?
 - [ ] Refactoriser du code ?
