@@ -23,6 +23,7 @@
 - [ ] Pouvoir lancer la partie et lock les objectifs
 - [ ] Erreurs qui s' affiche a l'ecran quand les requetes ne passent pas
 - [ ] Changer les couleurs de Clerk : on doir pouvoir passer des couleurs aux Components ?
+- [ ] Error Boundary pour ne pas effrayer le visiteur du site ?
 
 - [x] Pouvoir changer le nom des objectifs
 

@@ -12,7 +12,11 @@ export const useLocation = function (
   const firstLoadBoundFit = useRef(true);
 
   useEffect(() => {
-    if (objectives?.length === undefined || firstLoadBoundFit.current === false)
+    if (
+      objectives?.length === undefined ||
+      !mapObject ||
+      firstLoadBoundFit.current === false
+    )
       return;
     const bounds = new google.maps.LatLngBounds();
     const objectivesLength = objectives.length;
