@@ -86,3 +86,7 @@
     scrollbar-width: none; /* Firefox */
   }
 }
+
+html {
+  font-size: 100%;
+}

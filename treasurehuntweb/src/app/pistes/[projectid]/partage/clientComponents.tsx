@@ -4,10 +4,12 @@ import { Button } from "~/components/ui/button";
 import { MutableRefObject, useRef, useState, useEffect, use } from "react";
 import { api } from "~/trpc/client";
 import { useProjects } from "~/lib/useProjects";
+import { cn } from "~/lib/utils";
 
 export function TitleChange({ projectId }: { projectId: number }) {
   const { data, isLoading } = api.projects.fetchUserProjects.useQuery();
   const [clientTitle, setClientTitle] = useState<string>("");
+  const [userHasFeedback, setUserHasFeedback] = useState<boolean>(false);
 
   useEffect(() => {
     if (isLoading) return;
@@ -22,13 +24,16 @@ export function TitleChange({ projectId }: { projectId: number }) {
 
   function changeAndSetTitle(elem: React.ChangeEvent<HTMLInputElement>) {
     setClientTitle(elem.target.value);
-    debouncedSetTitleApiCall(elem.target.value);
+    debouncedSetTitleApiCall(elem.target.value, setUserHasFeedback);
   }
 
   return (
     <input
       type="text"
-      className="flex grow resize-none items-center justify-center truncate rounded-3xl bg-background px-4 py-2 text-2xl text-foreground"
+      className={cn(
+        "flex w-full resize-none items-center justify-center truncate rounded-3xl bg-background px-4 py-2 text-foreground sm:w-fit sm:grow md:text-2xl",
+        userHasFeedback ? "bg-primary" : "",
+      )}
       placeholder="Les mystérieuses cités d'or..."
       onChange={changeAndSetTitle}
       value={isLoading ? "Chargement..." : clientTitle}

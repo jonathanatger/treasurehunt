@@ -1,5 +1,5 @@
 import { api } from "~/trpc/client";
-import { useRef, MutableRefObject } from "react";
+import { useRef, MutableRefObject, SetStateAction } from "react";
 import { Router } from "next/router";
 import { revalidate } from "./serverActions";
 
@@ -41,11 +41,19 @@ export function useProjects(projectId: number) {
     string | number | NodeJS.Timeout | undefined
   > = useRef(0);
 
-  function debouncedSetTitleApiCall(_message: string) {
+  function debouncedSetTitleApiCall(
+    _message: string,
+    setUserHasFeedback: React.Dispatch<SetStateAction<boolean>>,
+  ) {
     clearTimeout(debouncedTimeout.current);
 
     debouncedTimeout.current = setTimeout(() => {
+      setUserHasFeedback(true);
+
       changeTitleApiCall.mutate({ projectId: projectId, title: _message });
+      setTimeout(() => {
+        setUserHasFeedback(false);
+      }, 200);
     }, 1000);
   }
 
