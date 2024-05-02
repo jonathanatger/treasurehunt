@@ -38,7 +38,7 @@ export default function RootLayout({
             )}
           >
             <Navbar />
-            <div className="absolute top-16 h-[calc(100%-4rem)] w-full overflow-auto p-8">
+            <div className="absolute top-16 h-[calc(100%-4rem)] w-full overflow-auto p-4">
               {children}
             </div>
           </body>
