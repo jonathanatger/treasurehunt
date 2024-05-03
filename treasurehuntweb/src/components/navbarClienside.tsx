@@ -25,7 +25,10 @@ export function NavbarAdditionalLinks() {
       )}
     >
       <MenuVisibilityButton
-        className="pointer-events-auto  self-end rounded-full text-primary hover:scale-110 md:hidden"
+        className={cn(
+          "pointer-events-auto  self-end rounded-full text-primary hover:scale-110 ",
+          isScreenMediumWidth ? "hidden" : "",
+        )}
         onClick={() => setMenuIsVisible(!menuIsVisible)}
       />
       {((menuIsVisible && !isScreenMediumWidth) || isScreenMediumWidth) && (
@@ -57,7 +60,7 @@ export function ResponsiveNavbarLinks({
           "flex w-fit items-center shadow-md outline outline-1 outline-secondary",
           isScreenMediumWidth
             ? "absolute left-0 right-0 ml-auto mr-auto h-8 flex-row  rounded-3xl"
-            : "w-full flex-col space-y-2 rounded-2xl",
+            : "w-full flex-col rounded-2xl",
         )}
         setIsMenuVisible={setMenuIsVisible}
       />
@@ -65,7 +68,7 @@ export function ResponsiveNavbarLinks({
         className={cn(
           "flex w-fit items-center",
           isScreenMediumWidth
-            ? "h-full flex-row  space-x-2"
+            ? "h-full flex-row space-x-2"
             : "w-full flex-col space-y-4",
         )}
         setIsMenuVisible={setMenuIsVisible}

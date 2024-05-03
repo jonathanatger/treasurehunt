@@ -17,7 +17,7 @@ export function ProjectObjectivesComponent() {
 
   return (
     <>
-      <div className="flex w-full flex-col">
+      <div className="flex h-full flex-row md:w-full md:flex-col">
         {objectives &&
           objectives
             .sort((a, b) => {
@@ -79,13 +79,13 @@ function ObjectiveCard({
 
   return (
     <Card
-      className="mb-2 flex min-h-[150px] w-full flex-row rounded-3xl shadow-lg"
+      className="flex h-full min-w-60 flex-row rounded-3xl shadow-lg md:mb-2 md:h-auto md:min-h-[150px] md:w-full"
       onMouseEnter={() => highlightMarker(true)}
       onMouseLeave={() => highlightMarker(false)}
     >
       <div
         className={cn(
-          "flex w-12 flex-col items-center rounded-3xl",
+          "hidden w-12 flex-col items-center rounded-3xl md:flex",
           index === 0 ? " justify-end" : "justify-between",
         )}
       >
@@ -115,7 +115,7 @@ function ObjectiveCard({
       </div>
       <div
         className={cn(
-          "flex max-w-[calc(100%-48px)] grow  ",
+          "flex grow md:max-w-[calc(100%-48px)]",
           cluesVisible
             ? "flex-row-reverse justify-between"
             : "flex-col justify-start",

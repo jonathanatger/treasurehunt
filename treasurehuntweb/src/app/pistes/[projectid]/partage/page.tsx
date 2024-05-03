@@ -17,7 +17,7 @@ export default async function Page({
         <section className="flex h-full w-full flex-row overflow-clip rounded-3xl shadow-lg outline outline-1 outline-primary">
           <div className="flex h-full flex-1 flex-col  items-center justify-center">
             <div className="container flex flex-col space-y-4">
-              <Card className="flex flex-col items-center space-y-2 rounded-full bg-primary p-2 px-4 font-title sm:flex-row sm:justify-around sm:px-2">
+              <Card className="flex flex-col items-center space-y-2 rounded-full bg-primary px-8 py-2 font-title sm:flex-row sm:justify-center sm:space-y-0 sm:px-2 md:px-4">
                 <label className="px-2">Nom de la piste </label>
                 <TitleChange projectId={_projectId} />
               </Card>
@@ -29,7 +29,7 @@ export default async function Page({
               <LinkToClipboardCard projectId={params.projectid} />
             </div>
           </div>
-          <div className="hidden flex-1 items-center justify-center md:flex">
+          <div className="hidden flex-1 items-center justify-center lg:flex">
             <Image src={heroImage} alt="image of friends"></Image>
           </div>
         </section>

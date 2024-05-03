@@ -7,7 +7,7 @@ import { useMarkersAndObjectives } from "~/lib/useMarkersAndObjectives";
 import { useSyncClientAndServerState } from "~/lib/useSyncClientServer";
 import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp } from "lucide-react";
 import { ObjectivesContext } from "./objectivesContext";
 
 export default function Page({ params }: { params: { projectid: string } }) {
@@ -58,7 +58,7 @@ export default function Page({ params }: { params: { projectid: string } }) {
 
   return (
     <>
-      <main className="bg-red-4 00h flex h-full w-full flex-row ">
+      <main className="flex h-full w-full flex-col-reverse md:flex-row ">
         <ObjectivesContext.Provider
           value={{
             mapObject: mapObject,
@@ -77,8 +77,10 @@ export default function Page({ params }: { params: { projectid: string } }) {
         >
           <div
             className={cn(
-              cluesVisible ? "w-[550px]" : "w-[300px]",
-              "scro mr-8 flex h-full flex-row rounded-3xl p-4 outline outline-4 outline-primary",
+              cluesVisible
+                ? "h-[400px] w-full md:h-auto md:w-[550px]"
+                : "h-48 w-full md:h-auto md:w-[300px]",
+              "flex flex-col-reverse rounded-3xl p-2 outline outline-4 outline-primary md:mr-8 md:h-full md:flex-row",
             )}
           >
             <div className="no-scrollbar h-full w-full overflow-auto">
@@ -88,19 +90,41 @@ export default function Page({ params }: { params: { projectid: string } }) {
               onClick={() => {
                 setCluesVisible(!cluesVisible);
               }}
-              className="ml-4 flex h-full w-8 flex-col items-center justify-start shadow-lg"
+              className="w:full mb-1 flex h-8 flex-row-reverse items-center justify-center shadow-lg md:ml-2 md:h-full md:w-8 md:flex-col md:justify-start md:pb-0"
             >
               {cluesVisible ? (
-                <ArrowLeft size={24} strokeWidth={3} className="mb-4" />
+                <>
+                  <ArrowDown
+                    size={24}
+                    strokeWidth={3}
+                    className="justify-self-center md:mb-4 md:hidden"
+                  />
+                  <ArrowLeft
+                    size={24}
+                    strokeWidth={3}
+                    className="hidden  md:mb-4 md:flex"
+                  />
+                </>
               ) : (
-                <ArrowRight size={24} strokeWidth={3} className="mb-4" />
+                <>
+                  <ArrowUp
+                    size={24}
+                    strokeWidth={3}
+                    className=" md:mb-4  md:hidden"
+                  />
+                  <ArrowRight
+                    size={24}
+                    strokeWidth={3}
+                    className="hidden md:mb-4 md:flex"
+                  />
+                </>
               )}
-              <h3 className="-rotate-90 p-4 font-title text-xl tracking-widest">
+              <h3 className="p-4 font-title text-xl tracking-widest md:-rotate-90">
                 INDICES
               </h3>
             </Button>
           </div>
-          <div className="flex grow items-center justify-start overflow-clip rounded-3xl ">
+          <div className="mb-4 flex grow items-center justify-start overflow-clip rounded-3xl md:mb-0 ">
             <MapComponent setMap={setMapObject} />
           </div>
         </ObjectivesContext.Provider>
