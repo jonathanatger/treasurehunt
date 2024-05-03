@@ -59,7 +59,7 @@ export function MapComponent({
       )}
       <div className="pointer-events-none absolute top-2 z-40 flex w-full justify-center">
         <Button
-          className="pointer-events-auto m-4 h-24 w-64 bg-secondary text-lg font-bold shadow-lg hover:bg-primary/100 active:outline active:outline-1 active:outline-white"
+          className="pointer-events-auto m-4 h-12 w-52  bg-secondary font-bold shadow-lg hover:bg-primary/100 active:outline active:outline-1 active:outline-white md:h-24 md:w-64 md:text-lg"
           id="button-add-objective"
           onClick={() => {
             if (

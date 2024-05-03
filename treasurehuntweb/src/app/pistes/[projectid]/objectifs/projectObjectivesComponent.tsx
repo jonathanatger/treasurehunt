@@ -66,6 +66,7 @@ function ObjectiveCard({
   const switchObjectiveOrder = contextData?.switchObjectiveOrder;
   const deleteObjective = contextData?.deleteObjective;
   const cluesVisible = contextData?.cluesVisible;
+  const [editingTitle, setEditingTitle] = useState<boolean>(false);
 
   function highlightMarker(isHighlighted: boolean) {
     const correspondingMarker = markers?.find(
@@ -125,6 +126,7 @@ function ObjectiveCard({
           className={cn(
             "m-1 self-start bg-transparent p-1",
             cluesVisible ? "self-start" : "self-end",
+            editingTitle ? "hidden" : "",
           )}
           onClick={() => {
             if (deleteObjective === undefined) return;
@@ -138,6 +140,8 @@ function ObjectiveCard({
             cluesVisible={cluesVisible}
             title={title}
             clientId={clientId}
+            editingTitle={editingTitle}
+            setEditingTitle={setEditingTitle}
           />
           {cluesVisible && (
             <ObjectiveClueMessageInput
@@ -214,14 +218,17 @@ function ObjectiveTitle({
   title,
   clientId,
   cluesVisible,
+  editingTitle,
+  setEditingTitle,
 }: {
   title: string;
   clientId: number;
   cluesVisible: boolean | undefined;
+  editingTitle: boolean;
+  setEditingTitle: React.Dispatch<SetStateAction<boolean>>;
 }) {
   const changeTitle = useContext(ObjectivesContext)?.changeTitleOfObjective;
   const objectives = useContext(ObjectivesContext)?.objectives;
-  const [editingTitle, setEditingTitle] = useState<boolean>(false);
   const [titleOnClient, setTitleOnClient] = useState(title);
 
   useEffect(() => {
