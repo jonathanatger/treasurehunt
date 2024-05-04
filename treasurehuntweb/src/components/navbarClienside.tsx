@@ -111,7 +111,7 @@ export function UserRelatedNavbarButtons({
       </SignedIn>
 
       <SignedOut>
-        <SignInButton afterSignInUrl="localhost:3000/pistes">
+        <SignInButton afterSignInUrl="www.treasurehunt-jet.vercel.app/pistes">
           <div className="flex flex-col justify-center">
             <h3 className="h-fit w-full cursor-pointer text-primary hover:text-primary/80">
               Connection
