@@ -172,9 +172,21 @@ function Footer() {
         <div>Jonathan ATGER</div>
       </div>
       <div className="flex flex-row space-x-1">
-        <Figma />
-        <Github />
-        <Mail />
+        <Link
+          href="https://www.figma.com/file/nnIsqT543sQI7iUPESDUrF/Treasurio?type=design&node-id=3920%3A260&mode=design&t=MIGsZDwwdYBtO6FS-1"
+          target="_blank"
+        >
+          <Figma />
+        </Link>
+        <Link
+          href="https://github.com/jonathanatger/treasurehunt"
+          target="_blank"
+        >
+          <Github />
+        </Link>
+        <Link href="mailto:jonathan.atger@gmail.com">
+          <Mail />
+        </Link>
       </div>
     </footer>
   );
