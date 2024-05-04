@@ -11,16 +11,16 @@ import Link from "next/link";
 export default function HomePage() {
   return (
     <>
-      <section className="flex w-full flex-col items-center justify-between px-4 pb-24 pt-12 md:h-[80vh] md:px-0 md:pb-0 md:pt-0 ">
-        <div className="flex w-full flex-col items-center justify-end md:flex-row">
-          <div className="flex flex-col items-center rounded-3xl bg-primary px-8 py-6 text-primary-foreground md:absolute md:w-[100vw] md:-translate-x-[50vw] md:items-end md:py-24">
-            <h2 className="text-balance font-title text-4xl font-bold leading-snug md:pb-4 md:text-6xl">
+      <section className="flex w-full flex-col items-center justify-between px-4 pb-24 pt-12 lg:h-[80vh] lg:px-0 lg:pb-0 lg:pt-0 ">
+        <div className="flex w-full flex-col items-center justify-end lg:flex-row">
+          <div className="flex flex-col items-center rounded-3xl bg-primary px-8 py-6 text-primary-foreground lg:absolute lg:w-[100vw] lg:-translate-x-[50vw] lg:items-end lg:py-24">
+            <h2 className="text-balance font-title text-4xl font-bold leading-snug lg:pb-4 lg:text-6xl">
               BOUGER ENSEMBLE,
             </h2>
-            <h2 className="text-balance pb-8 font-title text-4xl font-bold leading-snug md:text-6xl">
+            <h2 className="text-balance pb-8 font-title text-4xl font-bold leading-snug lg:text-6xl">
               TROUVER ENSEMBLE
             </h2>
-            <h3 className="text-balance pb-8 text-lg font-light md:text-2xl">
+            <h3 className="text-balance pb-8 text-lg font-light lg:text-2xl">
               Organisez votre jeu de piste sans vous prendre la tête
             </h3>
             <Link href={"/pistes"} className="w-full max-w-64">
@@ -35,7 +35,7 @@ export default function HomePage() {
             width={700}
             height={700}
             alt="image of friends having fun"
-            className="pl-8 md:flex"
+            className="pl-8 lg:flex"
             priority
           />
         </div>
