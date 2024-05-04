@@ -23,6 +23,8 @@ export function MapComponent({
     "Ajouter un objectif sur la carte",
   );
 
+  const screenIsLarge = window.screen.width > 782 ? true : false;
+
   useEffect(() => {
     if (apiImportsAreLoading === true) return;
 
@@ -30,7 +32,7 @@ export function MapComponent({
       center: { lat: userLocation.lat, lng: userLocation.lng },
       zoom: 6,
       mapId: "ff0e486cd3e262db",
-      zoomControl: true,
+      zoomControl: screenIsLarge,
       zoomControlOptions: {
         style: google.maps.ZoomControlStyle.SMALL,
         position: google.maps.ControlPosition.RIGHT_CENTER,

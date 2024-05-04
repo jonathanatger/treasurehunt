@@ -3,6 +3,7 @@
 ### To-Do-List Important
 
 - [ ] Rendre le site responsive !
+- [ ] Clerk is in dev mode
 
 ### To-Do-List Dev
 
