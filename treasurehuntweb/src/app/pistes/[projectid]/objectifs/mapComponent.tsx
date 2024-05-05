@@ -1,6 +1,5 @@
 import { useContext, SetStateAction, useEffect, useState } from "react";
 import { Plus } from "lucide-react";
-import { useGMapImports } from "~/lib/useImportGMapAPI";
 import { useLocation } from "~/lib/useLocation";
 import { Button } from "~/components/ui/button";
 import { ObjectivesContext } from "./objectivesContext";
@@ -8,11 +7,12 @@ import ErrorBoundary from "~/components/errorComponent";
 
 export function MapComponent({
   setMap,
+  apiImportsAreLoading,
 }: {
+  apiImportsAreLoading: boolean;
   setMap: React.Dispatch<SetStateAction<google.maps.Map | null>>;
 }) {
   const objectives = useContext(ObjectivesContext)?.objectives;
-  const apiImportsAreLoading: boolean = useGMapImports();
   const mapObject = useContext(ObjectivesContext)?.mapObject;
   const userLocation: google.maps.LatLngLiteral = useLocation(
     objectives,

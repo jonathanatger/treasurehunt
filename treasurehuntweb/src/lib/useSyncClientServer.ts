@@ -21,6 +21,7 @@ export const useSyncClientAndServerState = function (
   >,
   markerContent: (title: string, isHighlighted: boolean) => HTMLDivElement,
   areMarkersDraggable: boolean,
+  apiImportsAreLoading: boolean,
 ) {
   const DEFAULT_ON_CREATION_CLIENT_ID = 1;
 
@@ -35,6 +36,8 @@ export const useSyncClientAndServerState = function (
       marker: google.maps.marker.AdvancedMarkerElement;
       listener: google.maps.MapsEventListener | null;
     }> = [];
+
+    if (apiImportsAreLoading) return;
 
     // create markers when a new objective appears
     objectives?.forEach((obj) => {
@@ -94,7 +97,7 @@ export const useSyncClientAndServerState = function (
 
     updatePolyline();
     refreshMarkerListeners();
-  }, [objectives, mapObject]);
+  }, [objectives, mapObject, apiImportsAreLoading]);
 
   const generateClientId = (objectives: ProjectObjective[]) => {
     return objectives.reduce<number>((acc, value) => {

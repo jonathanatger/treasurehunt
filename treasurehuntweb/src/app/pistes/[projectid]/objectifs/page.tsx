@@ -9,6 +9,7 @@ import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp } from "lucide-react";
 import { ObjectivesContext } from "./objectivesContext";
+import { useGMapImports } from "~/lib/useImportGMapAPI";
 
 export default function Page({ params }: { params: { projectid: string } }) {
   const [mapObject, setMapObject] = useState<google.maps.Map | null>(null);
@@ -19,6 +20,8 @@ export default function Page({ params }: { params: { projectid: string } }) {
       listener: google.maps.MapsEventListener | null;
     }[]
   >([]);
+
+  const apiImportsAreLoading: boolean = useGMapImports();
 
   const [cluesVisible, setCluesVisible] = useState(false);
   // fetch data to initialize the component
@@ -125,7 +128,10 @@ export default function Page({ params }: { params: { projectid: string } }) {
             </Button>
           </div>
           <div className="mb-4 flex grow items-center justify-start overflow-clip rounded-3xl md:mb-0 ">
-            <MapComponent setMap={setMapObject} />
+            <MapComponent
+              setMap={setMapObject}
+              apiImportsAreLoading={apiImportsAreLoading}
+            />
           </div>
         </ObjectivesContext.Provider>
       </main>
