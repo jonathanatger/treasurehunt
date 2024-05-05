@@ -10,6 +10,7 @@ import {
 } from "./fonts/fonts";
 import { Navbar } from "../components/navbar";
 import { ClerkProvider } from "@clerk/nextjs";
+import ErrorBoundary from "~/components/errorComponent";
 
 export const metadata = {
   title: "Treasurio",
