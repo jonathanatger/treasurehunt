@@ -41,6 +41,7 @@ export default function Page({ params }: { params: { projectid: string } }) {
     setMarkers,
     markerSimplifiedContent,
     areMarkersDraggable,
+    apiImportsAreLoading,
   );
 
   useEffect(() => {
