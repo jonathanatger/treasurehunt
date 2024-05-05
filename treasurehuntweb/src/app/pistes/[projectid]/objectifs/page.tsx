@@ -42,6 +42,7 @@ export default function Page({ params }: { params: { projectid: string } }) {
     setMarkers,
     markerContent,
     areMarkersDraggable,
+    apiImportsAreLoading,
   );
 
   const {
