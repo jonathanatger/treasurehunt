@@ -10,7 +10,12 @@ import { cn } from "~/lib/utils";
 export function NavbarAdditionalLinks() {
   const [menuIsVisible, setMenuIsVisible] = useState(false);
 
-  const isScreenMediumWidth = window.screen.width > 782 ? true : false;
+  const isScreenMediumWidth =
+    typeof window !== "undefined"
+      ? window.screen.width > 782
+        ? true
+        : false
+      : true;
 
   return (
     <div

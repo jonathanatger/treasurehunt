@@ -24,7 +24,12 @@ export function MapComponent({
     "Ajouter un objectif sur la carte",
   );
 
-  const screenIsLarge = window.screen.width > 782 ? true : false;
+  const screenIsLarge =
+    typeof window !== "undefined"
+      ? window.screen.width > 782
+        ? true
+        : false
+      : true;
 
   useEffect(() => {
     if (apiImportsAreLoading === true) return;
