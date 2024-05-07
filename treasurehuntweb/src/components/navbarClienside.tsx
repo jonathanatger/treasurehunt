@@ -25,7 +25,7 @@ export function NavbarAdditionalLinks() {
           ? "space-y-2 bg-background shadow-lg outline outline-1 outline-primary"
           : "bg-transparent",
         isScreenMediumWidth
-          ? "absolute h-full w-[calc(100vw-32px)] flex-row items-center justify-end rounded-3xl p-4"
+          ? "absolute h-full w-full flex-row items-center justify-end rounded-3xl p-4"
           : " fixed w-[100vw] flex-col justify-center space-y-4  p-4 text-2xl",
       )}
     >
@@ -56,13 +56,13 @@ export function ResponsiveNavbarLinks({
   return (
     <div
       className={cn(
-        "pointer-events-auto flex h-full w-full",
+        "pointer-events-none flex h-full w-full",
         isScreenMediumWidth ? "flex-row justify-end" : "flex-col space-y-4",
       )}
     >
       <InProjectNavLinks
         className={cn(
-          "flex w-fit items-center shadow-md outline outline-1 outline-secondary",
+          "pointer-events-auto flex w-fit items-center shadow-md outline outline-1 outline-secondary",
           isScreenMediumWidth
             ? "absolute left-0 right-0 ml-auto mr-auto h-8 flex-row  rounded-3xl"
             : "w-full flex-col rounded-2xl",
@@ -71,7 +71,7 @@ export function ResponsiveNavbarLinks({
       />
       <UserRelatedNavbarButtons
         className={cn(
-          "flex w-fit items-center",
+          "pointer-events-auto flex w-fit items-center",
           isScreenMediumWidth
             ? "h-full flex-row space-x-2"
             : "w-full flex-col space-y-4",

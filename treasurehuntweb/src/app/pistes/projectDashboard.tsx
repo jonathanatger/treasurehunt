@@ -10,43 +10,55 @@ import { api } from "~/trpc/client";
 import { Project } from "~/server/db/schema";
 import { revalidate } from "~/lib/serverActions";
 import Link from "next/link";
-import { useAuth } from "@clerk/nextjs";
 import { CircleChevronRight, CirclePlus } from "lucide-react";
 import { Button } from "~/components/ui/button";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { cn } from "~/lib/utils";
+import { SetStateAction, useEffect, useState } from "react";
 
 export function ProjectDashboard({
   userprojects,
 }: {
   userprojects: Project[];
 }) {
+  const [isDeletingId, setIsDeletingId] = useState(0);
+
   return (
-    <div className="h-full w-full rounded-md ">
+    <div className="h-full w-full">
       <div className="my-8 border-b-2 border-solid border-primary font-title text-3xl font-bold text-primary">
         VOS PISTES
       </div>
-      <div className="flex max-w-[100%] flex-row flex-wrap items-center justify-start gap-8">
+      <div className="flex max-w-[100%] flex-row flex-wrap items-center justify-center gap-8">
         {userprojects &&
           userprojects.map((prj) => (
             <ProjectCard
               title={prj.name ? prj.name : "projet sans titre"}
               id={prj.id}
               key={prj.id}
+              setIsDeletingId={setIsDeletingId}
             />
           ))}
         <NewProjectCard />
+        {isDeletingId !== 0 && (
+          <ProjectDeletionModal
+            isDeletingId={isDeletingId}
+            setIsDeleting={setIsDeletingId}
+          />
+        )}
       </div>
     </div>
   );
 }
 
-function ProjectCard({ title, id }: { title: string; id: number }) {
-  const [isDeleting, setIsDeleting] = useState(false);
-
+function ProjectCard({
+  title,
+  id,
+  setIsDeletingId,
+}: {
+  title: string;
+  id: number;
+  setIsDeletingId: React.Dispatch<SetStateAction<number>>;
+}) {
   return (
-    <Card className="relative flex h-40 w-64 flex-col justify-between p-1 hover:opacity-90">
+    <Card className="relative flex h-40 w-64 flex-col justify-between rounded-3xl p-1 hover:opacity-90">
       <Link
         className="flex grow flex-col justify-between "
         href={`/pistes/${id}/partage`}
@@ -58,42 +70,39 @@ function ProjectCard({ title, id }: { title: string; id: number }) {
       </Link>
       <Button
         onClick={() => {
-          setIsDeleting((prev) => !prev);
+          setIsDeletingId(id);
         }}
         className="absolute bottom-2 right-2 h-fit bg-transparent px-2 py-0 font-light hover:font-bold"
       >
         Supprimer
       </Button>
-      {isDeleting && (
-        <ProjectDeletionPage id={id} setIsDeleting={setIsDeleting} />
-      )}
     </Card>
   );
 }
 
-function ProjectDeletionPage({
+function ProjectDeletionModal({
   setIsDeleting,
-  id,
+  isDeletingId,
 }: {
-  setIsDeleting: React.Dispatch<React.SetStateAction<boolean>>;
-  id: number;
+  setIsDeleting: React.Dispatch<React.SetStateAction<number>>;
+  isDeletingId: number;
 }) {
   function close() {
-    setIsDeleting((prev) => !prev);
+    setIsDeleting(0);
   }
 
   const apiCall = api.projects.delete.useMutation();
 
   function deleteProject() {
     apiCall.mutate(
-      { projectId: id },
+      { projectId: isDeletingId },
       {
         onError(err) {
           console.error(err);
         },
         async onSuccess() {
           await revalidate("/pistes").catch((err) => console.error(err));
-          setIsDeleting((prev) => !prev);
+          close();
         },
       },
     );
@@ -101,9 +110,12 @@ function ProjectDeletionPage({
   return (
     <dialog
       open
-      className="fixed left-0 top-0 z-50 flex h-[100vh] w-[100vw] items-center justify-center bg-zinc-500/50"
+      className="pointer-events-auto fixed left-0 top-0 z-50 flex h-[100vh] w-[100vw] items-center justify-center bg-zinc-500/50"
     >
-      <div onClick={close} className="absolute h-full w-full bg-transparent" />
+      <div
+        onClick={close}
+        className="absolute z-50 h-full w-full bg-transparent"
+      />
       <div className="z-50 flex h-[200px] w-[300px] flex-col justify-between text-balance rounded-3xl bg-background p-4 text-center font-title">
         Etes vous certain de vouloir supprimer la piste ?
         <div className="flex flex-row justify-end space-x-4">
@@ -150,7 +162,7 @@ function NewProjectCard() {
   }
   return (
     <Card
-      className="h-40 w-64 cursor-pointer bg-secondary opacity-30  hover:opacity-100"
+      className="h-40 w-64 cursor-pointer rounded-3xl bg-secondary opacity-30 hover:opacity-100"
       onClick={handleNewProjectClick}
     >
       <CardHeader className="flex h-full flex-col justify-between py-2">
