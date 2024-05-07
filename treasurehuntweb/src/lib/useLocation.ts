@@ -13,6 +13,7 @@ export const useLocation = function (
 
   useEffect(() => {
     if (
+      objectives?.length === 0 ||
       objectives?.length === undefined ||
       !mapObject ||
       firstLoadBoundFit.current === false
