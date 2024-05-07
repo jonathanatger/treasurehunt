@@ -12,15 +12,16 @@ export const useLocation = function (
   const firstLoadBoundFit = useRef(true);
 
   useEffect(() => {
+    const objectivesLength = objectives?.length;
     if (
-      objectives?.length === 0 ||
-      objectives?.length === undefined ||
+      objectives === undefined ||
+      objectivesLength === undefined ||
+      objectivesLength === 0 ||
       !mapObject ||
       firstLoadBoundFit.current === false
     )
       return;
     const bounds = new google.maps.LatLngBounds();
-    const objectivesLength = objectives.length;
 
     const newCenter = objectives.reduce(
       (acc, value, index) => {
@@ -39,7 +40,7 @@ export const useLocation = function (
     if (mapObject) {
       mapObject.panTo(newCenter);
 
-      mapObject.fitBounds(bounds);
+      if (objectivesLength > 1) mapObject.fitBounds(bounds, 250);
       firstLoadBoundFit.current = false;
     }
   }, [objectives, mapObject]);
