@@ -19,18 +19,18 @@ export default clerkMiddleware(
       return;
     }
 
-    const userMetadata = (await clerkClient.users.getUser(userId))
+    const userMetadataProjectIds = (await clerkClient.users.getUser(userId))
       .publicMetadata.projectIds as string[] | undefined;
     const url = request.nextUrl;
 
-    if (!userMetadata) {
+    if (!userMetadataProjectIds) {
       authObj.redirectToSignIn();
       return;
     }
 
-    userMetadata.forEach((element) => {
+    userMetadataProjectIds.forEach((projectId) => {
       if (
-        url.pathname.includes(`pistes/${element}`) ||
+        url.pathname.includes(`pistes/${projectId}`) ||
         url.pathname.endsWith("pistes")
       ) {
         isAuthorized = true;

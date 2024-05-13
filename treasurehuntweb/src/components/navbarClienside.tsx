@@ -26,7 +26,7 @@ export function NavbarAdditionalLinks() {
           : "bg-transparent",
         isScreenMediumWidth
           ? "absolute h-full w-full flex-row items-center justify-end rounded-3xl p-4"
-          : " fixed w-[100vw] flex-col justify-center space-y-4  p-4 text-2xl",
+          : " fixed w-[100vw] flex-col items-center justify-center space-y-4 p-2 text-2xl",
       )}
     >
       <MenuVisibilityButton
@@ -64,20 +64,41 @@ export function ResponsiveNavbarLinks({
         className={cn(
           "pointer-events-auto flex w-fit items-center shadow-md outline outline-1 outline-secondary",
           isScreenMediumWidth
-            ? "absolute left-0 right-0 ml-auto mr-auto h-8 flex-row  rounded-3xl"
+            ? "absolute left-0 right-0 ml-auto mr-auto h-8 flex-row rounded-3xl"
             : "w-full flex-col rounded-2xl",
         )}
         setIsMenuVisible={setMenuIsVisible}
       />
-      <UserRelatedNavbarButtons
+      <div
         className={cn(
           "pointer-events-auto flex w-fit items-center",
           isScreenMediumWidth
             ? "h-full flex-row space-x-2"
             : "w-full flex-col space-y-4",
         )}
-        setIsMenuVisible={setMenuIsVisible}
-      />
+        onClick={() => {
+          setMenuIsVisible(false);
+        }}
+      >
+        <SignedIn>
+          <NavbarButton
+            className="w-full md:w-24"
+            title="Vos pistes"
+            route="/pistes"
+          />
+          <UserButton />
+        </SignedIn>
+
+        <SignedOut>
+          <SignInButton afterSignInUrl="https://treasurehunt-jet.vercel.app/pistes">
+            <div className="flex flex-col justify-center">
+              <h3 className="h-fit w-full cursor-pointer text-primary hover:text-primary/80">
+                Connection
+              </h3>
+            </div>
+          </SignInButton>
+        </SignedOut>
+      </div>
     </div>
   );
 }
@@ -89,7 +110,7 @@ export function MenuVisibilityButton({
   className: string;
   onClick: () => void;
 }) {
-  return <Menu onClick={onClick} className={className} />;
+  return <Menu onClick={onClick} size={40} className={className} />;
 }
 
 export function UserRelatedNavbarButtons({
@@ -99,33 +120,7 @@ export function UserRelatedNavbarButtons({
   className: string;
   setIsMenuVisible: React.Dispatch<SetStateAction<boolean>>;
 }) {
-  return (
-    <div
-      className={className}
-      onClick={() => {
-        setIsMenuVisible(false);
-      }}
-    >
-      <SignedIn>
-        <NavbarButton
-          className="w-full md:w-24"
-          title="Vos pistes"
-          route="/pistes"
-        />
-        <UserButton />
-      </SignedIn>
-
-      <SignedOut>
-        <SignInButton afterSignInUrl="https://treasurehunt-jet.vercel.app/pistes">
-          <div className="flex flex-col justify-center">
-            <h3 className="h-fit w-full cursor-pointer text-primary hover:text-primary/80">
-              Connection
-            </h3>
-          </div>
-        </SignInButton>
-      </SignedOut>
-    </div>
-  );
+  return <div className={className}></div>;
 }
 
 export function InProjectNavLinks({
