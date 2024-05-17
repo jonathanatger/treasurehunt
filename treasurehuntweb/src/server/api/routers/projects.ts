@@ -3,7 +3,6 @@ import { and, eq } from "drizzle-orm";
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { projectObjectives, projects } from "../../db/schema";
-import { clerkClient } from "@clerk/nextjs/server";
 
 export const projectsRouter = createTRPCRouter({
   fetchUserProjects: protectedProcedure.query(async ({ ctx }) => {
@@ -35,19 +34,6 @@ export const projectsRouter = createTRPCRouter({
       const projectNumber = created[0]?.projectId;
 
       if (projectNumber === undefined) return;
-
-      const userData = (await clerkClient.users.getUser(ctx.user.userId!))
-        .publicMetadata;
-
-      const userProjectIds = userData.projectIds
-        ? (userData.projectIds as [])
-        : [];
-
-      await clerkClient.users.updateUserMetadata(ctx.user.userId!, {
-        publicMetadata: {
-          projectIds: [projectNumber, ...userProjectIds],
-        },
-      });
     }),
 
   delete: protectedProcedure
@@ -64,19 +50,6 @@ export const projectsRouter = createTRPCRouter({
       await ctx.db
         .delete(projectObjectives)
         .where(and(eq(projectObjectives.projectid, input.projectId)));
-
-      const userData = (await clerkClient.users.getUser(ctx.user.userId!))
-        .publicMetadata;
-
-      const userProjectIds = userData.projectIds
-        ? (userData.projectIds as [])
-        : [];
-
-      await clerkClient.users.updateUserMetadata(ctx.user.userId!, {
-        publicMetadata: {
-          projectIds: userProjectIds.filter((el) => el !== input.projectId),
-        },
-      });
     }),
 
   fetchProjectObjectives: protectedProcedure

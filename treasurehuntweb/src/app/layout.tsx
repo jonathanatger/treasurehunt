@@ -9,8 +9,6 @@ import {
   fontVelvendaCooler,
 } from "./fonts/fonts";
 import { Navbar } from "../components/navbar";
-import { ClerkProvider } from "@clerk/nextjs";
-import ErrorBoundary from "~/components/errorComponent";
 
 export const metadata = {
   title: "Treasurio",
@@ -26,25 +24,23 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <ClerkProvider>
-        <TRPCReactProvider>
-          <body
-            className={cn(
-              "flex min-h-screen flex-col bg-background font-sans text-black antialiased",
-              fontSans.variable,
-              fontTitle.variable,
-              fontVelvendaChill.variable,
-              fontVelvendaCooler.variable,
-              fontVelvendaBlack.variable,
-            )}
-          >
-            <Navbar />
-            <div className="absolute top-10 h-[calc(100%-4rem)] w-full overflow-auto p-4 md:top-14">
-              {children}
-            </div>
-          </body>
-        </TRPCReactProvider>
-      </ClerkProvider>
+      <TRPCReactProvider>
+        <body
+          className={cn(
+            "flex min-h-screen flex-col bg-background font-sans text-black antialiased",
+            fontSans.variable,
+            fontTitle.variable,
+            fontVelvendaChill.variable,
+            fontVelvendaCooler.variable,
+            fontVelvendaBlack.variable,
+          )}
+        >
+          <Navbar />
+          <div className="absolute top-10 h-[calc(100%-4rem)] w-full overflow-auto p-4 md:top-14">
+            {children}
+          </div>
+        </body>
+      </TRPCReactProvider>
     </html>
   );
 }

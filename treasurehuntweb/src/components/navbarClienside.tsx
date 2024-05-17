@@ -1,8 +1,6 @@
 "use client";
-
 import { usePathname, useRouter } from "next/navigation";
 import { Menu } from "lucide-react";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import NavLink from "./ui/NavLink";
 import { ReactElement, SetStateAction, useState } from "react";
 import { cn } from "~/lib/utils";
@@ -38,7 +36,7 @@ export function NavbarAdditionalLinks() {
       />
       {((menuIsVisible && !isScreenMediumWidth) || isScreenMediumWidth) && (
         <ResponsiveNavbarLinks
-          isMediumWidth={isScreenMediumWidth}
+          isScreenMediumWidth={isScreenMediumWidth}
           setMenuIsVisible={setMenuIsVisible}
         />
       )}
@@ -47,10 +45,10 @@ export function NavbarAdditionalLinks() {
 }
 
 export function ResponsiveNavbarLinks({
-  isMediumWidth: isScreenMediumWidth,
+  isScreenMediumWidth,
   setMenuIsVisible,
 }: {
-  isMediumWidth: boolean;
+  isScreenMediumWidth: boolean;
   setMenuIsVisible: React.Dispatch<SetStateAction<boolean>>;
 }) {
   return (
@@ -80,24 +78,16 @@ export function ResponsiveNavbarLinks({
           setMenuIsVisible(false);
         }}
       >
-        <SignedIn>
-          <NavbarButton
-            className="w-full md:w-24"
-            title="Vos pistes"
-            route="/pistes"
-          />
-          <UserButton />
-        </SignedIn>
-
-        <SignedOut>
-          <SignInButton afterSignInUrl="https://treasurehunt-jet.vercel.app/pistes">
-            <div className="flex flex-col justify-center">
-              <h3 className="h-fit w-full cursor-pointer text-primary hover:text-primary/80">
-                Connection
-              </h3>
-            </div>
-          </SignInButton>
-        </SignedOut>
+        <NavbarButton
+          className="w-full md:w-24"
+          title="Vos pistes"
+          route="/pistes"
+        />
+        <div className="flex flex-col justify-center">
+          <h3 className="h-fit w-full cursor-pointer text-primary hover:text-primary/80">
+            Connection
+          </h3>
+        </div>
       </div>
     </div>
   );
@@ -111,16 +101,6 @@ export function MenuVisibilityButton({
   onClick: () => void;
 }) {
   return <Menu onClick={onClick} size={40} className={className} />;
-}
-
-export function UserRelatedNavbarButtons({
-  className,
-  setIsMenuVisible,
-}: {
-  className: string;
-  setIsMenuVisible: React.Dispatch<SetStateAction<boolean>>;
-}) {
-  return <div className={className}></div>;
 }
 
 export function InProjectNavLinks({

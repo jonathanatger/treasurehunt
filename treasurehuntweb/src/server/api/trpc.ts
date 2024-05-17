@@ -3,11 +3,11 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { db } from "../db";
-import { auth } from "@clerk/nextjs/server";
 
 //define what is available in the requests
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const user = auth();
+  const user = { userId: "fakeUserId" };
+
   return {
     db,
     user,

@@ -7,9 +7,20 @@ import {
   varchar,
   integer,
   doublePrecision,
+  uuid,
 } from "drizzle-orm/pg-core";
 
 export const createTable = pgTableCreator((name) => `treasurehunt_${name}`);
+
+export const user = createTable("user", {
+  id: uuid("id").primaryKey().unique().defaultRandom(),
+  email: text("email").notNull().unique(),
+  name: text("name"),
+  image: text("image"),
+  created_at: timestamp("created_at").default(sql`now()`),
+  updated_at: timestamp("updated_at").default(sql`now()`),
+  password: text("password").notNull(),
+});
 
 export const projects = createTable("projects", {
   id: serial("id").primaryKey(),
@@ -47,25 +58,19 @@ export const objectivesProjectRelations = relations(
   }),
 );
 
-export const users = createTable("users", {
-  id: serial("id").primaryKey(),
-  fullName: text("full_name"),
-  phone: varchar("phone", { length: 256 }),
-});
-
-export const userProjectRelations = relations(users, ({ many }) => ({
+export const userProjectRelations = relations(user, ({ many }) => ({
   userProjects: many(projects),
 }));
 
 export const projectUserRelations = relations(projects, ({ one }) => ({
-  user: one(users, {
+  user: one(user, {
     fields: [projects.userId],
-    references: [users.id],
+    references: [user.id],
   }),
 }));
 
-export type User = typeof users.$inferSelect;
-export type NewUser = typeof users.$inferInsert;
+export type User = typeof user.$inferSelect;
+export type NewUser = typeof user.$inferInsert;
 
 export type Project = typeof projects.$inferSelect;
 export type NewProject = typeof projects.$inferInsert;
