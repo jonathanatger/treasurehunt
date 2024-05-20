@@ -43,7 +43,7 @@ export const signInAction = async (formData: TFormData) => {
     redirectTo: "/tracks",
   });
 
-  revalidate("/");
+  await revalidate("/");
 
   return {
     message: "User logged in successfully",

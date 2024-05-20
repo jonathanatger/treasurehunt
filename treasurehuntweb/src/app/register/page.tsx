@@ -11,7 +11,7 @@ const schema = z.object({
 });
 
 const RegisterPage = () => {
-  const { push } = useRouter();
+  const { push: routerPush } = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -29,17 +29,15 @@ const RegisterPage = () => {
         throw new Error(schemaResult.error.errors[0].message);
       }
 
-      //@ts-ignore
+      //@ts-expect-error :  ts does not recognize the schema validation
       const res = await action(schemaResult.data);
       if (res && !res?.status) {
         // toast error
         return;
       }
-      push("/login");
-
-      //@ts-ignore
-    } catch (error: any) {
-      console.error(error.message || "Something went wrong");
+      routerPush("/login");
+    } catch (error: unknown) {
+      console.error("Something went wrong");
     }
   };
 

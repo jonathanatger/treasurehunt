@@ -60,9 +60,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             await db
               .insert(user)
               .values({
-                name: name as string,
+                name: name!,
                 email,
-                image: image as string,
+                image: image!,
                 password,
               })
               .returning();

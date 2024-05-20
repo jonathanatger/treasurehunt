@@ -12,6 +12,8 @@ const config = {
   ],
   rules: {
     "react/no-unescaped-entities": "off",
+    "@typescript-eslint/unbound-method": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
     "@next/next/no-page-custom-font": "off",
     "@typescript-eslint/array-type": "off",
     "@typescript-eslint/prefer-optional-chain": "off",

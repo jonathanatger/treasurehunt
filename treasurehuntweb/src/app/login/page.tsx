@@ -31,8 +31,8 @@ const LoginForm = () => {
           return;
         }
       }
-    } catch (error: any) {
-      console.error(error.message || "Something went wrong");
+    } catch (error: unknown) {
+      console.error("Something went wrong");
     }
   };
 
@@ -41,7 +41,7 @@ const LoginForm = () => {
       <div className=" container max-w-[500px]  gap-3 rounded-3xl bg-primary p-4 text-lg text-primary-foreground">
         <form
           action={async () => {
-            googleSignIn();
+            await googleSignIn();
           }}
           className="flex w-full items-center justify-center"
         >

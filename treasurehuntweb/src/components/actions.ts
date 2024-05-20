@@ -9,7 +9,7 @@ export const signOutAction = async () => {
 
   await signOut({ redirect: true, redirectTo: "/" });
 
-  revalidate("/");
+  await revalidate("/");
 
   return {
     message: "User logged out successfully",
