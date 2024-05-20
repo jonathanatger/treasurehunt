@@ -40,7 +40,7 @@ const action = async (formData: TFormData) => {
     name: rest.name,
     id: rest.id,
     redirect: true,
-    redirectTo: "/",
+    redirectTo: "/pistes",
   });
 
   revalidate("/");

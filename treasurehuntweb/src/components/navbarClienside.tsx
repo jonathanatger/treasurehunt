@@ -94,11 +94,13 @@ export function ResponsiveNavbarLinks({
           setMenuIsVisible(false);
         }}
       >
-        <NavbarButton
-          className="w-full md:w-24"
-          title="Vos pistes"
-          route="/pistes"
-        />
+        {isUserSignedIn && (
+          <NavbarButton
+            className="w-full md:w-24"
+            title="Vos pistes"
+            route="/pistes"
+          />
+        )}
         {isUserSignedIn ? (
           <div className="flex flex-col justify-center">
             <form action={signOutAction}>
