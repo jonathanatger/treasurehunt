@@ -91,7 +91,10 @@ const LoginForm = () => {
           </button>
           <br></br>
           <div className="h-[1px] w-full bg-primary-foreground"></div>
-          <Link href="/register" className="text-sm italic underline">
+          <Link
+            href="/register"
+            className="self-auto text-balance text-sm italic underline"
+          >
             Vous n'êtes pas encore inscrit ? Par ici !
           </Link>
         </form>

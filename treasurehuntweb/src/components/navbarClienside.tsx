@@ -5,7 +5,6 @@ import NavLink from "./ui/NavLink";
 import { ReactElement, SetStateAction, useState } from "react";
 import { cn } from "~/lib/utils";
 import { Session } from "next-auth";
-import { staticGenerationBailout } from "next/dist/client/components/static-generation-bailout";
 import { signOutAction } from "./actions";
 import Link from "next/link";
 
@@ -16,53 +15,43 @@ export function NavbarAdditionalLinks({
   user: Session | null;
   isUserSignedIn: boolean;
 }) {
-  const [menuIsVisible, setMenuIsVisible] = useState(false);
-
-  const isScreenMediumWidth =
-    typeof window !== "undefined"
-      ? window.screen.width > 782
-        ? true
-        : false
-      : true;
+  const [menuIsVisible, setMenuIsVisible] = useState(true);
 
   return (
     <div
       className={cn(
         "pointer-events-none right-0 top-0 flex",
+        "fixed w-[100vw] flex-col items-center justify-center space-y-4  p-2 text-2xl",
+        "md:absolute md:h-full md:w-full md:flex-row md:items-center md:justify-end md:rounded-3xl md:p-4 md:text-lg",
         menuIsVisible
           ? "space-y-2 bg-background shadow-lg outline outline-1 outline-primary"
           : "bg-transparent",
-        isScreenMediumWidth
-          ? "absolute h-full w-full flex-row items-center justify-end rounded-3xl p-4"
-          : " fixed w-[100vw] flex-col items-center justify-center space-y-4 p-2 text-2xl",
       )}
     >
       <MenuVisibilityButton
         className={cn(
           "pointer-events-auto  self-end rounded-full text-primary hover:scale-110 ",
-          isScreenMediumWidth ? "hidden" : "",
+          "md:hidden",
         )}
         onClick={() => setMenuIsVisible(!menuIsVisible)}
       />
-      {((menuIsVisible && !isScreenMediumWidth) || isScreenMediumWidth) && (
-        <ResponsiveNavbarLinks
-          isScreenMediumWidth={isScreenMediumWidth}
-          setMenuIsVisible={setMenuIsVisible}
-          user={user}
-          isUserSignedIn={isUserSignedIn}
-        />
-      )}
+      <ResponsiveNavbarLinks
+        menuIsVisible={menuIsVisible}
+        setMenuIsVisible={setMenuIsVisible}
+        user={user}
+        isUserSignedIn={isUserSignedIn}
+      />
     </div>
   );
 }
 
 export function ResponsiveNavbarLinks({
-  isScreenMediumWidth,
+  menuIsVisible,
   setMenuIsVisible,
   user,
   isUserSignedIn,
 }: {
-  isScreenMediumWidth: boolean;
+  menuIsVisible: boolean;
   setMenuIsVisible: React.Dispatch<SetStateAction<boolean>>;
   user: Session | null;
   isUserSignedIn: boolean;
@@ -71,28 +60,28 @@ export function ResponsiveNavbarLinks({
     <div
       className={cn(
         "pointer-events-none flex h-full w-full",
-        isScreenMediumWidth ? "flex-row justify-end" : "flex-col space-y-4",
+        prefixStyles("max-md:", "flex-col space-y-4"),
+        prefixStyles("md:", "flex-row justify-end "),
+        menuIsVisible ? "" : "max-md:hidden",
       )}
     >
       <InProjectNavLinks
         className={cn(
           "pointer-events-auto flex w-fit items-center shadow-md outline outline-1 outline-secondary",
-          isScreenMediumWidth
-            ? "absolute left-0 right-0 ml-auto mr-auto h-8 flex-row rounded-3xl"
-            : "w-full flex-col rounded-2xl",
+          prefixStyles("max-md:", "w-full flex-col rounded-2xl"),
+          prefixStyles(
+            "md:",
+            "absolute left-0 right-0 ml-auto mr-auto h-8 flex-row rounded-3xl",
+          ),
         )}
         setIsMenuVisible={setMenuIsVisible}
       />
       <div
         className={cn(
           "pointer-events-auto flex w-fit items-center",
-          isScreenMediumWidth
-            ? "h-full flex-row space-x-2"
-            : "w-full flex-col space-y-4",
+          prefixStyles("max-md:", "w-full flex-col space-y-4"),
+          prefixStyles("md:", "h-full flex-row space-x-2"),
         )}
-        onClick={() => {
-          setMenuIsVisible(false);
-        }}
       >
         {isUserSignedIn && (
           <NavbarButton
@@ -117,6 +106,9 @@ export function ResponsiveNavbarLinks({
             <Link
               href={"/login"}
               className="h-fit w-full cursor-pointer text-primary hover:text-primary/80"
+              onClick={() => {
+                setMenuIsVisible(false);
+              }}
             >
               Connection
             </Link>
@@ -223,3 +215,10 @@ export const NavbarProjectButton = function (props: {
     </NavLink>
   );
 };
+
+function prefixStyles(prefix: string, styles: string): string {
+  return styles
+    .split(" ")
+    .map((el) => prefix + el)
+    .join(" ");
+}
