@@ -54,6 +54,6 @@ export const signInAction = async (formData: TFormData) => {
 export const googleSignIn = async () => {
   await signIn("google", {
     redirect: true,
-    redirectTo: "/", // as per your requirement
+    redirectTo: "/tracks",
   });
 };
