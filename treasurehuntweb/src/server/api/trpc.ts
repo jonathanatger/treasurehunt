@@ -5,6 +5,7 @@ import { ZodError } from "zod";
 import { db } from "../db";
 import { auth } from "~/auth/auth";
 import { User } from "next-auth";
+import { redirect } from "next/navigation";
 
 //define what is available in the requests
 export const createTRPCContext = async (opts: { headers: Headers }) => {
@@ -54,7 +55,9 @@ export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
 
   return next({
     ctx: {
+      db: ctx.db,
       user: ctx.user,
+      id: ctx.id,
     },
   });
 });
