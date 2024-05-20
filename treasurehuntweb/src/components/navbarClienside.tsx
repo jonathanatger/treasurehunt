@@ -98,7 +98,7 @@ export function ResponsiveNavbarLinks({
           <NavbarButton
             className="w-full md:w-24"
             title="Vos pistes"
-            route="/pistes"
+            route="/tracks"
           />
         )}
         {isUserSignedIn ? (
@@ -145,7 +145,7 @@ export function InProjectNavLinks({
   setIsMenuVisible: React.Dispatch<SetStateAction<boolean>>;
 }) {
   const path = usePathname();
-  const regex = /\/pistes\/\d+\//;
+  const regex = /\/tracks\/\d+\//;
   const linksAreShown = regex.test(path);
 
   const result = regex.exec(path);
@@ -167,16 +167,16 @@ export function InProjectNavLinks({
       >
         <NavbarProjectButton
           title="Objectifs"
-          route={`/pistes/${idOfProject}/objectifs`}
+          route={`/tracks/${idOfProject}/objectifs`}
         />
         <NavbarProjectButton
           title="Partage"
-          route={`/pistes/${idOfProject}/partage`}
+          route={`/tracks/${idOfProject}/partage`}
         />
         <NavbarProjectButton
           title="Suivi"
-          route={`/pistes/${idOfProject}/suivi/classement`}
-          alternateRoute={`/pistes/${idOfProject}/suivi/carte`}
+          route={`/tracks/${idOfProject}/suivi/classement`}
+          alternateRoute={`/tracks/${idOfProject}/suivi/carte`}
         />
       </div>
     );

@@ -12,7 +12,7 @@ type TFormData = {
   password: string;
 };
 
-const action = async (formData: TFormData) => {
+export const signInAction = async (formData: TFormData) => {
   const { password, email } = formData;
   const isUserExist = (await db.select().from(user)).find(
     (user) => user.email === email,
@@ -40,7 +40,7 @@ const action = async (formData: TFormData) => {
     name: rest.name,
     id: rest.id,
     redirect: true,
-    redirectTo: "/pistes",
+    redirectTo: "/tracks",
   });
 
   revalidate("/");
@@ -51,4 +51,9 @@ const action = async (formData: TFormData) => {
   };
 };
 
-export default action;
+export const googleSignIn = async () => {
+  await signIn("google", {
+    redirect: true,
+    redirectTo: "/", // as per your requirement
+  });
+};

@@ -33,7 +33,7 @@ export function useProjects(projectId: number) {
     },
     onSettled: async () => {
       await apiUtils.projects.fetchUserProjects.invalidate();
-      await revalidate("/pistes");
+      await revalidate("/tracks");
     },
   });
 

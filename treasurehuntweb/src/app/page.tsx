@@ -23,7 +23,7 @@ export default function HomePage() {
             <h3 className="text-balance pb-8 text-lg font-light lg:text-2xl">
               Organisez votre jeu de piste sans vous prendre la tête
             </h3>
-            <Link href={"/pistes"} className="w-full max-w-64">
+            <Link href={"/tracks"} className="w-full max-w-64">
               <Button className="w-full font-sans text-2xl shadow-lg hover:bg-secondary/90">
                 <h3 className="w-full text-left">Par ici !</h3>
                 <ArrowRight />
@@ -57,7 +57,7 @@ export default function HomePage() {
           />
         </div>
         <div className="flex w-full items-center justify-center ">
-          <Link href={"/pistes"} className="flex w-full justify-center">
+          <Link href={"/tracks"} className="flex w-full justify-center">
             <Button className="h-16 rounded-full p-4 font-title text-3xl font-bold shadow-lg">
               <h3 className="mr-4 p-4">Essayez-vous même</h3>
               <ArrowRight strokeWidth={3} size={32} />

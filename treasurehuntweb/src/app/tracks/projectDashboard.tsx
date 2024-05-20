@@ -61,7 +61,7 @@ function ProjectCard({
     <Card className="relative flex h-40 w-64 flex-col justify-between rounded-3xl p-1 hover:opacity-90">
       <Link
         className="flex grow flex-col justify-between "
-        href={`/pistes/${id}/partage`}
+        href={`/tracks/${id}/partage`}
       >
         <CardHeader className="flex grow justify-between pb-2 pt-2">
           <CardTitle className="line-clamp-2 flex-wrap">{title}</CardTitle>
@@ -101,7 +101,7 @@ function ProjectDeletionModal({
           console.error(err);
         },
         async onSuccess() {
-          await revalidate("/pistes").catch((err) => console.error(err));
+          await revalidate("/tracks").catch((err) => console.error(err));
           close();
         },
       },
@@ -155,7 +155,7 @@ function NewProjectCard() {
           console.error("An error occured");
         },
         async onSuccess() {
-          await revalidate("/pistes");
+          await revalidate("/tracks");
         },
       },
     );
