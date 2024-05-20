@@ -38,6 +38,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.id = token.sub!;
       return session;
     },
+
     signIn: async ({ user: userProvider, account }) => {
       try {
         if (account?.provider === "google") {

@@ -2,6 +2,7 @@
 
 "use server";
 
+import { revalidate } from "~/lib/serverActions";
 import { signIn } from "../../auth/auth";
 import { db } from "../../server/db/index";
 import { user } from "../../server/db/schema";
@@ -41,6 +42,8 @@ const action = async (formData: TFormData) => {
     redirect: true,
     redirectTo: "/",
   });
+
+  revalidate("/");
 
   return {
     message: "User logged in successfully",

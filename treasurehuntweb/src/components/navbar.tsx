@@ -1,7 +1,13 @@
 import Link from "next/link";
 import { NavbarAdditionalLinks } from "./navbarClienside";
+import { auth } from "~/auth/auth";
 
-export function Navbar() {
+export async function Navbar() {
+  let isUserSignedIn = false;
+  const user = await auth();
+  if (user?.user) isUserSignedIn = true;
+  console.log(user);
+
   return (
     <nav className="fixed top-0 z-50 box-border flex h-16 w-full flex-row items-center  justify-between  p-4">
       <Link
@@ -10,7 +16,7 @@ export function Navbar() {
       >
         TREASURIO
       </Link>
-      <NavbarAdditionalLinks />
+      <NavbarAdditionalLinks user={user} isUserSignedIn={isUserSignedIn} />
     </nav>
   );
 }

@@ -7,7 +7,7 @@ import { projectObjectives, projects } from "../../db/schema";
 export const projectsRouter = createTRPCRouter({
   fetchUserProjects: protectedProcedure.query(async ({ ctx }) => {
     const projectsData = ctx.db.query.projects.findMany({
-      where: eq(projects.userId, ctx.user.userId!),
+      where: eq(projects.userId, ctx.id!),
       orderBy: (projects, { asc }) => [asc(projects.createdAt)],
     });
 
@@ -26,7 +26,7 @@ export const projectsRouter = createTRPCRouter({
         .insert(projects)
         .values({
           name: input.name,
-          userId: ctx.user.userId!,
+          userId: ctx.id!,
           description: input.description,
         })
         .returning({ projectId: projects.id });
@@ -44,7 +44,7 @@ export const projectsRouter = createTRPCRouter({
         .where(
           and(
             eq(projects.id, input.projectId),
-            eq(projects.userId, ctx.user.userId!),
+            eq(projects.userId, ctx.user.id!),
           ),
         );
       await ctx.db
@@ -76,7 +76,7 @@ export const projectsRouter = createTRPCRouter({
         .where(
           and(
             eq(projects.id, input.projectId),
-            eq(projects.userId, ctx.user.userId!),
+            eq(projects.userId, ctx.user.id!),
           ),
         );
     }),

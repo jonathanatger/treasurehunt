@@ -3,14 +3,21 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { db } from "../db";
+import { auth } from "~/auth/auth";
+import { User } from "next-auth";
 
 //define what is available in the requests
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const user = { userId: "fakeUserId" };
+  const session = await auth();
+  let user: User | undefined;
+  let id: string | undefined;
+  if (session) user = session.user;
+  if (user) id = user.id;
 
   return {
     db,
     user,
+    id,
     ...opts,
   };
 };

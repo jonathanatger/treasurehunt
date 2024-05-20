@@ -4,8 +4,18 @@ import { Menu } from "lucide-react";
 import NavLink from "./ui/NavLink";
 import { ReactElement, SetStateAction, useState } from "react";
 import { cn } from "~/lib/utils";
+import { Session } from "next-auth";
+import { staticGenerationBailout } from "next/dist/client/components/static-generation-bailout";
+import { signOutAction } from "./actions";
+import Link from "next/link";
 
-export function NavbarAdditionalLinks() {
+export function NavbarAdditionalLinks({
+  user,
+  isUserSignedIn,
+}: {
+  user: Session | null;
+  isUserSignedIn: boolean;
+}) {
   const [menuIsVisible, setMenuIsVisible] = useState(false);
 
   const isScreenMediumWidth =
@@ -38,6 +48,8 @@ export function NavbarAdditionalLinks() {
         <ResponsiveNavbarLinks
           isScreenMediumWidth={isScreenMediumWidth}
           setMenuIsVisible={setMenuIsVisible}
+          user={user}
+          isUserSignedIn={isUserSignedIn}
         />
       )}
     </div>
@@ -47,9 +59,13 @@ export function NavbarAdditionalLinks() {
 export function ResponsiveNavbarLinks({
   isScreenMediumWidth,
   setMenuIsVisible,
+  user,
+  isUserSignedIn,
 }: {
   isScreenMediumWidth: boolean;
   setMenuIsVisible: React.Dispatch<SetStateAction<boolean>>;
+  user: Session | null;
+  isUserSignedIn: boolean;
 }) {
   return (
     <div
@@ -83,11 +99,27 @@ export function ResponsiveNavbarLinks({
           title="Vos pistes"
           route="/pistes"
         />
-        <div className="flex flex-col justify-center">
-          <h3 className="h-fit w-full cursor-pointer text-primary hover:text-primary/80">
-            Connection
-          </h3>
-        </div>
+        {isUserSignedIn ? (
+          <div className="flex flex-col justify-center">
+            <form action={signOutAction}>
+              <button
+                type="submit"
+                className="h-fit w-full cursor-pointer text-primary hover:text-primary/80"
+              >
+                Se déconnecter
+              </button>
+            </form>
+          </div>
+        ) : (
+          <div className="flex flex-col justify-center">
+            <Link
+              href={"/login"}
+              className="h-fit w-full cursor-pointer text-primary hover:text-primary/80"
+            >
+              Connection
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );
