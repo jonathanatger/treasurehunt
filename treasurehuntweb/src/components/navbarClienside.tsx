@@ -2,7 +2,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { Menu } from "lucide-react";
 import NavLink from "./ui/NavLink";
-import { ReactElement, SetStateAction, useState } from "react";
+import { ReactElement, SetStateAction, useEffect, useState } from "react";
 import { cn } from "~/lib/utils";
 import { Session } from "next-auth";
 import { signOutAction } from "./actions";
@@ -15,27 +15,39 @@ export function NavbarAdditionalLinks({
   user: Session | null;
   isUserSignedIn: boolean;
 }) {
-  const [menuIsVisible, setMenuIsVisible] = useState(true);
+  const [menuIsVisible, setMenuIsVisible] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.screen.width > 782) {
+      setMenuIsVisible(true);
+    }
+  }, []);
 
   return (
     <div
       className={cn(
         "pointer-events-none right-0 top-0 flex",
         "fixed w-[100vw] flex-col items-center justify-center space-y-4  p-2 text-2xl",
-        "md:absolute md:h-full md:w-full md:flex-row md:items-center md:justify-end md:rounded-3xl md:p-4 md:text-lg",
         menuIsVisible
           ? "space-y-2 bg-background shadow-lg outline outline-1 outline-primary"
           : "bg-transparent",
+        "md:absolute md:h-full md:w-full md:flex-row md:items-center md:justify-end md:space-y-0 md:bg-transparent md:p-4 md:text-base md:shadow-none md:outline-none",
       )}
     >
       <MenuVisibilityButton
         className={cn(
-          "pointer-events-auto  self-end rounded-full text-primary hover:scale-110 ",
+          "pointer-events-auto self-end rounded-full text-primary hover:scale-110 ",
           "md:hidden",
         )}
         onClick={() => setMenuIsVisible(!menuIsVisible)}
       />
       <ResponsiveNavbarLinks
+        className={cn(
+          "pointer-events-none flex h-fit w-full",
+          "flex-col space-y-4",
+          "md:w-auto md:flex-row md:items-center md:justify-end md:space-y-0",
+          menuIsVisible ? "" : "hidden",
+        )}
         menuIsVisible={menuIsVisible}
         setMenuIsVisible={setMenuIsVisible}
         user={user}
@@ -50,69 +62,77 @@ export function ResponsiveNavbarLinks({
   setMenuIsVisible,
   user,
   isUserSignedIn,
+  className,
 }: {
   menuIsVisible: boolean;
   setMenuIsVisible: React.Dispatch<SetStateAction<boolean>>;
   user: Session | null;
   isUserSignedIn: boolean;
+  className: string;
 }) {
   return (
-    <div
-      className={cn(
-        "pointer-events-none flex h-full w-full",
-        prefixStyles("max-md:", "flex-col space-y-4"),
-        prefixStyles("md:", "flex-row justify-end "),
-        menuIsVisible ? "" : "max-md:hidden",
-      )}
-    >
+    <div className={className}>
       <InProjectNavLinks
         className={cn(
-          "pointer-events-auto flex w-fit items-center shadow-md outline outline-1 outline-secondary",
-          prefixStyles("max-md:", "w-full flex-col rounded-2xl"),
-          prefixStyles(
-            "md:",
-            "absolute left-0 right-0 ml-auto mr-auto h-8 flex-row rounded-3xl",
-          ),
+          "pointer-events-auto flex items-center shadow-md outline outline-1 outline-secondary",
+          "w-full flex-col rounded-2xl",
+          "md:absolute md:left-0 md:right-0 md:ml-auto md:mr-auto md:h-6 md:w-fit md:flex-row md:rounded-3xl",
         )}
         setIsMenuVisible={setMenuIsVisible}
       />
       <div
         className={cn(
           "pointer-events-auto flex w-fit items-center",
-          prefixStyles("max-md:", "w-full flex-col space-y-4"),
-          prefixStyles("md:", "h-full flex-row space-x-2"),
+          "w-full flex-col space-y-4",
+          "md:h-full md:w-auto md:flex-row md:space-x-2 md:space-y-0",
         )}
       >
         {isUserSignedIn && (
-          <NavbarButton
-            className="w-full md:w-24"
-            title="Vos pistes"
-            route="/tracks"
-          />
+          <div
+            className="flex h-fit w-full justify-center md:w-fit"
+            onClick={() => {
+              if (typeof window !== "undefined" && window.screen.width < 782) {
+                setMenuIsVisible(false);
+              }
+            }}
+          >
+            <NavLink
+              href="/tracks"
+              nonActiveClassName="outline-primary outline outline-1 text-primary"
+              activeClassName="bg-primary text-primary-foreground"
+              className={cn(
+                "flex h-full w-full justify-center truncate rounded-full px-4 py-1 font-bold",
+                "md:h-6 md:w-40 md:py-0",
+              )}
+            >
+              Vos pistes
+            </NavLink>
+          </div>
         )}
         {isUserSignedIn ? (
-          <div className="flex flex-col justify-center">
-            <form action={signOutAction}>
-              <button
-                type="submit"
-                className="h-fit w-full cursor-pointer text-primary hover:text-primary/80"
-              >
-                Se déconnecter
-              </button>
-            </form>
-          </div>
-        ) : (
-          <div className="flex flex-col justify-center">
-            <Link
-              href={"/login"}
-              className="h-fit w-full cursor-pointer text-primary hover:text-primary/80"
-              onClick={() => {
-                setMenuIsVisible(false);
-              }}
+          <form
+            action={signOutAction}
+            className="m-0 flex h-full w-full items-center justify-center  p-0"
+          >
+            <button
+              type="submit"
+              className="h-full w-full cursor-pointer text-primary hover:text-primary/80"
             >
-              Connection
-            </Link>
-          </div>
+              Se déconnecter
+            </button>
+          </form>
+        ) : (
+          <Link
+            href={"/login"}
+            className="cursor-pointer text-primary hover:text-primary/80"
+            onClick={() => {
+              if (typeof window !== "undefined" && window.screen.width < 782) {
+                setMenuIsVisible(false);
+              }
+            }}
+          >
+            Connection
+          </Link>
         )}
       </div>
     </div>
@@ -154,7 +174,9 @@ export function InProjectNavLinks({
       <div
         className={className}
         onClick={() => {
-          setIsMenuVisible(false);
+          if (typeof window !== "undefined" && window.screen.width < 782) {
+            setIsMenuVisible(false);
+          }
         }}
       >
         <NavbarProjectButton
@@ -177,27 +199,6 @@ export function InProjectNavLinks({
   }
 }
 
-const NavbarButton = function (props: {
-  title: string;
-  route: string;
-  alternateRoute?: string;
-  className?: string;
-}): ReactElement {
-  return (
-    <NavLink
-      href={`${props.route}`}
-      nonActiveClassName="outline-primary outline outline-1 text-primary"
-      activeClassName="bg-primary text-primary-foreground"
-      className={cn(
-        "text-md flex h-full items-center justify-center truncate rounded-full px-4 font-bold",
-        props.className,
-      )}
-    >
-      {props.title}
-    </NavLink>
-  );
-};
-
 export const NavbarProjectButton = function (props: {
   title: string;
   route: string;
@@ -208,17 +209,10 @@ export const NavbarProjectButton = function (props: {
       href={`${props.route}`}
       activeClassName="bg-secondary text-secondary-foreground"
       nonActiveClassName="hover:bg-orange-100"
-      className="text-md flex h-full w-full items-center justify-center rounded-2xl px-12 font-bold text-secondary"
+      className="text-md flex h-full w-full items-center justify-center rounded-2xl px-12 font-bold text-secondary md:px-8"
       alternativeActivePath={props.alternateRoute}
     >
       {props.title}
     </NavLink>
   );
 };
-
-function prefixStyles(prefix: string, styles: string): string {
-  return styles
-    .split(" ")
-    .map((el) => prefix + el)
-    .join(" ");
-}
