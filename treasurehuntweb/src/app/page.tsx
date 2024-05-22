@@ -7,8 +7,11 @@ import raceStartDrawing from "../../public/drawing4.png";
 import { Button } from "~/components/ui/button";
 import { Card, CardDescription, CardHeader } from "~/components/ui/card";
 import Link from "next/link";
+import { auth } from "~/auth/auth";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const session = await auth();
+
   return (
     <>
       <section className="flex w-full flex-col items-center justify-between px-4 pb-24 pt-12 lg:h-[80vh] lg:px-0 lg:pb-0 lg:pt-0 ">
@@ -23,7 +26,10 @@ export default function HomePage() {
             <h3 className="text-balance pb-8 text-lg font-light lg:text-2xl">
               Organisez votre jeu de piste sans vous prendre la tête
             </h3>
-            <Link href={"/tracks"} className="w-full max-w-64">
+            <Link
+              href={session ? "/tracks" : "/login"}
+              className="w-full max-w-64"
+            >
               <Button className="w-full font-sans text-2xl shadow-lg hover:bg-secondary/90">
                 <h3 className="w-full text-left">Par ici !</h3>
                 <ArrowRight />
