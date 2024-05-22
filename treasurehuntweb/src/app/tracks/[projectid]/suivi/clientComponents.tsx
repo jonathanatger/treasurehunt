@@ -6,13 +6,13 @@ import NavLink from "~/components/ui/NavLink";
 export function ProjectTrackingClientComponents() {
   return (
     <>
-      <div className="mx-2 flex h-8 grow flex-row items-center justify-around rounded-full shadow-lg outline outline-1 outline-primary">
+      <div className="flex w-full flex-1 flex-row items-center justify-around rounded-full shadow-lg outline outline-1 outline-primary md:mx-2 md:h-8 md:grow">
         <NavSubLink route="classement" title="Classement" />
         <NavSubLink route="carte" title="Carte" />
       </div>
       <form
         action={launchGame}
-        className="flex h-full w-96 max-w-96 justify-center rounded-full bg-secondary text-secondary-foreground shadow-lg hover:bg-secondary/90 hover:font-bold active:outline active:outline-2 active:outline-secondary"
+        className="flex min-h-[40px] w-full max-w-96 flex-1 justify-center rounded-full bg-secondary text-secondary-foreground shadow-lg hover:bg-secondary/90 hover:font-bold active:outline active:outline-2 active:outline-secondary md:h-full md:w-96"
       >
         <button className=" h-full w-full active:outline-2" type="submit">
           Lancer la partie !

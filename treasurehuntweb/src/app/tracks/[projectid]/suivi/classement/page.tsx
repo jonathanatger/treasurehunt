@@ -5,7 +5,6 @@ import {
   TableHeader,
   TableRow,
   TableHead,
-  TableCell,
 } from "~/components/ui/table";
 
 export default async function Page({
@@ -15,7 +14,7 @@ export default async function Page({
 }) {
   return (
     <>
-      <Table className="grow overflow-auto text-primary">
+      <Table className="grow overflow-auto text-xs text-primary md:text-base">
         <TableCaption className="text-muted">
           L'avancement des participants sera mis à jour ici lors de la partie.
         </TableCaption>

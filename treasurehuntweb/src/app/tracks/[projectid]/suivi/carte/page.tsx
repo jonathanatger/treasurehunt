@@ -68,8 +68,8 @@ export default function Page({ params }: { params: { projectid: string } }) {
   }, [apiImportsAreLoading]);
 
   return (
-    <section className="flex h-full w-full flex-row space-x-4">
-      <div className="h-full w-96">
+    <section className="flex h-full w-full flex-row md:space-x-4">
+      <div className="hidden h-full md:flex md:w-96">
         <Table className="grow overflow-auto">
           <TableCaption>
             L'avancement des participants sera mis à jour ici lors de la partie.
@@ -91,7 +91,10 @@ export default function Page({ params }: { params: { projectid: string } }) {
         {apiImportsAreLoading ? (
           <LoadingComponent />
         ) : (
-          <div className="h-[calc(100%+24px)] w-full" id="map-container"></div>
+          <div
+            className="h-full w-full md:h-[calc(100%+24px)]"
+            id="map-container"
+          ></div>
         )}
       </div>
     </section>
