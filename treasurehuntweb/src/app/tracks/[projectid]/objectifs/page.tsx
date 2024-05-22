@@ -83,7 +83,7 @@ export default function Page({ params }: { params: { projectid: string } }) {
             className={cn(
               cluesVisible
                 ? "h-[400px] w-full md:h-auto md:w-[550px]"
-                : "h-48 w-full md:h-auto md:w-[300px]",
+                : "h-40 w-full md:h-auto md:w-[300px]",
               "flex flex-col-reverse rounded-2xl p-1 outline outline-4 outline-primary md:mr-8 md:h-full md:flex-row md:rounded-3xl md:p-2",
             )}
           >

@@ -118,21 +118,21 @@ function ObjectiveCard({
         className={cn(
           "flex h-full grow",
           cluesVisible
-            ? "flex-row-reverse justify-between"
-            : "flex-col justify-start",
+            ? " md:flex-row-reverse md:justify-between"
+            : "flex flex-col justify-start",
         )}
       >
         <Button
           className={cn(
-            "m-1 bg-transparent p-1",
-            cluesVisible ? "self-start" : "self-end",
+            "h-fit bg-transparent pt-1",
+            cluesVisible ? "hidden md:flex" : "self-end",
           )}
           onClick={() => {
             if (deleteObjective === undefined) return;
             deleteObjective(clientId);
           }}
         >
-          <X size={32} strokeWidth={2} />
+          <X size={24} strokeWidth={2} />
         </Button>
         <div className="flex w-full grow flex-col items-start justify-start">
           <ObjectiveTitle
@@ -171,6 +171,7 @@ function ObjectiveClueMessageInput({
     if (message) setClientMessage(message);
   }, [message]);
 
+  const cluesVisible = useContext(ObjectivesContext)?.cluesVisible;
   const changeClueMessage = useContext(ObjectivesContext)?.changeClueMessage;
 
   const debouncedTimeout: MutableRefObject<
@@ -186,25 +187,39 @@ function ObjectiveClueMessageInput({
     }, 3000);
   }
 
+  function changeHeightOfTextArea() {
+    const textAreaElement = document.getElementById(
+      "clue-message-" + clientId.toString(),
+    );
+    if (textAreaElement === null) return;
+
+    if (textAreaElement.scrollHeight < 150) {
+      textAreaElement.style.height = `${textAreaElement.scrollHeight}px`;
+    }
+  }
+  useEffect(() => {
+    changeHeightOfTextArea();
+  }, []);
+
   function changeHeightAndSetMessage(
     elem: React.ChangeEvent<HTMLTextAreaElement>,
   ) {
-    if (elem.target.scrollHeight < 150) {
-      elem.target.style.height = `${elem.target.scrollHeight}px`;
-    }
+    changeHeightOfTextArea();
     setClientMessage(elem.target.value);
     debouncedChangeClueMessageApiCall(elem.target.value);
   }
 
   return (
-    <div className="flex w-full flex-row items-start p-2 ">
-      <h4 className="text-light pr-2 pt-2  italic">Indice : </h4>
-      <form className="grow rounded-3xl bg-background p-2 text-foreground outline outline-blue-800">
+    <div
+      className={cn("flex h-full w-full flex-col items-start p-2 md:flex-row")}
+    >
+      <h4 className="text-light pr-2 pt-2 italic">Indice : </h4>
+      <form className="h-full grow rounded-xl bg-background p-2 text-foreground">
         <textarea
           id={"clue-message-" + clientId.toString()}
           key={"clue-message-" + clientId.toString()}
-          className="max-h-[80%] min-h-16 w-full resize-none text-wrap bg-background outline-none"
-          placeholder="Vous devez trouver la plus haute tour de la ville..."
+          className="h-full w-full resize-none hyphens-auto text-wrap outline-none"
+          placeholder="Vous devez trouver..."
           onChange={changeHeightAndSetMessage}
           value={clientMessage}
         ></textarea>
@@ -258,10 +273,7 @@ function ObjectiveTitle({
 
   return (
     <div
-      className={cn(
-        "flex h-full max-h-[100%] max-w-[100%] flex-col",
-        editingTitle ? "justify-end" : "",
-      )}
+      className={cn("flex max-h-[100%] max-w-[100%] flex-col justify-start ")}
     >
       {editingTitle ? (
         <div
@@ -277,12 +289,9 @@ function ObjectiveTitle({
               setTitleOnClient(e.target.value);
             }}
             id={"titleChangeBox-" + clientId.toString()}
-            className="w-[100%] resize-none text-wrap rounded-3xl bg-background px-4 font-normal text-foreground"
+            className="h-6 w-[100%] resize-none text-wrap rounded-3xl bg-background px-4 font-normal text-foreground md:h-auto"
           />
-          <Button
-            onClick={switchDisplay}
-            className="mb-2 h-6 bg-transparent outline"
-          >
+          <Button onClick={switchDisplay} className="mb-2 h-6 bg-transparent">
             <Check onClick={switchDisplay} className="min-h-8" size={18} />
           </Button>
         </div>

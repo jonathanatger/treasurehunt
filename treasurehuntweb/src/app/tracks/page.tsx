@@ -10,9 +10,6 @@ export default async function Page() {
       <main className="top-12 h-[100svh] w-[100%] overflow-auto">
         <section className="box-border h-[calc(100%-3rem)] ">
           <ProjectDashboard userprojects={userprojects} />
-          <h3 className="text-center">
-            Connectez-vous pour voir vos pistes ici.
-          </h3>
         </section>
       </main>
     </>
