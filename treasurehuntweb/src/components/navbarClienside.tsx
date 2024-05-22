@@ -102,7 +102,7 @@ export function ResponsiveNavbarLinks({
               activeClassName="bg-primary text-primary-foreground"
               className={cn(
                 "flex h-full w-full justify-center truncate rounded-full px-4 py-1 font-bold",
-                "md:h-6 md:w-40 md:py-0",
+                "hover:opacity-90 md:h-6 md:w-40 md:py-0",
               )}
             >
               Vos pistes

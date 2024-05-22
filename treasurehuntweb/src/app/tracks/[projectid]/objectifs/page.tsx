@@ -84,7 +84,7 @@ export default function Page({ params }: { params: { projectid: string } }) {
               cluesVisible
                 ? "h-[400px] w-full md:h-auto md:w-[550px]"
                 : "h-48 w-full md:h-auto md:w-[300px]",
-              "flex flex-col-reverse rounded-3xl p-2 outline outline-4 outline-primary md:mr-8 md:h-full md:flex-row",
+              "flex flex-col-reverse rounded-2xl p-1 outline outline-4 outline-primary md:mr-8 md:h-full md:flex-row md:rounded-3xl md:p-2",
             )}
           >
             <div className="no-scrollbar h-full w-full overflow-auto">
@@ -94,12 +94,15 @@ export default function Page({ params }: { params: { projectid: string } }) {
               onClick={() => {
                 setCluesVisible(!cluesVisible);
               }}
-              className="w:full mb-1 flex h-8 flex-row-reverse items-center justify-center shadow-lg md:ml-2 md:h-full md:w-8 md:flex-col md:justify-start md:pb-0"
+              className={cn(
+                "w:full mb-1 flex h-6 flex-row-reverse items-center justify-center  shadow-lg",
+                "md:ml-2 md:h-full md:w-8 md:flex-col md:justify-start md:pb-0",
+              )}
             >
               {cluesVisible ? (
                 <>
                   <ArrowDown
-                    size={24}
+                    size={18}
                     strokeWidth={3}
                     className="justify-self-center md:mb-4 md:hidden"
                   />
@@ -112,7 +115,7 @@ export default function Page({ params }: { params: { projectid: string } }) {
               ) : (
                 <>
                   <ArrowUp
-                    size={24}
+                    size={18}
                     strokeWidth={3}
                     className=" md:mb-4  md:hidden"
                   />
@@ -123,7 +126,7 @@ export default function Page({ params }: { params: { projectid: string } }) {
                   />
                 </>
               )}
-              <h3 className="p-4 font-title text-xl tracking-widest md:-rotate-90">
+              <h3 className="p-4 font-title tracking-widest md:-rotate-90 md:text-xl">
                 INDICES
               </h3>
             </Button>
@@ -147,9 +150,10 @@ function markerContent(title: string, isHighlighted: boolean) {
 
   newHtmlElement.innerHTML = `
   <div class="flex flex-col justify-center items-center text-primary-foreground">
-    <div class="p-2 min-h-12 min-w-16 ${bgColor} font-bold flex flex-col items-start space-y-2 justify-center rounded-md shadow-md">
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-move"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/><line x1="2" x2="22" y1="12" y2="12"/><line x1="12" x2="12" y1="2" y2="22"/></svg>
-    <h3 class="text-lg max-w-32 line-clamp-2 ">${title}</h3>
+    <div class="p-1 md:p-2 min-h-8 min-w-12 md:min-h-12 md:min-w-16 ${bgColor} font-bold flex flex-col
+     items-start space-y-1 md:space-y-2 justify-center rounded-md shadow-md">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-move"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/><line x1="2" x2="22" y1="12" y2="12"/><line x1="12" x2="12" y1="2" y2="22"/></svg>
+    <h3 class="text-base md:text-lg max-w-32 line-clamp-2">${title}</h3>
     </div>
     <div class="w-0 h-0 border-l-8 border-l-transparent border-r-8 border-r-transparent border-t-8 ${borderColor} shadow-md">
     </div>

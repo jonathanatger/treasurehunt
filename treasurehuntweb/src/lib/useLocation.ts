@@ -40,7 +40,7 @@ export const useLocation = function (
     if (mapObject) {
       mapObject.panTo(newCenter);
 
-      if (objectivesLength > 1) mapObject.fitBounds(bounds, 250);
+      if (objectivesLength > 1) mapObject.fitBounds(bounds, 100);
       firstLoadBoundFit.current = false;
     }
   }, [objectives, mapObject]);

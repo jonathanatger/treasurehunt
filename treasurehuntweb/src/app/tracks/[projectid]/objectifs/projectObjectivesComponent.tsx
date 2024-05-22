@@ -80,13 +80,13 @@ function ObjectiveCard({
 
   return (
     <Card
-      className="flex h-full min-w-60 flex-row rounded-3xl shadow-lg md:mb-2 md:h-auto md:min-h-[150px] md:w-full"
+      className="flex h-full min-w-48 flex-row rounded-3xl shadow-lg md:mb-2 md:h-auto md:min-h-[160px] md:w-full md:min-w-60"
       onMouseEnter={() => highlightMarker(true)}
       onMouseLeave={() => highlightMarker(false)}
     >
       <div
         className={cn(
-          "hidden w-12 flex-col items-center rounded-3xl md:flex",
+          "hidden max-h-[100%] w-12 flex-col items-center rounded-3xl md:flex",
           index === 0 ? " justify-end" : "justify-between",
         )}
       >
@@ -116,7 +116,7 @@ function ObjectiveCard({
       </div>
       <div
         className={cn(
-          "flex grow md:max-w-[calc(100%-48px)]",
+          "flex h-full grow",
           cluesVisible
             ? "flex-row-reverse justify-between"
             : "flex-col justify-start",
@@ -124,9 +124,8 @@ function ObjectiveCard({
       >
         <Button
           className={cn(
-            "m-1 self-start bg-transparent p-1",
+            "m-1 bg-transparent p-1",
             cluesVisible ? "self-start" : "self-end",
-            editingTitle ? "hidden" : "",
           )}
           onClick={() => {
             if (deleteObjective === undefined) return;
@@ -135,7 +134,7 @@ function ObjectiveCard({
         >
           <X size={32} strokeWidth={2} />
         </Button>
-        <div className="flex w-full flex-col">
+        <div className="flex w-full grow flex-col items-start justify-start">
           <ObjectiveTitle
             cluesVisible={cluesVisible}
             title={title}
@@ -190,26 +189,26 @@ function ObjectiveClueMessageInput({
   function changeHeightAndSetMessage(
     elem: React.ChangeEvent<HTMLTextAreaElement>,
   ) {
-    elem.target.style.height = `${elem.target.scrollHeight}px`;
+    if (elem.target.scrollHeight < 150) {
+      elem.target.style.height = `${elem.target.scrollHeight}px`;
+    }
     setClientMessage(elem.target.value);
     debouncedChangeClueMessageApiCall(elem.target.value);
   }
 
   return (
-    <div className="flex w-full flex-col items-center">
-      <div className="flex h-full w-full flex-row p-2 ">
-        <h4 className="text-light pr-2 pt-2  italic">Indice : </h4>
-        <form className="h-full grow rounded-3xl bg-background p-2 text-foreground">
-          <textarea
-            id={"clue-message-" + clientId.toString()}
-            key={"clue-message-" + clientId.toString()}
-            className="h-full min-h-24 w-full resize-none text-wrap bg-background outline-none"
-            placeholder="Vous devez trouver la plus haute tour de la ville..."
-            onChange={changeHeightAndSetMessage}
-            value={clientMessage}
-          ></textarea>
-        </form>
-      </div>
+    <div className="flex w-full flex-row items-start p-2 ">
+      <h4 className="text-light pr-2 pt-2  italic">Indice : </h4>
+      <form className="grow rounded-3xl bg-background p-2 text-foreground outline outline-blue-800">
+        <textarea
+          id={"clue-message-" + clientId.toString()}
+          key={"clue-message-" + clientId.toString()}
+          className="max-h-[80%] min-h-16 w-full resize-none text-wrap bg-background outline-none"
+          placeholder="Vous devez trouver la plus haute tour de la ville..."
+          onChange={changeHeightAndSetMessage}
+          value={clientMessage}
+        ></textarea>
+      </form>
     </div>
   );
 }
@@ -231,6 +230,7 @@ function ObjectiveTitle({
   const objectives = useContext(ObjectivesContext)?.objectives;
   const [titleOnClient, setTitleOnClient] = useState(title);
 
+  // update title of objectives UI component after data comes back from server
   useEffect(() => {
     if (objectives === undefined) return;
 
@@ -240,6 +240,7 @@ function ObjectiveTitle({
     if (serverTitle !== undefined) setTitleOnClient(serverTitle);
   }, [objectives]);
 
+  // make sure the textarea grows with the text
   useEffect(() => {
     if (!editingTitle) return;
     const textarea = document.getElementById(
@@ -256,38 +257,47 @@ function ObjectiveTitle({
   }
 
   return (
-    <div className="">
+    <div
+      className={cn(
+        "flex h-full max-h-[100%] max-w-[100%] flex-col",
+        editingTitle ? "justify-end" : "",
+      )}
+    >
       {editingTitle ? (
         <div
           className={cn(
-            "flex py-2 pr-2 font-title text-xl font-bold",
+            "flex max-w-[100%] flex-col px-2 py-2 font-title text-base font-bold md:text-xl",
             cluesVisible ? "flex-row space-x-2" : "flex-col space-y-2",
           )}
         >
           <textarea
             value={titleOnClient}
             onChange={(e) => {
-              e.target.style.height = `${e.target.scrollHeight}px`;
+              // e.target.style.height = `${e.target.scrollHeight}px`;
               setTitleOnClient(e.target.value);
             }}
             id={"titleChangeBox-" + clientId.toString()}
-            className="text-md resize-none text-wrap rounded-3xl bg-background px-4 font-normal text-foreground"
+            className="w-[100%] resize-none text-wrap rounded-3xl bg-background px-4 font-normal text-foreground"
           />
-          <Button onClick={switchDisplay} className="mb-2 bg-transparent">
-            <Check onClick={switchDisplay} className="min-h-8" size={24} />
+          <Button
+            onClick={switchDisplay}
+            className="mb-2 h-6 bg-transparent outline"
+          >
+            <Check onClick={switchDisplay} className="min-h-8" size={18} />
           </Button>
         </div>
       ) : (
         <div
           className={cn(
-            "mb-2 mr-2 flex cursor-pointer self-center py-2 pr-2 font-title text-xl font-bold hover:rounded-3xl hover:bg-secondary",
+            "mb-2 mr-2 flex cursor-pointer self-center px-4 py-2 font-title text-base font-bold hover:rounded-3xl hover:bg-secondary",
+            "md:text-xl",
             cluesVisible
               ? "flex-row items-center space-x-4"
               : "flex-col items-start space-y-2",
           )}
           onClick={switchDisplay}
         >
-          <h3 className="hyphens-auto pl-4">{titleOnClient}</h3>
+          <h3 className="hyphens-auto">{titleOnClient}</h3>
         </div>
       )}
     </div>
