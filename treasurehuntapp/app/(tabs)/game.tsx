@@ -1,10 +1,10 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 
-export default function HomeScreen() {
+export default function GameScreen() {
   return (
     <ThemedView>
-      <ThemedText> This is index</ThemedText>
+      <ThemedText> This is Gamescreen !</ThemedText>
     </ThemedView>
   );
 }
