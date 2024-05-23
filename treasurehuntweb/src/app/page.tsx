@@ -63,7 +63,10 @@ export default async function HomePage() {
           />
         </div>
         <div className="flex w-full items-center justify-center ">
-          <Link href={"/tracks"} className="flex w-full justify-center">
+          <Link
+            href={session ? "/tracks" : "/login"}
+            className="flex w-full justify-center"
+          >
             <Button className="h-16 rounded-full p-4 font-title text-3xl font-bold shadow-lg">
               <h3 className="mr-4 p-4">Essayez-vous même</h3>
               <ArrowRight strokeWidth={3} size={32} />
