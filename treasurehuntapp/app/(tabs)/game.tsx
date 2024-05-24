@@ -1,10 +1,10 @@
 import { ThemedText } from "@/components/ThemedText";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { ThemedSafeAreaView } from "@/components/ThemedView";
 
 export default function GameScreen() {
   return (
-    <SafeAreaView>
+    <ThemedSafeAreaView>
       <ThemedText> This is the second screen</ThemedText>
-    </SafeAreaView>
+    </ThemedSafeAreaView>
   );
 }

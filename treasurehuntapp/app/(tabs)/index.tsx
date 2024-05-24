@@ -1,11 +1,10 @@
 import { ThemedText } from "@/components/ThemedText";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { ThemedSafeAreaView } from "@/components/ThemedView";
 
 export default function HomeScreen() {
   return (
-    <SafeAreaView>
+    <ThemedSafeAreaView>
       <ThemedText> This is index !</ThemedText>
-    </SafeAreaView>
+    </ThemedSafeAreaView>
   );
 }
