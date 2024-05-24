@@ -1,5 +1,3 @@
-// auth/auth.ts
-
 import { db } from "../server/db";
 import { user } from "../server/db/schema";
 import NextAuth, { AuthError } from "next-auth";

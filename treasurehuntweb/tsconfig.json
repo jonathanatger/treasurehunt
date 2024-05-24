@@ -38,7 +38,8 @@
     "**/*.js",
     ".next/types/**/*.ts",
     "../config.ts",
-    "../init.ts"
+    "../init.ts",
+    "__tests__/page.test.jsx"
   ],
   "exclude": ["node_modules"]
 }

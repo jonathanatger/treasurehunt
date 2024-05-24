@@ -9,7 +9,10 @@
 
 export default function PagePrix() {
   return (
-    <main className="flex h-full w-[100vw] flex-row items-center justify-center p-32">
+    <main
+      id="prices-section"
+      className="flex h-full w-[100vw] flex-row items-center justify-center p-32"
+    >
       {/* <Card className="mr-8">
         <CardHeader>
           <CardTitle>Gratuit</CardTitle>

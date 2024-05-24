@@ -4,7 +4,7 @@ import heroImage from "../../public/heroimage.png";
 import objectiveDrawing from "../../public/drawing2.png";
 import clueDrawing from "../../public/drawing3.png";
 import raceStartDrawing from "../../public/drawing4.png";
-import { Button } from "~/components/ui/button";
+import { Button } from "../components/ui/button";
 import { Card, CardDescription, CardHeader } from "~/components/ui/card";
 import Link from "next/link";
 import { auth } from "~/auth/auth";
@@ -14,7 +14,10 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="flex w-full flex-col items-center justify-between px-4 pb-24 pt-12 lg:h-[80vh] lg:px-0 lg:pb-0 lg:pt-0 ">
+      <section
+        id="homepage-herosection"
+        className="flex w-full flex-col items-center justify-between px-4 pb-24 pt-12 lg:h-[80vh] lg:px-0 lg:pb-0 lg:pt-0 "
+      >
         <div className="flex w-full flex-col items-center justify-end lg:flex-row">
           <div className="flex flex-col items-center rounded-3xl bg-primary px-8 py-6 text-primary-foreground lg:absolute lg:w-[100vw] lg:-translate-x-[50vw] lg:items-end lg:py-24">
             <h2 className="text-balance font-title text-4xl font-bold leading-snug lg:pb-4 lg:text-6xl">
