@@ -174,9 +174,7 @@ function ObjectiveClueMessageInput({
   const cluesVisible = useContext(ObjectivesContext)?.cluesVisible;
   const changeClueMessage = useContext(ObjectivesContext)?.changeClueMessage;
 
-  const debouncedTimeout: MutableRefObject<
-    string | number | NodeJS.Timeout | undefined
-  > = useRef(0);
+  const debouncedTimeout: MutableRefObject<Timer | undefined> = useRef();
 
   function debouncedChangeClueMessageApiCall(_message: string) {
     clearTimeout(debouncedTimeout.current);

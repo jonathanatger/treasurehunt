@@ -222,8 +222,8 @@ export const useSyncClientAndServerState = function (
   const apiUtils = api.useUtils();
 
   const debouncedObjectivesDataCacheInvalidationTimeout: MutableRefObject<
-    string | number | NodeJS.Timeout | undefined
-  > = useRef(0);
+    Timer | undefined
+  > = useRef();
 
   const debouncedObjectivesDataCacheInvalidation = useRef(
     constructorDebouncedObjectivesDataCacheInvalidation(),

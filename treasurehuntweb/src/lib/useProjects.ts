@@ -37,9 +37,7 @@ export function useProjects(projectId: number) {
     },
   });
 
-  const debouncedTimeout: MutableRefObject<
-    string | number | NodeJS.Timeout | undefined
-  > = useRef(0);
+  const debouncedTimeout: MutableRefObject<Timer | undefined> = useRef();
 
   function debouncedSetTitleApiCall(
     _message: string,
