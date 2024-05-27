@@ -24,6 +24,7 @@
     "@trpc/react-query": "next",
     "@trpc/server": "next",
     "@types/googlemaps": "^3.43.3",
+    "@vitejs/plugin-react": "^4.3.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "drizzle-orm": "^0.29.4",
@@ -37,7 +38,7 @@
     "superjson": "^2.2.1",
     "tailwind-merge": "^2.2.2",
     "tailwindcss-animate": "^1.0.7",
-    "vite-tsconfig-paths": "latest",
+    "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^1.6.0",
     "zod": "latest"
   },
