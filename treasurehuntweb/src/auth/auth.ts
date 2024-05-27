@@ -36,7 +36,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.id = token.sub!;
       return session;
     },
-
     signIn: async ({ user: userProvider, account }) => {
       try {
         if (account?.provider === "google") {
@@ -46,9 +45,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             throw new AuthError("Failed to sign in");
           }
 
-          const isUserExist = (await db.select().from(user)).find(
-            (user) => user.email === email,
-          );
+          const isUserExist = (await db.select().from(user)).find((user) => {
+            return user.email === email;
+          });
 
           if (!isUserExist) {
             // create password and you mail it to user as temporary password

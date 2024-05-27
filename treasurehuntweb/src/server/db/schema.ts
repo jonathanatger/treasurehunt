@@ -31,6 +31,7 @@ export const projects = createTable("projects", {
   updatedAt: timestamp("updatedAt"),
   description: text("projectDescription"),
   userId: varchar("userId").notNull(),
+  userEmail: text("email").notNull().unique(),
 });
 
 export const projectObjectives = createTable("projectObjectives", {

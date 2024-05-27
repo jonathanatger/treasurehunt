@@ -1,24 +1,22 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import { user } from "../db/schema";
 
 import { db } from "../db";
 import { auth } from "~/auth/auth";
-import { User } from "next-auth";
-import { redirect } from "next/navigation";
+import { User as AuthUser } from "next-auth";
 
 //define what is available in the requests
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   const session = await auth();
-  let user: User | undefined;
-  let id: string | undefined;
-  if (session) user = session.user;
-  if (user) id = user.id;
+  let authUser: AuthUser | undefined;
+  let email: string | undefined;
+  if (session) authUser = session.user;
 
   return {
     db,
-    user,
-    id,
+    authUser,
     ...opts,
   };
 };
@@ -49,15 +47,14 @@ export const createTRPCRouter = t.router;
 export const publicProcedure = t.procedure;
 
 export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
-  if (!ctx.user) {
+  if (!ctx.authUser) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
   return next({
     ctx: {
       db: ctx.db,
-      user: ctx.user,
-      id: ctx.id,
+      user: ctx.authUser,
     },
   });
 });
