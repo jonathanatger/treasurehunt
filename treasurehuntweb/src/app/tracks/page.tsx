@@ -3,7 +3,8 @@ import type { Project } from "~/server/db/schema";
 import { api } from "~/trpc/server";
 
 export default async function Page() {
-  const userprojects: Project[] = await api.projects.fetchUserProjects();
+  const userprojects: Project[] | undefined =
+    await api.projects.fetchUserProjects();
 
   return (
     <>

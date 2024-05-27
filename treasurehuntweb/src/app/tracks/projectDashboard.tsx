@@ -17,7 +17,7 @@ import { SetStateAction, useEffect, useState } from "react";
 export function ProjectDashboard({
   userprojects,
 }: {
-  userprojects: Project[];
+  userprojects: Project[] | undefined;
 }) {
   const [isDeletingId, setIsDeletingId] = useState(0);
 

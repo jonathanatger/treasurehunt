@@ -6,8 +6,10 @@ import { projectObjectives, projects } from "../../db/schema";
 
 export const projectsRouter = createTRPCRouter({
   fetchUserProjects: protectedProcedure.query(async ({ ctx }) => {
+    const authUserEmail = ctx.authUser?.email;
+    if (!authUserEmail) return;
     const projectsData = ctx.db.query.projects.findMany({
-      where: eq(projects.userEmail, ctx.authUser?.email!),
+      where: eq(projects.userEmail, authUserEmail),
       orderBy: (projects, { asc }) => [asc(projects.createdAt)],
     });
 

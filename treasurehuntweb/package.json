@@ -38,6 +38,7 @@
     "tailwind-merge": "^2.2.2",
     "tailwindcss-animate": "^1.0.7",
     "vite-tsconfig-paths": "latest",
+    "vitest": "^1.6.0",
     "zod": "latest"
   },
   "devDependencies": {
