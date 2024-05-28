@@ -1,5 +1,6 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { Link } from "expo-router";
 
 export default function Index() {
   return (
@@ -10,6 +11,7 @@ export default function Index() {
         alignItems: "center",
       }}>
       <ThemedText>This page does not exist !</ThemedText>
+      <Link href="index">Home</Link>
     </ThemedView>
   );
 }

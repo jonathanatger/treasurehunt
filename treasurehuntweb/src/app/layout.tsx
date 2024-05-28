@@ -7,7 +7,7 @@ import {
   fontVelvendaBlack,
   fontVelvendaChill,
   fontVelvendaCooler,
-} from "./fonts/fonts";
+} from "../fonts/fonts";
 import { Navbar } from "../components/navbar";
 
 export const metadata = {
