@@ -11,7 +11,6 @@ import { User as AuthUser } from "next-auth";
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   const session = await auth();
   let authUser: AuthUser | undefined;
-  let email: string | undefined;
   if (session) authUser = session.user;
 
   return {
