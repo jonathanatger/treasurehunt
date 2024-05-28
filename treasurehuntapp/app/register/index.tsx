@@ -2,7 +2,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedSafeAreaView, ThemedView } from "@/components/ThemedView";
 import { Link } from "expo-router";
 
-function Login() {
+function Register() {
   return (
     <ThemedSafeAreaView>
       <ThemedText>This is login</ThemedText>
@@ -11,4 +11,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Register;

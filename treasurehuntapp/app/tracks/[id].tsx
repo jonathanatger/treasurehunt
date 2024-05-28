@@ -1,15 +1,43 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedSafeAreaView, ThemedView } from "@/components/ThemedView";
-import { Link, useLocalSearchParams } from "expo-router";
+import { Link, router, useLocalSearchParams } from "expo-router";
+import { Pressable, StyleSheet, useWindowDimensions } from "react-native";
 
-function index() {
+function SpecificTrackPage() {
+  const { height, width } = useWindowDimensions();
   const { id } = useLocalSearchParams();
+
   return (
-    <ThemedSafeAreaView>
-      <ThemedText>This is tracks {id}</ThemedText>
-      <Link href="">Go back</Link>
+    <ThemedSafeAreaView style={{ height: height, ...styles.main }}>
+      <ThemedText type="title">This is tracks {id}</ThemedText>
+      <ThemedText type="subtitle">
+        We are waiting on other participants
+      </ThemedText>
+      <Pressable
+        onPress={() => {
+          router.back();
+        }}>
+        <ThemedText>Go back</ThemedText>
+      </Pressable>
+      <ThemedView style={styles.teamsView}>
+        <ThemedText type="defaultSemiBold">TEAM 1</ThemedText>
+        <ThemedText type="defaultSemiBold">TEAM 1</ThemedText>
+        <ThemedText type="defaultSemiBold">TEAM 1</ThemedText>
+        <ThemedText type="defaultSemiBold">TEAM 1</ThemedText>
+      </ThemedView>
     </ThemedSafeAreaView>
   );
 }
 
-export default index;
+const styles = StyleSheet.create({
+  main: {
+    flexDirection: "column",
+  },
+  teamsView: {
+    flex: 1,
+    borderTopColor: "black",
+    borderTopWidth: 1,
+    flexDirection: "column",
+  },
+});
+export default SpecificTrackPage;
