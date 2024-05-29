@@ -1,12 +1,18 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+import { headers } from "next/headers";
 
-type ResponseData = {
-  message: string;
-};
+export const dynamic = "force-dynamic"; // defaults to auto
 
-export default function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<ResponseData>,
-) {
-  res.status(200).json({ message: "Hello from Next.js!" });
+export async function GET(request: Request) {
+  // const res = await fetch("https://data.mongodb-api.com/...", {
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //     "API-Key": process.env.DATA_API_KEY,
+  //   } as HeadersInit,
+  // });
+
+  // const data = await res.json();
+
+  const data = { message: "this is data from the api" };
+
+  return Response.json({ data });
 }
