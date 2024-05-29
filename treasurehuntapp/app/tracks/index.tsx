@@ -3,10 +3,16 @@ import { ThemedSafeAreaView, ThemedView } from "@/components/ThemedView";
 import { Link } from "expo-router";
 import { useState } from "react";
 import { StyleSheet, useWindowDimensions } from "react-native";
+import { useQuery } from "@tanstack/react-query";
+
+const fetchTracks = async () => {
+  const data = await fetch("https://");
+};
 
 function TracksMainPage() {
   const { height, width } = useWindowDimensions();
   const [tracksIds, setTracksIds] = useState([1, 2, 3]);
+
   return (
     <ThemedSafeAreaView style={{ height: height, ...styles.container }}>
       <Link href="/">
