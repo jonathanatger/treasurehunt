@@ -14,7 +14,7 @@ function TracksMainPage() {
       </Link>
       <ThemedText type="title">This is tracks main page !</ThemedText>
       {tracksIds.map((id) => {
-        return <Track id={id} />;
+        return <Track key={id} id={id} />;
       })}
     </ThemedSafeAreaView>
   );
