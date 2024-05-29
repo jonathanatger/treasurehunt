@@ -1,4 +1,4 @@
-import { Inter, Oswald, Outfit, Roboto } from "next/font/google";
+import { Oswald, Roboto } from "next/font/google";
 import localFont from "next/font/local";
 
 export const fontSans = Roboto({
