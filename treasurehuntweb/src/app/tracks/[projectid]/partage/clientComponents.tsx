@@ -12,11 +12,10 @@ export function TitleChange({ projectId }: { projectId: number }) {
   const [userHasFeedback, setUserHasFeedback] = useState<boolean>(false);
 
   useEffect(() => {
-    if (isLoading) return;
-
     const fetchedDataProjectTitle = data?.find(
       (project) => project.id === projectId,
     )?.name;
+
     if (fetchedDataProjectTitle) setClientTitle(fetchedDataProjectTitle);
   }, [isLoading]);
 
@@ -48,12 +47,15 @@ export function LinkToClipboardCard({ projectId }: { projectId: number }) {
   )?.currentRace;
   const link = `www.treasurio.com/rejoindre/${currentRaceId}`;
   async function copyLink(e: React.FormEvent<HTMLButtonElement>) {
+    if (isLoading) return;
     await navigator.clipboard
       .writeText(link)
       .catch((err) => console.error(err));
     const textElement = document.getElementById("clipboard-link")!;
     textElement.innerHTML = "Copié !";
-    textElement.classList.add("font-bold");
+    setTimeout(() => {
+      textElement.innerHTML = link;
+    }, 1000);
   }
   return (
     <Button
@@ -64,7 +66,7 @@ export function LinkToClipboardCard({ projectId }: { projectId: number }) {
         <h3 className="font-title text-2xl">Copier le lien</h3>
         <Clipboard></Clipboard>
       </div>
-      <h3 id="clipboard-link">{link}</h3>
+      {isLoading ? <h3>...</h3> : <h3 id="clipboard-link">{link}</h3>}
     </Button>
   );
 }
