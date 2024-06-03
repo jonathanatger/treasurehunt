@@ -2,48 +2,74 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedSafeAreaView, ThemedView } from "@/components/ThemedView";
 import { Link } from "expo-router";
 import { useState } from "react";
-import { StyleSheet, useWindowDimensions } from "react-native";
+import { ScrollView, StyleSheet, useWindowDimensions } from "react-native";
 import { useQuery } from "@tanstack/react-query";
+import { queryClient } from "../_layout";
+import { PressableLink } from "@/components/PressableLink";
 
 const fetchTracks = async () => {
-  const data = await fetch("https://");
+  const data = await fetch("https://treasurehunt-jet.vercel.app/api/mobile");
+  const res = await data.json();
+  return res;
 };
 
 function TracksMainPage() {
   const { height, width } = useWindowDimensions();
-  const [tracksIds, setTracksIds] = useState([1, 2, 3]);
+  const [tracksIds, setTracksIds] = useState([1, 2, 3, 4]);
+
+  const logindata = queryClient.getQueryData(["googleAuth"]);
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["nextapi"],
+    queryFn: fetchTracks,
+  });
 
   return (
-    <ThemedSafeAreaView style={{ height: height, ...styles.container }}>
-      <Link href="/">
-        <ThemedText type="defaultSemiBold">Go back</ThemedText>
-      </Link>
-      <ThemedText type="title">This is tracks main page !</ThemedText>
-      {tracksIds.map((id) => {
-        return <Track key={id} id={id} />;
-      })}
+    <ThemedSafeAreaView style={{ height: height }}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <PressableLink text="Go back" style={styles.backlink}></PressableLink>
+        <ThemedText type="title">This is tracks main page !</ThemedText>
+        {isLoading ? (
+          <ThemedText type="title">Loading...</ThemedText>
+        ) : (
+          <ThemedText type="title">
+            {data
+              ? data.data
+                ? data.data.message
+                : "body loaded"
+              : "data loaded"}
+          </ThemedText>
+        )}
+        {tracksIds.map((id) => {
+          return (
+            <PressableLink
+              route={`/tracks/${id}`}
+              text={`This is Track ${id}`}
+              style={styles.trackCard}
+              textType="subtitle"
+              key={"track" + id}
+            />
+          );
+        })}
+      </ScrollView>
     </ThemedSafeAreaView>
   );
 }
 
 function Track(props: { id: number }) {
-  return (
-    <>
-      <ThemedView style={styles.trackCard}>
-        <Link href={`/tracks/${props.id}`}>
-          <ThemedText>This is track {props.id}</ThemedText>
-        </Link>
-      </ThemedView>
-    </>
-  );
+  return <></>;
 }
 
 const styles = StyleSheet.create({
+  backlink: {
+    width: 70,
+    padding: 3,
+    borderRadius: 5,
+  },
   container: {
     fontSize: 30,
-    paddingHorizontal: 10,
+    padding: 10,
     flexDirection: "column",
-    justifyContent: "flex-start",
     gap: 10,
   },
   main: {
@@ -53,10 +79,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   trackCard: {
+    flexDirection: "column",
+    justifyContent: "center",
+    alignContent: "center",
     height: 150,
-    paddingVertical: 10,
+    padding: 10,
     borderRadius: 5,
-    backgroundColor: "orange",
   },
   title: {
     fontSize: 30,

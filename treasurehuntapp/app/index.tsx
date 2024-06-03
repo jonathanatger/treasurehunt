@@ -5,6 +5,7 @@ import { Shadows } from "@/constants/Shadows";
 import { Link, router } from "expo-router";
 import React, { useState } from "react";
 import { Pressable, StyleSheet, View, useWindowDimensions } from "react-native";
+import { PressableLink } from "@/components/PressableLink";
 
 function Homescreen() {
   const { height, width } = useWindowDimensions();
@@ -17,39 +18,20 @@ function Homescreen() {
       <ThemedView style={styles.main}>
         {loggedIn ? (
           <>
-            <Pressable
-              style={({ pressed }) => [
-                {
-                  backgroundColor: pressed
-                    ? Colors.secondary.muted
-                    : Colors.secondary.background,
-                },
-                styles.links,
-              ]}
-              onPress={() => {
-                router.push("/tracks");
-              }}>
-              <ThemedText secondary={true}>Go to tracks</ThemedText>
-            </Pressable>
-            <Pressable
-              style={({ pressed }) => [
-                {
-                  backgroundColor: pressed
-                    ? Colors.secondary.muted
-                    : Colors.secondary.background,
-                },
-                styles.links,
-              ]}
-              onPress={() => {
-                router.push("/join");
-              }}>
-              <ThemedText secondary={true}>Join Race</ThemedText>
-            </Pressable>
+            <PressableLink
+              route="/tracks"
+              text="Go to Tracks"
+              style={styles.links}
+            />
+            <PressableLink
+              route="/join"
+              text="Join a Race"
+              style={styles.links}
+            />
+            <PressableLink route="/login" text="Login" style={styles.links} />
           </>
         ) : (
-          <Link href="/login" style={styles.links}>
-            <ThemedText>Go to login</ThemedText>
-          </Link>
+          <PressableLink route="/login" text="Login" />
         )}
       </ThemedView>
     </ThemedSafeAreaView>
@@ -85,6 +67,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   title: {
+    color: Colors.secondary.background,
     fontSize: 30,
     height: "auto",
     paddingBottom: 20,

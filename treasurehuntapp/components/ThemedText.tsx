@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
   default: {
     fontSize: 16,
     lineHeight: 24,
-    fontFamily: "Inter",
+    fontFamily: "Roboto",
   },
   defaultSemiBold: {
     fontSize: 16,
