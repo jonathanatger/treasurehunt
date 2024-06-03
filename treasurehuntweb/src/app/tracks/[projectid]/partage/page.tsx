@@ -26,7 +26,7 @@ export default async function Page({
                 Les participants peuvent rejoindre la course en téléchargeant
                 l’application et en suivant le lien ci-dessous.
               </div>
-              <LinkToClipboardCard projectId={params.projectid} />
+              <LinkToClipboardCard projectId={_projectId} />
             </div>
           </div>
           <div className="hidden flex-1 items-center justify-center lg:flex">

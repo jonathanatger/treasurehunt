@@ -141,6 +141,7 @@ function ProjectDeletionModal({
 
 function NewProjectCard() {
   const newProject = api.projects.create.useMutation();
+  const apiUtils = api.useUtils();
 
   function handleNewProjectClick(
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
@@ -155,6 +156,7 @@ function NewProjectCard() {
           console.error("An error occured");
         },
         async onSuccess() {
+          await apiUtils.projects.fetchUserProjects.invalidate();
           await revalidate("/tracks");
         },
       },

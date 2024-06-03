@@ -9,6 +9,7 @@ import {
   doublePrecision,
   uuid,
   primaryKey,
+  boolean,
 } from "drizzle-orm/pg-core";
 import { db } from ".";
 import { create } from "domain";
@@ -16,7 +17,7 @@ import { create } from "domain";
 export const createTable = pgTableCreator((name) => `treasurehunt_${name}`);
 
 export const user = createTable("users", {
-  id: uuid("id").primaryKey().unique().defaultRandom(),
+  id: uuid("id").primaryKey().defaultRandom(),
   email: text("email").notNull().unique(),
   name: text("name"),
   image: text("image"),
@@ -40,7 +41,9 @@ export const projects = createTable("projects", {
   updatedAt: timestamp("updatedAt"),
   description: text("projectDescription"),
   userId: varchar("userId").notNull(),
-  userEmail: text("email").notNull().unique(),
+  userEmail: text("email").notNull(),
+  currentRace: integer("currentRace"),
+  deleted: boolean("deleted").default(false),
 });
 
 export const projectRelations = relations(projects, ({ one, many }) => ({
@@ -49,6 +52,11 @@ export const projectRelations = relations(projects, ({ one, many }) => ({
     references: [user.id],
   }),
   projectObjectives: many(projectObjectives),
+  races: many(race, { relationName: "projectToRaces" }),
+  currentRace: one(race, {
+    fields: [projects.currentRace],
+    references: [race.id],
+  }),
 }));
 
 export const projectObjectives = createTable("projectObjectives", {
@@ -81,9 +89,10 @@ export const raceRelations = relations(race, ({ one, many }) => ({
   relatedProject: one(projects, {
     fields: [race.projectId],
     references: [projects.id],
+    relationName: "projectToRaces",
   }),
+  teams: many(team, { relationName: "raceToTeams" }),
   racePositions: many(racePosition),
-  users: many(raceOnUserJoinTable),
 }));
 
 export const raceOnUserJoinTable = createTable(
@@ -123,9 +132,10 @@ export const team = createTable("teams", {
 });
 
 export const teamRelations = relations(team, ({ one, many }) => ({
-  relatedProject: one(race, {
+  relatedRace: one(race, {
     fields: [team.raceId],
     references: [race.id],
+    relationName: "raceToTeams",
   }),
   users: many(userOnTeamJoinTable),
   racePositions: one(racePosition, {

@@ -41,8 +41,12 @@ export function TitleChange({ projectId }: { projectId: number }) {
   );
 }
 
-export function LinkToClipboardCard({ projectId }: { projectId: string }) {
-  const link = `www.treasurio.com/rejoindre/${projectId}`;
+export function LinkToClipboardCard({ projectId }: { projectId: number }) {
+  const { data, isLoading } = api.projects.fetchUserProjects.useQuery();
+  const currentRaceId = data?.find(
+    (project) => project.id === projectId,
+  )?.currentRace;
+  const link = `www.treasurio.com/rejoindre/${currentRaceId}`;
   async function copyLink(e: React.FormEvent<HTMLButtonElement>) {
     await navigator.clipboard
       .writeText(link)
