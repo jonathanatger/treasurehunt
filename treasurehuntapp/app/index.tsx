@@ -2,21 +2,35 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedSafeAreaView, ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
 import { Shadows } from "@/constants/Shadows";
-import { Link, router } from "expo-router";
-import React, { useState } from "react";
-import { Pressable, StyleSheet, View, useWindowDimensions } from "react-native";
+import React, { useContext, useEffect, useState } from "react";
+import { StyleSheet, useWindowDimensions } from "react-native";
 import { PressableLink } from "@/components/PressableLink";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { appContext } from "./_layout";
 
 function Homescreen() {
   const { height, width } = useWindowDimensions();
-  const [loggedIn, setLoggedIn] = useState(true);
+  const userInfo = useContext(appContext).userInfo;
+  const setUserInfo = useContext(appContext).setUserInfo;
+
+  useEffect(() => {
+    getUserInfoInStorage();
+  }, []);
+
+  const getUserInfoInStorage = async () => {
+    await AsyncStorage.getItem("user").then((userJSON) => {
+      if (!userJSON) return;
+      setUserInfo(JSON.parse(userJSON));
+    });
+  };
+
   return (
     <ThemedSafeAreaView style={{ height: height, ...styles.container }}>
       <ThemedText type="title" style={styles.title}>
         Treasurio
       </ThemedText>
       <ThemedView style={styles.main}>
-        {loggedIn ? (
+        {userInfo ? (
           <>
             <PressableLink
               route="/tracks"
@@ -31,7 +45,7 @@ function Homescreen() {
             <PressableLink route="/login" text="Login" style={styles.links} />
           </>
         ) : (
-          <PressableLink route="/login" text="Login" />
+          <PressableLink route="/login" text="Login" style={styles.links} />
         )}
       </ThemedView>
     </ThemedSafeAreaView>

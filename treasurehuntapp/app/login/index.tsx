@@ -4,26 +4,16 @@ import { Link, router } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import { makeRedirectUri } from "expo-auth-session";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Button, Linking } from "react-native";
 import { AuthSessionRedirectUriOptions, revokeAsync } from "expo-auth-session";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { queryClient } from "../_layout";
-
-type UserInfoType = {
-  email: string;
-  family_name?: string;
-  given_name?: string;
-  id?: string;
-  locale?: string;
-  name?: string;
-  picture?: string;
-  verified_email?: string;
-} | null;
+import { appContext, queryClient } from "../_layout";
+import { UserInfoType } from "@/constants/data";
 
 function Login() {
-  const [userInfo, setUserInfo] = useState<UserInfoType>(null);
-  const [authProvider, setAuthProvider] = useState<string | null>(null);
+  const userInfo = useContext(appContext).userInfo;
+  const setUserInfo = useContext(appContext).setUserInfo;
 
   WebBrowser.maybeCompleteAuthSession();
 
@@ -41,28 +31,21 @@ function Login() {
   );
 
   useEffect(() => {
-    setGoogleUserAuthInfo()
-      .then(() => {
-        queryClient.setQueryData(["authInfo"], userInfo);
-      })
-      .then(() => {
-        if (userInfo && userInfo.email !== "") {
-          router.push("/tracks");
-        }
-      });
+    setGoogleUserAuthInfo();
   }, [response]);
 
   const setGoogleUserAuthInfo = async () => {
     try {
-      const userJSON = await AsyncStorage.getItem("user");
-
-      if (userJSON) {
-        setUserInfo(JSON.parse(userJSON));
-      } else if (response?.type === "success") {
-        //@ts-ignore
-        const user = await getUserInfo(response.authentication.accessToken);
-        setUserInfo(user);
-      }
+      await AsyncStorage.getItem("user").then(async (userJSON) => {
+        if (userJSON) {
+          setUserInfo(JSON.parse(userJSON));
+        } else if (response?.type === "success") {
+          const user = await getUserInfo(
+            //@ts-ignore
+            response.authentication.accessToken
+          ).then((data) => setUserInfo(data));
+        }
+      });
     } catch (error) {
       console.error("Error retrieving user data from AsyncStorage:", error);
     }
@@ -80,6 +63,7 @@ function Login() {
       );
       const user = await response.json();
       await AsyncStorage.setItem("user", JSON.stringify(user));
+      await AsyncStorage.setItem("authProvider", "google");
       return user;
     } catch (error) {
       console.error(
@@ -94,7 +78,8 @@ function Login() {
 
   async function logout() {
     const token = await AsyncStorage.getItem("user");
-    if (token) {
+    const authProvider = await AsyncStorage.getItem("authProvider");
+    if (token && authProvider === "google") {
       try {
         await revokeAsync(
           { token },
@@ -102,10 +87,10 @@ function Login() {
         );
         await AsyncStorage.removeItem("user").then(() => {
           setUserInfo(null);
-          queryClient.setQueryData(["authInfo"], null);
         });
+        await AsyncStorage.removeItem("authProvider");
       } catch (error) {
-        console.log("ERROR XXX", error);
+        console.log("ERROR at logout", error);
       }
     }
   }

@@ -1,45 +1,88 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedSafeAreaView, ThemedView } from "@/components/ThemedView";
-import { Link } from "expo-router";
-import { StyleSheet, TextInput, useWindowDimensions } from "react-native";
+import {
+  Button,
+  StyleSheet,
+  TextInput,
+  useWindowDimensions,
+} from "react-native";
+import { Controller, useForm } from "react-hook-form";
+import { PressableLink } from "@/components/PressableLink";
 
 function Join() {
   const { height, width } = useWindowDimensions();
   return (
     <ThemedSafeAreaView style={{ height: height, ...styles.container }}>
-      <ThemedText>This is joining another race</ThemedText>
-      <TextInput placeholder="Code" style={styles.input} />
-      <ThemedView style={styles.main}>
-        <Link href="/">Go back !</Link>
-      </ThemedView>
+      <JoinForm />
+      <PressableLink text="Go back" style={styles.backlink}></PressableLink>
     </ThemedSafeAreaView>
   );
 }
 
+function JoinForm() {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ defaultValues: { Code: "" } });
+
+  const onSubmit = async (data: { Code: string }) => {
+    console.log(data);
+  };
+
+  return (
+    <ThemedView style={{ height: 300, paddingTop: 50 }}>
+      <ThemedText type="subtitle">
+        Pour rejoindre une piste, entrez le code ci-dessous
+      </ThemedText>
+      <Controller
+        control={control}
+        rules={{
+          required: true,
+        }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <TextInput
+            placeholder="Code"
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+            style={styles.input}
+          />
+        )}
+        name="Code"
+      />
+      {/* {errors.Code && <ThemedText>This is required.</ThemedText>} */}
+      <Button title="Join" onPress={handleSubmit(onSubmit)} />
+    </ThemedView>
+  );
+}
+
 const styles = StyleSheet.create({
+  backlink: {
+    height: 50,
+    borderRadius: 100,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 10,
+  },
   container: {
     fontSize: 30,
-    paddingHorizontal: 10,
+    padding: 10,
     flexDirection: "column",
     justifyContent: "space-between",
   },
-  main: {
-    height: 300,
-    flexDirection: "column",
-    justifyContent: "flex-start",
-    alignItems: "center",
-  },
-  title: {
-    fontSize: 30,
-    height: "auto",
-    paddingBottom: 20,
-    textAlign: "center",
-    lineHeight: 34,
-    paddingTop: 30,
-  },
   input: {
+    height: 50,
     borderStyle: "solid",
-    borderWidth: 3,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 10,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: "center",
+    fontSize: 24,
   },
 });
 

@@ -1,56 +1,72 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedSafeAreaView, ThemedView } from "@/components/ThemedView";
-import { Link } from "expo-router";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { ScrollView, StyleSheet, useWindowDimensions } from "react-native";
 import { useQuery } from "@tanstack/react-query";
-import { queryClient } from "../_layout";
+import { appContext, queryClient } from "../_layout";
 import { PressableLink } from "@/components/PressableLink";
+import {
+  Race,
+  RaceOnUserJoin,
+} from "../../../treasurehuntweb/src/server/db/schema";
+import { domain } from "@/constants/data";
 
-const fetchTracks = async () => {
-  const data = await fetch("https://treasurehunt-jet.vercel.app/api/mobile");
-  const res = await data.json();
-  return res;
+const fetchRaces = async (email: string | undefined) => {
+  if (!email) throw new Error("No email provided");
+
+  const res = await fetch(domain + "/api/races", {
+    method: "POST",
+    body: email,
+  });
+
+  const data = (await res.json()) as {
+    data: {
+      races: Race;
+      raceOnUserJoin: RaceOnUserJoin;
+    }[];
+  };
+  return data;
 };
 
 function TracksMainPage() {
   const { height, width } = useWindowDimensions();
   const [tracksIds, setTracksIds] = useState([1, 2, 3, 4]);
-
-  const logindata = queryClient.getQueryData(["googleAuth"]);
+  const userInfo = useContext(appContext).userInfo;
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["nextapi"],
-    queryFn: fetchTracks,
+    queryKey: ["userRaces"],
+    queryFn: () => {
+      return fetchRaces(userInfo?.email);
+    },
   });
 
   return (
     <ThemedSafeAreaView style={{ height: height }}>
       <ScrollView contentContainerStyle={styles.container}>
-        <PressableLink text="Go back" style={styles.backlink}></PressableLink>
+        <PressableLink
+          text="Go back"
+          route="/"
+          style={styles.backlink}></PressableLink>
         <ThemedText type="title">This is tracks main page !</ThemedText>
         {isLoading ? (
           <ThemedText type="title">Loading...</ThemedText>
+        ) : data ? (
+          <ThemedView>
+            {data.data.map((race) => {
+              return (
+                <PressableLink
+                  route={`/tracks/${race.races.id}`}
+                  text={`This is Track ${race.races.id}`}
+                  style={styles.trackCard}
+                  textType="subtitle"
+                  key={"track" + race.races.id.toString()}
+                />
+              );
+            })}
+          </ThemedView>
         ) : (
-          <ThemedText type="title">
-            {data
-              ? data.data
-                ? data.data.message
-                : "body loaded"
-              : "data loaded"}
-          </ThemedText>
+          <ThemedText>{error?.toString()}</ThemedText>
         )}
-        {tracksIds.map((id) => {
-          return (
-            <PressableLink
-              route={`/tracks/${id}`}
-              text={`This is Track ${id}`}
-              style={styles.trackCard}
-              textType="subtitle"
-              key={"track" + id}
-            />
-          );
-        })}
       </ScrollView>
     </ThemedSafeAreaView>
   );
