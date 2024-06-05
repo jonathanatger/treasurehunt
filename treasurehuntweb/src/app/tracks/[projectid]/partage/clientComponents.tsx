@@ -1,7 +1,7 @@
 "use client";
 import { Clipboard } from "lucide-react";
 import { Button } from "~/components/ui/button";
-import { MutableRefObject, useRef, useState, useEffect, use } from "react";
+import { useState, useEffect, use } from "react";
 import { api } from "~/trpc/client";
 import { useProjects } from "~/lib/useProjects";
 import { cn } from "~/lib/utils";

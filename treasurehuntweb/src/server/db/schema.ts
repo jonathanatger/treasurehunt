@@ -48,8 +48,8 @@ export const projects = createTable("projects", {
 
 export const projectRelations = relations(projects, ({ one, many }) => ({
   user: one(user, {
-    fields: [projects.userId],
-    references: [user.id],
+    fields: [projects.userEmail],
+    references: [user.email],
   }),
   projectObjectives: many(projectObjectives),
   races: many(race, { relationName: "projectToRaces" }),
@@ -101,25 +101,25 @@ export const raceOnUserJoinTable = createTable(
     raceId: integer("raceId")
       .notNull()
       .references(() => race.id),
-    userId: uuid("userId")
+    userEmail: text("userEmail")
       .notNull()
-      .references(() => user.id),
+      .references(() => user.email),
   },
   (t) => {
-    return { pk: primaryKey({ columns: [t.raceId, t.userId] }) };
+    return { pk: primaryKey({ columns: [t.raceId, t.userEmail] }) };
   },
 );
 
 export const raceOnUserJoinRelations = relations(
   raceOnUserJoinTable,
   ({ one }) => ({
-    race: one(race, {
+    raceId: one(race, {
       fields: [raceOnUserJoinTable.raceId],
       references: [race.id],
     }),
-    user: one(user, {
-      fields: [raceOnUserJoinTable.userId],
-      references: [user.id],
+    userEmail: one(user, {
+      fields: [raceOnUserJoinTable.userEmail],
+      references: [user.email],
     }),
   }),
 );
@@ -147,15 +147,15 @@ export const teamRelations = relations(team, ({ one, many }) => ({
 export const userOnTeamJoinTable = createTable(
   "userOnTeamJoin",
   {
-    userId: uuid("userId")
+    userEmail: text("userEmail")
       .notNull()
-      .references(() => user.id),
+      .references(() => user.email),
     teamId: integer("teamId")
       .notNull()
       .references(() => team.id),
   },
   (t) => {
-    return { pk: primaryKey({ columns: [t.userId, t.teamId] }) };
+    return { pk: primaryKey({ columns: [t.userEmail, t.teamId] }) };
   },
 );
 
@@ -163,8 +163,8 @@ export const userOnTeamJoinRelations = relations(
   userOnTeamJoinTable,
   ({ one }) => ({
     user: one(user, {
-      fields: [userOnTeamJoinTable.userId],
-      references: [user.id],
+      fields: [userOnTeamJoinTable.userEmail],
+      references: [user.email],
     }),
     team: one(team, {
       fields: [userOnTeamJoinTable.teamId],
@@ -204,6 +204,8 @@ export type NewProjectObjective = typeof projectObjectives.$inferInsert;
 
 export type Race = typeof race.$inferSelect;
 export type NewRace = typeof race.$inferInsert;
+
+export type RaceOnUserJoin = typeof raceOnUserJoinTable.$inferSelect;
 
 export type Team = typeof team.$inferSelect;
 export type NewTeam = typeof team.$inferInsert;

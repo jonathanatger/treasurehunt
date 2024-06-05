@@ -9,10 +9,12 @@ export const racesRouter = createTRPCRouter({
   fetchUserRaces: publicProcedure
     .input(z.string())
     .query(async ({ ctx, input }) => {
-      return await ctx.db
+      const races = await ctx.db
         .select()
         .from(race)
         .innerJoin(raceOnUserJoinTable, eq(race.id, raceOnUserJoinTable.raceId))
-        .where(eq(raceOnUserJoinTable.userId, input));
+        .where(eq(raceOnUserJoinTable.userEmail, input));
+
+      return races;
     }),
 });

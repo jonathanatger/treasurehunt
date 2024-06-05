@@ -8,7 +8,7 @@ export async function POST(request: Request) {
 
   if (!id) return new Response("No id provided", { status: 400 });
 
-  const data = api.races.fetchUserRaces(id);
+  const data = await api.races.fetchUserRaces(id);
 
   return Response.json({ data });
 }
