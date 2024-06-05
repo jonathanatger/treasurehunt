@@ -7,7 +7,8 @@ import { useProjects } from "~/lib/useProjects";
 import { cn } from "~/lib/utils";
 
 export function TitleChange({ projectId }: { projectId: number }) {
-  const { data, isLoading } = api.projects.fetchUserProjects.useQuery();
+  const { data, isLoading, isFetching } =
+    api.projects.fetchUserProjects.useQuery();
   const [clientTitle, setClientTitle] = useState<string>("");
   const [userHasFeedback, setUserHasFeedback] = useState<boolean>(false);
 
@@ -35,17 +36,18 @@ export function TitleChange({ projectId }: { projectId: number }) {
       )}
       placeholder="Les mystérieuses cités d'or..."
       onChange={changeAndSetTitle}
-      value={isLoading ? "Chargement..." : clientTitle}
+      value={isLoading ? "..." : clientTitle}
     />
   );
 }
 
 export function LinkToClipboardCard({ projectId }: { projectId: number }) {
-  const { data, isLoading } = api.projects.fetchUserProjects.useQuery();
+  const { data, isLoading, isFetching } =
+    api.projects.fetchUserProjects.useQuery();
   const currentRaceId = data?.find(
     (project) => project.id === projectId,
   )?.currentRace;
-  const link = `www.treasurio.com/rejoindre/${currentRaceId}`;
+  const link = `join${currentRaceId}`;
   async function copyLink(e: React.FormEvent<HTMLButtonElement>) {
     if (isLoading) return;
     await navigator.clipboard
@@ -66,7 +68,13 @@ export function LinkToClipboardCard({ projectId }: { projectId: number }) {
         <h3 className="font-title text-2xl">Copier le lien</h3>
         <Clipboard></Clipboard>
       </div>
-      {isLoading ? <h3>...</h3> : <h3 id="clipboard-link">{link}</h3>}
+      {isLoading ? (
+        <h3 className="text-secondary">.</h3>
+      ) : (
+        <h3 className="appear-animation" id="clipboard-link">
+          {link}
+        </h3>
+      )}
     </Button>
   );
 }
