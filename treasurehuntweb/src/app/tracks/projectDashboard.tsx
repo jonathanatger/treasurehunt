@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
+import { Card, CardHeader, CardTitle } from "~/components/ui/card";
 import { api } from "~/trpc/client";
 import { Project } from "~/server/db/schema";
 import { revalidate } from "~/lib/serverActions";
@@ -150,6 +145,7 @@ function NewProjectCard() {
       {
         name: "Nouveau",
         description: "",
+        code: randomProjectCode(),
       },
       {
         onError() {
@@ -177,4 +173,9 @@ function NewProjectCard() {
       </CardHeader>
     </Card>
   );
+}
+
+function randomProjectCode(): string {
+  const code = Math.random().toString(36).slice(-8);
+  return code;
 }

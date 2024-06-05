@@ -44,19 +44,18 @@ export function TitleChange({ projectId }: { projectId: number }) {
 export function LinkToClipboardCard({ projectId }: { projectId: number }) {
   const { data, isLoading, isFetching } =
     api.projects.fetchUserProjects.useQuery();
-  const currentRaceId = data?.find(
+  const currentRaceCode = data?.find(
     (project) => project.id === projectId,
-  )?.currentRace;
-  const link = `join${currentRaceId}`;
+  )?.code;
   async function copyLink(e: React.FormEvent<HTMLButtonElement>) {
     if (isLoading) return;
     await navigator.clipboard
-      .writeText(link)
+      .writeText(currentRaceCode!)
       .catch((err) => console.error(err));
     const textElement = document.getElementById("clipboard-link")!;
     textElement.innerHTML = "Copié !";
     setTimeout(() => {
-      textElement.innerHTML = link;
+      textElement.innerHTML = currentRaceCode!;
     }, 1000);
   }
   return (
@@ -72,7 +71,7 @@ export function LinkToClipboardCard({ projectId }: { projectId: number }) {
         <h3 className="text-secondary">.</h3>
       ) : (
         <h3 className="appear-animation" id="clipboard-link">
-          {link}
+          {currentRaceCode!}
         </h3>
       )}
     </Button>

@@ -25,6 +25,7 @@ export const projectsRouter = createTRPCRouter({
       z.object({
         name: z.string().min(1),
         description: z.string(),
+        code: z.string().min(1),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -36,6 +37,7 @@ export const projectsRouter = createTRPCRouter({
           userId: ctx.authUser.id!,
           userEmail: ctx.authUser.email,
           description: input.description,
+          code: input.code,
         })
         .returning({ projectId: projects.id });
 
