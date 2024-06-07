@@ -44,7 +44,6 @@ export const projects = createTable("projects", {
   userEmail: text("email").notNull(),
   currentRace: integer("currentRace"),
   deleted: boolean("deleted").default(false),
-  code: varchar("code", { length: 8 }).default("as93sa9d"),
 });
 
 export const projectRelations = relations(projects, ({ one, many }) => ({
@@ -84,6 +83,7 @@ export const race = createTable("races", {
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
+  code: varchar("code", { length: 8 }).notNull(),
 });
 
 export const raceRelations = relations(race, ({ one, many }) => ({

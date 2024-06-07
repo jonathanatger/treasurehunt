@@ -7,13 +7,10 @@ import { TRPCError } from "@trpc/server";
 
 export const projectsRouter = createTRPCRouter({
   fetchUserProjects: protectedProcedure.query(async ({ ctx }) => {
-    const authUserEmail = ctx.authUser?.email;
-    if (!authUserEmail) return;
+    const authUserId = ctx.authUser?.id;
+    if (!authUserId) throw { code: "UNAUTHORIZED" };
     const projectsData = ctx.db.query.projects.findMany({
-      where: and(
-        eq(projects.userEmail, authUserEmail),
-        eq(projects.deleted, false),
-      ),
+      where: and(eq(projects.userId, authUserId), eq(projects.deleted, false)),
       orderBy: (projects, { asc }) => [asc(projects.createdAt)],
     });
 
@@ -29,15 +26,14 @@ export const projectsRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      if (!ctx.authUser?.email) return;
+      if (!ctx.authUser?.id) return;
       const created = await ctx.db
         .insert(projects)
         .values({
           name: input.name,
-          userId: ctx.authUser.id!,
-          userEmail: ctx.authUser.email,
+          userId: ctx.authUser.id,
+          userEmail: ctx.authUser.email!,
           description: input.description,
-          code: input.code,
         })
         .returning({ projectId: projects.id });
 
@@ -48,13 +44,13 @@ export const projectsRouter = createTRPCRouter({
           code: "INTERNAL_SERVER_ERROR",
           message: "Could not create project",
         });
-        return;
       }
 
       const newRace = await ctx.db
         .insert(race)
         .values({
           projectId: projectNumber,
+          code: input.code,
         })
         .returning({ id: race.id });
 
@@ -85,7 +81,7 @@ export const projectsRouter = createTRPCRouter({
         .where(
           and(
             eq(projects.id, input.projectId),
-            eq(projects.userEmail, ctx.user.email!),
+            eq(projects.userId, ctx.user.id!),
           ),
         );
     }),

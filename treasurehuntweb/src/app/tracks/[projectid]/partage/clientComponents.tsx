@@ -44,18 +44,27 @@ export function TitleChange({ projectId }: { projectId: number }) {
 export function LinkToClipboardCard({ projectId }: { projectId: number }) {
   const { data, isLoading, isFetching } =
     api.projects.fetchUserProjects.useQuery();
-  const currentRaceCode = data?.find(
+
+  const currentRaceId = data?.find(
     (project) => project.id === projectId,
-  )?.code;
+  )?.currentRace;
+
+  const { data: race, isLoading: isRaceLoading } = api.races.fetchRace.useQuery(
+    { raceId: currentRaceId! },
+  );
+
   async function copyLink(e: React.FormEvent<HTMLButtonElement>) {
-    if (isLoading) return;
+    if (isRaceLoading || !race) return;
+
     await navigator.clipboard
-      .writeText(currentRaceCode!)
+      .writeText(race.code)
       .catch((err) => console.error(err));
+
     const textElement = document.getElementById("clipboard-link")!;
     textElement.innerHTML = "Copié !";
+
     setTimeout(() => {
-      textElement.innerHTML = currentRaceCode!;
+      textElement.innerHTML = race.code;
     }, 1000);
   }
   return (
@@ -67,11 +76,11 @@ export function LinkToClipboardCard({ projectId }: { projectId: number }) {
         <h3 className="font-title text-2xl">Copier le lien</h3>
         <Clipboard></Clipboard>
       </div>
-      {isLoading ? (
+      {isRaceLoading ? (
         <h3 className="text-secondary">.</h3>
       ) : (
         <h3 className="appear-animation" id="clipboard-link">
-          {currentRaceCode!}
+          {race && race.code}
         </h3>
       )}
     </Button>

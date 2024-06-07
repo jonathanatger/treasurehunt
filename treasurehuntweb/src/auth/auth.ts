@@ -4,6 +4,8 @@ import NextAuth, { AuthError } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import { nanoid } from "nanoid";
+import { api } from "~/trpc/client";
+import { domain } from "~/lib/utils";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -32,8 +34,27 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     signIn: "/login",
   },
   callbacks: {
+    jwt: async ({ token, user, account }) => {
+      if (user) {
+        if (user.email && account?.provider === "google") {
+          const res = await fetch(domain + "/api/auth/getUserIdLocal", {
+            method: "POST",
+            body: user.email,
+          }); //query.fetchUserId({ email: user.email });
+
+          const data = (await res.json()) as {
+            data: {
+              email: string;
+            };
+          };
+          token.sub = data.data.email;
+          return token;
+        } else return token;
+      }
+      return token;
+    },
     session: async ({ session, token }) => {
-      session.user.id = token.sub!;
+      if (token.sub) session.user.id = token.sub;
       return session;
     },
     signIn: async ({ user: userProvider, account }) => {
