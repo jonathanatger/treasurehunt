@@ -10,6 +10,7 @@ import {
   RaceOnUserJoin,
 } from "../../../treasurehuntweb/src/server/db/schema";
 import { domain } from "@/constants/data";
+import { RefreshControl } from "react-native";
 
 const fetchRaces = async (email: string | undefined) => {
   if (!email) throw new Error("No email provided");
@@ -32,6 +33,7 @@ function TracksMainPage() {
   const { height, width } = useWindowDimensions();
   const [tracksIds, setTracksIds] = useState([1, 2, 3, 4]);
   const userInfo = useContext(appContext).userInfo;
+  const [refreshing, setRefreshing] = useState(false);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["userRaces"],
@@ -40,9 +42,23 @@ function TracksMainPage() {
     },
   });
 
+  const refreshFunction = async () => {
+    setRefreshing(true);
+    queryClient.invalidateQueries({ queryKey: ["userRaces"] });
+    queryClient.refetchQueries({ queryKey: ["userRaces"] }).then(() => {
+      setRefreshing(false);
+    });
+  };
   return (
     <ThemedSafeAreaView style={{ height: height }}>
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => refreshFunction()}
+          />
+        }>
         <PressableLink
           text="Go back"
           route="/"
@@ -67,6 +83,7 @@ function TracksMainPage() {
         ) : (
           <ThemedText>{error?.toString()}</ThemedText>
         )}
+        <ThemedText>Pull down to refresh</ThemedText>
       </ScrollView>
     </ThemedSafeAreaView>
   );
