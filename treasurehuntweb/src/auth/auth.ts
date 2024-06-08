@@ -37,17 +37,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     jwt: async ({ token, user, account }) => {
       if (user) {
         if (user.email && account?.provider === "google") {
-          const res = await fetch(domain + "/api/auth/getUserIdLocal", {
+          const res = await fetch(domain + "/api/getUserIdLocal", {
             method: "POST",
             body: user.email,
-          }); //query.fetchUserId({ email: user.email });
+          });
+
+          console.log(res);
 
           const data = (await res.json()) as {
             data: {
-              email: string;
+              id: string;
             };
           };
-          token.sub = data.data.email;
+          token.sub = data.data.id;
           return token;
         } else return token;
       }
