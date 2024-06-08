@@ -45,7 +45,6 @@
     "zod": "latest"
   },
   "devDependencies": {
-    "@clerk/types": "^4.0.0-beta.28",
     "@testing-library/react": "^15.0.7",
     "@types/bun": "latest",
     "@types/eslint": "^8.56.2",
