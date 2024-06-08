@@ -11,11 +11,15 @@ import { User as AuthUser } from "next-auth";
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   const session = await auth();
   let authUser: AuthUser | undefined;
+  let id: string | undefined;
+
   if (session) authUser = session.user;
+  if (authUser) id = authUser.id;
 
   return {
     db,
     authUser,
+    id,
     ...opts,
   };
 };

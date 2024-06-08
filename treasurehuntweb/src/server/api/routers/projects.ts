@@ -7,8 +7,11 @@ import { TRPCError } from "@trpc/server";
 
 export const projectsRouter = createTRPCRouter({
   fetchUserProjects: protectedProcedure.query(async ({ ctx }) => {
+    console.log("ctx.authUser", ctx.authUser);
+
     const authUserId = ctx.authUser?.id;
     if (!authUserId) throw { code: "UNAUTHORIZED" };
+
     const projectsData = ctx.db.query.projects.findMany({
       where: and(eq(projects.userId, authUserId), eq(projects.deleted, false)),
       orderBy: (projects, { asc }) => [asc(projects.createdAt)],
