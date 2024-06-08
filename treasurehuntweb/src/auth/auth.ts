@@ -35,24 +35,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   callbacks: {
     jwt: async ({ token, user, account }) => {
-      if (user) {
-        if (user.email && account?.provider === "google") {
-          const res = await fetch(domain + "/api/getUserIdLocal", {
-            method: "POST",
-            body: user.email,
-          });
+      if (!user) return token;
+      if (user.email && account?.provider === "google") {
+        const res = await fetch(domain + "/api/getUserIdLocal", {
+          method: "POST",
+          body: user.email,
+        });
 
-          console.log(res);
+        console.log(res);
 
-          const data = (await res.json()) as {
-            data: {
-              id: string;
-            };
+        const data = (await res.json()) as {
+          data: {
+            id: string;
           };
-          token.sub = data.data.id;
-          return token;
-        } else return token;
+        };
+        token.sub = data.data.id;
       }
+
       return token;
     },
     session: async ({ session, token }) => {

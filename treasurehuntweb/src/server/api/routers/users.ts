@@ -6,7 +6,7 @@ import { projectObjectives, projects, race, team, user } from "../../db/schema";
 import { TRPCError } from "@trpc/server";
 
 export const usersRouter = createTRPCRouter({
-  fetchUserId: protectedProcedure
+  fetchUserId: publicProcedure
     .input(z.object({ email: z.string() }))
     .query(async ({ ctx, input }) => {
       const fetchedUser = await ctx.db.query.user.findFirst({
