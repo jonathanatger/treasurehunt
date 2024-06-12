@@ -5,6 +5,8 @@ import { useState, useEffect, use } from "react";
 import { api } from "~/trpc/client";
 import { useProjects } from "~/lib/useProjects";
 import { cn } from "~/lib/utils";
+import { Race } from "~/server/db/schema";
+import { getQueryKey } from "@trpc/react-query";
 
 export function TitleChange({ projectId }: { projectId: number }) {
   const { data, isLoading, isFetching } =
@@ -49,22 +51,25 @@ export function LinkToClipboardCard({ projectId }: { projectId: number }) {
     (project) => project.id === projectId,
   )?.currentRace;
 
-  const { data: race, isLoading: isRaceLoading } = api.races.fetchRace.useQuery(
-    { raceId: currentRaceId! },
+  const { data: raceData } = api.races.fetchRace.useQuery(
+    {
+      raceId: currentRaceId!,
+    },
+    { enabled: !!currentRaceId },
   );
 
   async function copyLink(e: React.FormEvent<HTMLButtonElement>) {
-    if (isRaceLoading || !race) return;
+    if (!raceData) return;
 
     await navigator.clipboard
-      .writeText(race.code)
+      .writeText(raceData.code)
       .catch((err) => console.error(err));
 
     const textElement = document.getElementById("clipboard-link")!;
     textElement.innerHTML = "Copié !";
 
     setTimeout(() => {
-      textElement.innerHTML = race.code;
+      textElement.innerHTML = raceData.code;
     }, 1000);
   }
   return (
@@ -76,11 +81,11 @@ export function LinkToClipboardCard({ projectId }: { projectId: number }) {
         <h3 className="font-title text-2xl">Copier le lien</h3>
         <Clipboard></Clipboard>
       </div>
-      {isRaceLoading ? (
+      {!raceData ? (
         <h3 className="text-secondary">.</h3>
       ) : (
         <h3 className="appear-animation" id="clipboard-link">
-          {race && race.code}
+          {raceData && raceData.code}
         </h3>
       )}
     </Button>
