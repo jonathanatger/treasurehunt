@@ -36,6 +36,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     jwt: async ({ token, user, account }) => {
       if (!user) return token;
+      console.log(token);
 
       if (user.email && account?.provider === "google") {
         const res = await fetch(domain + "/api/getUserIdLocal", {
@@ -53,12 +54,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     session: async ({ session, token }) => {
       if (token.sub) session.user.id = token.sub;
+      console.log(session);
       return session;
     },
     signIn: async ({ user: userProvider, account }) => {
       try {
         if (account?.provider === "google") {
-          const { image, name, email } = userProvider;
+          const { image, name, email, id } = userProvider;
 
           if (!email) {
             throw new AuthError("Failed to sign in");
@@ -80,6 +82,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 email,
                 image: image!,
                 password,
+                providerid: id,
               })
               .returning();
           }

@@ -18,6 +18,7 @@ export const createTable = pgTableCreator((name) => `treasurehunt_${name}`);
 
 export const user = createTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
+  providerid: varchar("providerid").notNull().default("0"),
   email: text("email").notNull().unique(),
   name: text("name"),
   image: text("image"),
@@ -44,6 +45,7 @@ export const projects = createTable("projects", {
   userEmail: text("email").notNull(),
   currentRace: integer("currentRace"),
   deleted: boolean("deleted").default(false),
+  isLaunched: boolean("isLaunched").default(false),
 });
 
 export const projectRelations = relations(projects, ({ one, many }) => ({
