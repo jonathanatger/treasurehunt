@@ -52,6 +52,7 @@ export const projectsRouter = createTRPCRouter({
         .values({
           projectId: projectNumber,
           code: input.code,
+          name: input.name,
         })
         .returning({ id: race.id });
 
@@ -114,5 +115,10 @@ export const projectsRouter = createTRPCRouter({
             eq(projects.userId, ctx.user.id!),
           ),
         );
+
+      const name = await ctx.db
+        .update(race)
+        .set({ name: input.title })
+        .where(and(eq(race.id, input.projectId)));
     }),
 });

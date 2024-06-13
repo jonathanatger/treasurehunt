@@ -86,6 +86,7 @@ export const race = createTable("races", {
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
   code: varchar("code", { length: 8 }).notNull(),
+  name: varchar("name").notNull().default(""),
 });
 
 export const raceRelations = relations(race, ({ one, many }) => ({
