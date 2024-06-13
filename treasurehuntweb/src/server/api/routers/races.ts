@@ -21,17 +21,33 @@ export const racesRouter = createTRPCRouter({
   userJoinsRace: publicProcedure
     .input(z.object({ code: z.string(), userEmail: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const selectedRace = await ctx.db.query.race.findFirst({
+      const raceWhereCodeMatches = await ctx.db.query.race.findFirst({
         where: eq(race.code, input.code),
       });
 
-      if (!selectedRace) return false;
+      if (!raceWhereCodeMatches)
+        return {
+          joined: false,
+          result: "Pas de course avec ce code ! Pouvez-vous vérifier ?",
+        };
 
-      await ctx.db.insert(raceOnUserJoinTable).values({
-        userEmail: input.userEmail,
-        raceId: selectedRace.id,
-      });
-      return true;
+      let hasEnteredTheRace = false;
+      const req = await ctx.db
+        .insert(raceOnUserJoinTable)
+        .values({
+          userEmail: input.userEmail,
+          raceId: raceWhereCodeMatches.id,
+        })
+        .onConflictDoNothing()
+        .returning();
+
+      if (req.length === 0)
+        return {
+          joined: false,
+          result: "Vous avez déjà rejoint cette course !",
+        };
+
+      return { joined: true, result: "Vous avez rejoint la course !" };
     }),
 
   fetchRace: protectedProcedure
