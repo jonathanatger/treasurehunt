@@ -13,5 +13,5 @@ export async function POST(request: Request) {
     userEmail: reqData.userEmail,
   });
 
-  return Response.json({ id });
+  return Response.json(id);
 }

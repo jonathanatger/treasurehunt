@@ -21,23 +21,17 @@ export const racesRouter = createTRPCRouter({
   userJoinsRace: publicProcedure
     .input(z.object({ code: z.string(), userEmail: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const selectedRace = await ctx.db
-        .select()
-        .from(race)
-        .where(eq(race.code, input.code));
+      const selectedRace = await ctx.db.query.race.findFirst({
+        where: eq(race.code, input.code),
+      });
 
-      if (!selectedRace)
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Could not find race",
-        });
+      if (!selectedRace) return false;
 
-      // 0000000 WIP
-      // await ctx.db.insert(raceOnUserJoinTable).values({
-      //   userEmail: input.userEmail,
-      //   raceId: selectedRace[0].id,
-      // });
-      // return true;
+      await ctx.db.insert(raceOnUserJoinTable).values({
+        userEmail: input.userEmail,
+        raceId: selectedRace.id,
+      });
+      return true;
     }),
 
   fetchRace: protectedProcedure
