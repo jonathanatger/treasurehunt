@@ -9,8 +9,8 @@ export async function POST(request: Request) {
   if (!reqData) return new Response("No code provided", { status: 400 });
 
   const id = await api.races.userJoinsRace({
-    code: reqData.data,
-    userEmail: reqData.email,
+    code: reqData.code,
+    userEmail: reqData.userEmail,
   });
 
   return Response.json({ id });
