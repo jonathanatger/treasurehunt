@@ -31,7 +31,6 @@ export const racesRouter = createTRPCRouter({
           result: "Pas de course avec ce code ! Pouvez-vous vérifier ?",
         };
 
-      let hasEnteredTheRace = false;
       const req = await ctx.db
         .insert(raceOnUserJoinTable)
         .values({
