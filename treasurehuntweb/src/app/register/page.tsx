@@ -40,8 +40,8 @@ const RegisterPage = () => {
       }
       router.push("/tracks");
     } catch (error: unknown) {
-      // @ts-expect-error
-      setError(error.message);
+      // @ts-ignore
+      setError(error.message as string);
     }
   };
 
