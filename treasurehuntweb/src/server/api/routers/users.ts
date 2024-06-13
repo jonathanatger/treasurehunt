@@ -14,12 +14,9 @@ export const usersRouter = createTRPCRouter({
       });
 
       if (!fetchedUser) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Could not find user",
-        });
+        return { found: false, id: "no user with that email" };
       }
 
-      return fetchedUser.id;
+      return { found: true, id: fetchedUser.id };
     }),
 });

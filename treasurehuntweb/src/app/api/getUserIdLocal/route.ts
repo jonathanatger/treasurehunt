@@ -7,7 +7,7 @@ export async function POST(request: Request) {
 
   if (!email) return new Response("No email provided", { status: 400 });
 
-  const id = await api.users.fetchUserId({ email: email });
+  const data = await api.users.fetchUserId({ email: email });
 
-  return Response.json({ id });
+  return Response.json(data);
 }
