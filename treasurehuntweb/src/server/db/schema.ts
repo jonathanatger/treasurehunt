@@ -132,7 +132,7 @@ export const team = createTable("teams", {
   id: serial("id").primaryKey(),
   name: varchar("name").notNull(),
   raceId: integer("raceId").notNull(),
-  racePositionId: integer("racePositionId").notNull(),
+  racePositionId: integer("racePositionId"),
 });
 
 export const teamRelations = relations(team, ({ one, many }) => ({

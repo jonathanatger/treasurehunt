@@ -2,6 +2,7 @@ import { user } from "../db/schema";
 import { objectivesRouter } from "./routers/objectives";
 import { projectsRouter } from "./routers/projects";
 import { racesRouter } from "./routers/races";
+import { teamsRouter } from "./routers/teams";
 import { usersRouter } from "./routers/users";
 import { createCallerFactory, createTRPCRouter } from "./trpc";
 
@@ -11,6 +12,7 @@ export const appRouter = createTRPCRouter({
   objectives: objectivesRouter,
   races: racesRouter,
   users: usersRouter,
+  teams: teamsRouter,
 });
 
 // export type definition of API
