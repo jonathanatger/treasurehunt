@@ -43,16 +43,24 @@ export const teamsRouter = createTRPCRouter({
     }),
 
   enterTeam: publicProcedure
-    .input(z.object({ teamId: z.number(), userEmail: z.string() }))
+    .input(
+      z.object({
+        teamId: z.number(),
+        userEmail: z.string(),
+        existingTeamId: z.number().optional(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
-      const existingTeam = await ctx.db
-        .delete(userOnTeamJoinTable)
-        .where(
-          and(
-            eq(userOnTeamJoinTable.teamId, input.teamId),
-            eq(userOnTeamJoinTable.userEmail, input.userEmail),
-          ),
-        );
+      if (input.existingTeamId) {
+        const existingTeam = await ctx.db
+          .delete(userOnTeamJoinTable)
+          .where(
+            and(
+              eq(userOnTeamJoinTable.teamId, input.existingTeamId),
+              eq(userOnTeamJoinTable.userEmail, input.userEmail),
+            ),
+          );
+      }
 
       const enteredTeam = await ctx.db.insert(userOnTeamJoinTable).values({
         teamId: input.teamId,
