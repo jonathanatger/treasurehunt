@@ -26,10 +26,6 @@ export const teamsRouter = createTRPCRouter({
 
       if (!newTeam) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
 
-      const userOnTeamJoin = await ctx.db.insert(userOnTeamJoinTable).values({
-        userEmail: input.userEmail,
-        teamId: newTeam.id,
-      });
       return newTeam;
     }),
 
@@ -47,13 +43,28 @@ export const teamsRouter = createTRPCRouter({
     }),
 
   enterTeam: publicProcedure
-    .input(
-      z.object({ raceId: z.number(), userEmail: z.string(), name: z.string() }),
-    )
+    .input(z.object({ teamId: z.number(), userEmail: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const enteredTeam = await ctx.db.insert(team).values({
-        raceId: input.raceId,
-        name: input.name,
+      const enteredTeam = await ctx.db.insert(userOnTeamJoinTable).values({
+        teamId: input.teamId,
+        userEmail: input.userEmail,
       });
+    }),
+
+  quitTeam: publicProcedure
+    .input(z.object({ teamId: z.number(), userEmail: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const enteredTeam = await ctx.db
+        .delete(userOnTeamJoinTable)
+        .where(
+          and(
+            eq(userOnTeamJoinTable.teamId, input.teamId),
+            eq(userOnTeamJoinTable.userEmail, input.userEmail),
+          ),
+        );
+
+      if (!enteredTeam) return false;
+
+      return true;
     }),
 });
