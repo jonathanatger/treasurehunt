@@ -13,5 +13,7 @@ export async function POST(request: Request) {
     userEmail: reqData.userEmail,
   });
 
-  return Response.json({ result: res });
+  if (!res) return Response.json({ result: "error" });
+
+  return Response.json({ result: "success" });
 }
