@@ -13,10 +13,8 @@ export const teamsRouter = createTRPCRouter({
         .select()
         .from(team)
         .where(eq(team.raceId, input.raceId))
-        .rightJoin(
-          userOnTeamJoinTable,
-          eq(team.id, userOnTeamJoinTable.teamId),
-        );
+        .rightJoin(userOnTeamJoinTable, eq(team.id, userOnTeamJoinTable.teamId))
+        .rightJoin(user, eq(user.email, userOnTeamJoinTable.userEmail));
 
       return teams;
     }),
