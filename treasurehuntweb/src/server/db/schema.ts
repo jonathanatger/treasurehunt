@@ -87,6 +87,7 @@ export const race = createTable("races", {
     .notNull(),
   code: varchar("code", { length: 8 }).notNull(),
   name: varchar("name").notNull().default(""),
+  launched: boolean("launched").default(false),
 });
 
 export const raceRelations = relations(race, ({ one, many }) => ({
