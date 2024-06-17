@@ -2,10 +2,37 @@ import { z } from "zod";
 import { and, eq } from "drizzle-orm";
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-import { team, user, userOnTeamJoinTable } from "../../db/schema";
+import { race, team, user, userOnTeamJoinTable } from "../../db/schema";
 import { TRPCError } from "@trpc/server";
+import { create } from "domain";
 
 export const teamsRouter = createTRPCRouter({
+  createTeam: publicProcedure
+    .input(
+      z.object({
+        raceId: z.number(),
+        userEmail: z.string(),
+        teamName: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const [newTeam] = await ctx.db
+        .insert(team)
+        .values({
+          raceId: input.raceId,
+          name: input.teamName,
+        })
+        .returning({ id: team.id });
+
+      if (!newTeam) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+      const userOnTeamJoin = await ctx.db.insert(userOnTeamJoinTable).values({
+        userEmail: input.userEmail,
+        teamId: newTeam.id,
+      });
+      return newTeam;
+    }),
+
   getRaceTeams: publicProcedure
     .input(z.object({ raceId: z.number() }))
     .query(async ({ ctx, input }) => {
