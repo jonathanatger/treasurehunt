@@ -73,15 +73,14 @@ export const teamsRouter = createTRPCRouter({
 
       if (!usersOnTeam) return false;
 
-      const [enteredTeam] = await ctx.db
+      await ctx.db
         .delete(userOnTeamJoinTable)
         .where(
           and(
             eq(userOnTeamJoinTable.teamId, input.teamId),
             eq(userOnTeamJoinTable.userEmail, input.userEmail),
           ),
-        )
-        .returning({ teamId: team.id });
+        );
 
       if (usersOnTeam.length < 2) {
         await ctx.db.delete(team).where(and(eq(team.id, input.teamId)));
