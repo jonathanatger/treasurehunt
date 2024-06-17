@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { and, eq } from "drizzle-orm";
+import { and, count, eq, gt } from "drizzle-orm";
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { race, team, user, userOnTeamJoinTable } from "../../db/schema";
@@ -36,8 +36,8 @@ export const teamsRouter = createTRPCRouter({
         .select()
         .from(team)
         .where(eq(team.raceId, input.raceId))
-        .rightJoin(userOnTeamJoinTable, eq(team.id, userOnTeamJoinTable.teamId))
-        .rightJoin(user, eq(user.email, userOnTeamJoinTable.userEmail));
+        .fullJoin(userOnTeamJoinTable, eq(team.id, userOnTeamJoinTable.teamId))
+        .fullJoin(user, eq(user.email, userOnTeamJoinTable.userEmail));
 
       return teams;
     }),
@@ -54,16 +54,26 @@ export const teamsRouter = createTRPCRouter({
   quitTeam: publicProcedure
     .input(z.object({ teamId: z.number(), userEmail: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const enteredTeam = await ctx.db
+      const usersOnTeam = await ctx.db
+        .select()
+        .from(userOnTeamJoinTable)
+        .where(and(eq(userOnTeamJoinTable.teamId, input.teamId)));
+
+      if (!usersOnTeam) return false;
+
+      const [enteredTeam] = await ctx.db
         .delete(userOnTeamJoinTable)
         .where(
           and(
             eq(userOnTeamJoinTable.teamId, input.teamId),
             eq(userOnTeamJoinTable.userEmail, input.userEmail),
           ),
-        );
+        )
+        .returning({ teamId: team.id });
 
-      if (!enteredTeam) return false;
+      if (usersOnTeam.length < 2) {
+        await ctx.db.delete(team).where(and(eq(team.id, input.teamId)));
+      }
 
       return true;
     }),
