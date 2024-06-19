@@ -2,7 +2,13 @@ import { z } from "zod";
 import { and, eq } from "drizzle-orm";
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-import { race, raceOnUserJoinTable, user } from "../../db/schema";
+import {
+  projectObjectives,
+  projects,
+  race,
+  raceOnUserJoinTable,
+  user,
+} from "../../db/schema";
 import { TRPCError } from "@trpc/server";
 
 export const racesRouter = createTRPCRouter({
@@ -63,5 +69,28 @@ export const racesRouter = createTRPCRouter({
         });
 
       return selectedRace;
+    }),
+
+  getRaceObjectives: publicProcedure
+    .input(z.object({ raceId: z.number() }))
+    .query(async ({ ctx, input }) => {
+      const project = await ctx.db
+        .select()
+        .from(projects)
+        .where(eq(projects.currentRace, input.raceId))
+        .rightJoin(
+          projectObjectives,
+          eq(projectObjectives.projectid, projects.id),
+        );
+
+      if (!project)
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Could not find race",
+        });
+
+      const objectives = project.map((p) => p.projectObjectives);
+
+      return objectives;
     }),
 });

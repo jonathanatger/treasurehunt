@@ -10,7 +10,7 @@ export default function HelperPage() {
     const formData = new FormData(e.currentTarget);
     const datainput = formData.get("datainput") as string;
     const res = await action(datainput);
-    setData(res.toString());
+    console.log(res);
   };
 
   return (
