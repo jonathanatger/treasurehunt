@@ -97,7 +97,6 @@ export const raceRelations = relations(race, ({ one, many }) => ({
     relationName: "projectToRaces",
   }),
   teams: many(team, { relationName: "raceToTeams" }),
-  racePositions: many(racePosition),
 }));
 
 export const raceOnUserJoinTable = createTable(
@@ -133,7 +132,9 @@ export const team = createTable("teams", {
   id: serial("id").primaryKey(),
   name: varchar("name").notNull(),
   raceId: integer("raceId").notNull(),
-  racePositionId: integer("racePositionId"),
+  objectiveIndex: integer("objectiveIndex").notNull().default(0),
+  currentLatitude: doublePrecision("latitude").notNull().default(0),
+  currentLongitude: doublePrecision("longitude").notNull().default(0),
 });
 
 export const teamRelations = relations(team, ({ one, many }) => ({
@@ -143,10 +144,6 @@ export const teamRelations = relations(team, ({ one, many }) => ({
     relationName: "raceToTeams",
   }),
   users: many(userOnTeamJoinTable),
-  racePositions: one(racePosition, {
-    fields: [team.racePositionId],
-    references: [racePosition.id],
-  }),
 }));
 
 export const userOnTeamJoinTable = createTable(
@@ -177,26 +174,6 @@ export const userOnTeamJoinRelations = relations(
     }),
   }),
 );
-
-export const racePosition = createTable("racePosition", {
-  id: serial("id").primaryKey(),
-  raceId: integer("raceId").notNull(),
-  teamId: integer("teamId").notNull(),
-  objectiveIndex: integer("userId").notNull(),
-  latitude: doublePrecision("latitude").notNull(),
-  longitude: doublePrecision("longitude").notNull(),
-});
-
-export const racePositionRelations = relations(racePosition, ({ one }) => ({
-  team: one(team, {
-    fields: [racePosition.teamId],
-    references: [team.id],
-  }),
-  race: one(race, {
-    fields: [racePosition.raceId],
-    references: [race.id],
-  }),
-}));
 
 export type User = typeof user.$inferSelect;
 export type NewUser = typeof user.$inferInsert;
