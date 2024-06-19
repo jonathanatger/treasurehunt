@@ -12,7 +12,7 @@ export const useMarkersAndObjectives = function (
   generateClientId: (objectives: ProjectObjective[]) => number,
 ) {
   const DEFAULT_ON_CREATION_ID = -1;
-  const DEFAULT_ON_CREATION_ORDER = 1;
+  const DEFAULT_ON_CREATION_ORDER = 0;
 
   // Add new objective, with a click on the map.
   // step 1 : create listener on the map, to get the click
