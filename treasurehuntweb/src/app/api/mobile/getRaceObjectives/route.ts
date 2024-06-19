@@ -8,7 +8,7 @@ export async function POST(request: Request) {
   if (!reqData) return new Response("No race id provided", { status: 400 });
 
   const res = await api.races.getRaceObjectives({
-    raceId: reqData,
+    raceId: reqData.raceId,
   });
 
   return Response.json({ result: res });
