@@ -7,6 +7,7 @@ import {
   projects,
   race,
   raceOnUserJoinTable,
+  teamSubmissions,
   user,
 } from "../../db/schema";
 import { TRPCError } from "@trpc/server";
@@ -92,5 +93,41 @@ export const racesRouter = createTRPCRouter({
       const objectives = project.map((p) => p.projectObjectives);
 
       return objectives;
+    }),
+
+  advanceObjective: publicProcedure
+    .input(
+      z.object({
+        teamId: z.number(),
+        raceId: z.number(),
+        objectiveIndex: z.number(),
+        objectiveName: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const existingSubmissions = await ctx.db
+        .select()
+        .from(teamSubmissions)
+        .where(
+          and(
+            eq(teamSubmissions.teamId, input.teamId),
+            eq(teamSubmissions.objectiveIndex, input.objectiveIndex),
+            eq(teamSubmissions.raceId, input.raceId),
+          ),
+        );
+
+      if (existingSubmissions && existingSubmissions.length > 0) {
+        return false;
+      }
+
+      const submission = await ctx.db.insert(teamSubmissions).values({
+        teamId: input.teamId,
+        raceId: input.raceId,
+        objectiveIndex: input.objectiveIndex,
+        objectiveName: input.objectiveName,
+      });
+
+      if (!submission) return false;
+      return true;
     }),
 });

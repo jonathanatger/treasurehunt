@@ -10,6 +10,7 @@ import {
   uuid,
   primaryKey,
   boolean,
+  date,
 } from "drizzle-orm/pg-core";
 import { db } from ".";
 import { create } from "domain";
@@ -144,6 +145,9 @@ export const teamRelations = relations(team, ({ one, many }) => ({
     relationName: "raceToTeams",
   }),
   users: many(userOnTeamJoinTable),
+  teamSubmissions: many(teamSubmissions, {
+    relationName: "teamSubmissionsToTeams",
+  }),
 }));
 
 export const userOnTeamJoinTable = createTable(
@@ -171,6 +175,33 @@ export const userOnTeamJoinRelations = relations(
     team: one(team, {
       fields: [userOnTeamJoinTable.teamId],
       references: [team.id],
+    }),
+  }),
+);
+
+export const teamSubmissions = createTable("teamSubmissions", {
+  id: serial("id").primaryKey(),
+  teamId: integer("teamId").notNull(),
+  raceId: integer("raceId").notNull(),
+  objectiveIndex: integer("objectiveIndex").notNull(),
+  objectiveName: varchar("objectiveName").notNull(),
+  date: timestamp("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+});
+
+export const teamSubmissionsRelations = relations(
+  teamSubmissions,
+  ({ one }) => ({
+    team: one(team, {
+      fields: [teamSubmissions.teamId],
+      references: [team.id],
+      relationName: "teamSubmissionsToTeams",
+    }),
+    race: one(race, {
+      fields: [teamSubmissions.raceId],
+      references: [race.id],
+      relationName: "teamSubmissionsToRaces",
     }),
   }),
 );
