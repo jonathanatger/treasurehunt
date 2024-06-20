@@ -7,6 +7,7 @@ import {
   projects,
   race,
   raceOnUserJoinTable,
+  team,
   teamSubmissions,
   user,
 } from "../../db/schema";
@@ -127,7 +128,14 @@ export const racesRouter = createTRPCRouter({
         objectiveName: input.objectiveName,
       });
 
-      if (!submission) return false;
+      const teamUpdate = await ctx.db
+        .update(team)
+        .set({
+          objectiveIndex: input.objectiveIndex + 1,
+        })
+        .where(eq(team.id, input.teamId));
+
+      if (!submission || !teamUpdate) return false;
       return true;
     }),
 });
