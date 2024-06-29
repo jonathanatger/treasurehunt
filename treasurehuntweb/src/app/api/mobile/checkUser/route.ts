@@ -24,7 +24,7 @@ export async function POST(request: Request) {
         password: password,
       })
       .returning();
-    return Response.json({ userInfo });
+    return Response.json({ found: false, user: userInfo });
   }
-  return Response.json({ user: "No user with that email" });
+  return Response.json({ found: true, user: check.user });
 }
