@@ -174,7 +174,10 @@ function ReasonsToBuyCard({
 function Footer() {
   return (
     <footer className="flex flex-col justify-between space-y-2 border-t-2 border-primary pt-2 font-title text-muted md:flex-row md:space-y-0">
-      <div>TREASURIO</div>
+      <div>
+        <div>TREASURIO</div>
+        <Link href="/privacypolicy">Privacy policy</Link>
+      </div>
       <div className="flex flex-col justify-start">
         <div>3 rue Poirier de Narcay</div>
         <div>75014 Paris</div>
