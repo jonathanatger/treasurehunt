@@ -11,7 +11,7 @@ export const teamsRouter = createTRPCRouter({
     .input(
       z.object({
         raceId: z.number(),
-        userEmail: z.string(),
+        userId: z.string(),
         teamName: z.string(),
       }),
     )
@@ -37,7 +37,7 @@ export const teamsRouter = createTRPCRouter({
         .from(team)
         .where(eq(team.raceId, input.raceId))
         .fullJoin(userOnTeamJoinTable, eq(team.id, userOnTeamJoinTable.teamId))
-        .fullJoin(user, eq(user.email, userOnTeamJoinTable.userEmail));
+        .fullJoin(user, eq(user.id, userOnTeamJoinTable.userId));
 
       return teams;
     }),
@@ -46,7 +46,7 @@ export const teamsRouter = createTRPCRouter({
     .input(
       z.object({
         teamId: z.number(),
-        userEmail: z.string(),
+        userId: z.string(),
         existingTeamId: z.number().optional(),
       }),
     )
@@ -57,14 +57,14 @@ export const teamsRouter = createTRPCRouter({
           .where(
             and(
               eq(userOnTeamJoinTable.teamId, input.existingTeamId),
-              eq(userOnTeamJoinTable.userEmail, input.userEmail),
+              eq(userOnTeamJoinTable.userId, input.userId),
             ),
           );
       }
 
       const enteredTeam = await ctx.db.insert(userOnTeamJoinTable).values({
         teamId: input.teamId,
-        userEmail: input.userEmail,
+        userId: input.userId,
       });
 
       if (!enteredTeam) return false;
@@ -72,7 +72,7 @@ export const teamsRouter = createTRPCRouter({
     }),
 
   quitTeam: publicProcedure
-    .input(z.object({ teamId: z.number(), userEmail: z.string() }))
+    .input(z.object({ teamId: z.number(), userId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const usersOnTeam = await ctx.db
         .select()
@@ -86,7 +86,7 @@ export const teamsRouter = createTRPCRouter({
         .where(
           and(
             eq(userOnTeamJoinTable.teamId, input.teamId),
-            eq(userOnTeamJoinTable.userEmail, input.userEmail),
+            eq(userOnTeamJoinTable.userId, input.userId),
           ),
         );
 

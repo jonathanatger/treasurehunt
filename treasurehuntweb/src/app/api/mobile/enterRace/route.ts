@@ -9,7 +9,7 @@ export async function POST(request: Request) {
 
   const res = await api.races.userJoinsRace({
     code: reqData.code,
-    userEmail: reqData.userEmail,
+    userId: reqData.userId,
   });
 
   return Response.json({ result: res });

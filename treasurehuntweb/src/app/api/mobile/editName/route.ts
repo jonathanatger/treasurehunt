@@ -9,7 +9,7 @@ export async function POST(request: Request) {
 
   const reqBody = {
     name: reqData.name,
-    userEmail: reqData.userEmail,
+    userId: reqData.userId,
   };
 
   const res = await api.users.editName(reqBody);

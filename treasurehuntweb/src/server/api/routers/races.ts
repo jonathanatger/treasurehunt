@@ -21,13 +21,13 @@ export const racesRouter = createTRPCRouter({
         .select()
         .from(race)
         .innerJoin(raceOnUserJoinTable, eq(race.id, raceOnUserJoinTable.raceId))
-        .where(eq(raceOnUserJoinTable.userEmail, input));
+        .where(eq(raceOnUserJoinTable.userId, input));
 
       return races;
     }),
 
   userJoinsRace: publicProcedure
-    .input(z.object({ code: z.string(), userEmail: z.string() }))
+    .input(z.object({ code: z.string(), userId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const raceWhereCodeMatches = await ctx.db.query.race.findFirst({
         where: eq(race.code, input.code),
@@ -42,7 +42,7 @@ export const racesRouter = createTRPCRouter({
       const req = await ctx.db
         .insert(raceOnUserJoinTable)
         .values({
-          userEmail: input.userEmail,
+          userId: input.userId,
           raceId: raceWhereCodeMatches.id,
         })
         .onConflictDoNothing()

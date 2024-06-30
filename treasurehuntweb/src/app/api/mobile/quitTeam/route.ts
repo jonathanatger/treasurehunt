@@ -9,7 +9,7 @@ export async function POST(request: Request) {
 
   const res = await api.teams.quitTeam({
     teamId: reqData.teamId,
-    userEmail: reqData.userEmail,
+    userId: reqData.userId,
   });
 
   if (!res) return Response.json({ result: "error" });

@@ -9,7 +9,7 @@ export async function POST(request: Request) {
 
   const res = await api.teams.createTeam({
     raceId: reqData.raceId,
-    userEmail: reqData.userEmail,
+    userId: reqData.userId,
     teamName: reqData.teamName,
   });
 

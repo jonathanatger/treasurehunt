@@ -21,12 +21,12 @@ export const usersRouter = createTRPCRouter({
     }),
 
   editName: publicProcedure
-    .input(z.object({ name: z.string(), userEmail: z.string() }))
+    .input(z.object({ name: z.string(), userId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const returnedUser = await ctx.db
         .update(user)
         .set({ name: input.name })
-        .where(eq(user.email, input.userEmail));
+        .where(eq(user.email, input.userId));
 
       if (!returnedUser) return false;
       return true;

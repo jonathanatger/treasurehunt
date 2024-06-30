@@ -9,20 +9,20 @@ export async function POST(request: Request) {
     return new Response("No user or race provided", { status: 400 });
   let reqBody: {
     teamId: number;
-    userEmail: string;
+    userId: string;
     existingTeamId?: number;
   };
 
   if (reqData.existingTeamId) {
     reqBody = {
       teamId: reqData.teamId,
-      userEmail: reqData.userEmail,
+      userId: reqData.userId,
       existingTeamId: reqData.existingTeamId,
     };
   } else {
     reqBody = {
       teamId: reqData.teamId,
-      userEmail: reqData.userEmail,
+      userId: reqData.userId,
     };
   }
 
