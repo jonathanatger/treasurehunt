@@ -13,12 +13,9 @@ export async function POST(request: Request) {
 
   const res = await api.users.guestSubscription(reqBody);
 
-  if (!res.created)
-    return Response.json({
-      created: false,
-      result: res.user,
-      error: res.error,
-    });
-
-  return Response.json({ created: true, result: res, error: "" });
+  return Response.json({
+    created: res.created,
+    result: res.user,
+    error: res.error,
+  });
 }
