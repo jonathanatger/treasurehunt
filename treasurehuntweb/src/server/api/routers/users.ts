@@ -49,4 +49,29 @@ export const usersRouter = createTRPCRouter({
       if (!returnedUser) return false;
       return true;
     }),
+
+  guestSubscription: publicProcedure
+    .input(z.object({ name: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      // check if user already exists
+      const fetchedUser = await ctx.db.query.user.findFirst({
+        where: eq(user.email, input.name + "@guesttreasurehunt.com"),
+      });
+
+      if (fetchedUser) return fetchedUser;
+
+      const [returnedUser] = await ctx.db
+        .insert(user)
+        .values({
+          name: input.name,
+          email: input.name + "@guesttreasurehunt.com",
+          password: "guest",
+          image: "guest",
+          deleted: false,
+        })
+        .returning();
+
+      if (!returnedUser) return null;
+      return returnedUser;
+    }),
 });
