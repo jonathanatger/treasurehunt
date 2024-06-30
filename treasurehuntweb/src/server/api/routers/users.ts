@@ -14,10 +14,10 @@ export const usersRouter = createTRPCRouter({
       });
 
       if (!fetchedUser) {
-        return { found: false, id: "no user with that email" };
+        return { found: false, user: "no user with that email" };
       }
 
-      return { found: true, id: fetchedUser.id };
+      return { found: true, user: fetchedUser };
     }),
 
   editName: publicProcedure

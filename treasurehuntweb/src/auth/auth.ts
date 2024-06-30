@@ -1,5 +1,5 @@
 import { db } from "../server/db";
-import { user } from "../server/db/schema";
+import { User, user } from "../server/db/schema";
 import NextAuth, { AuthError } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
@@ -45,9 +45,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         const data = (await res.json()) as {
           found: boolean;
-          id: string;
+          user: User;
         };
-        token.sub = data.id;
+        console.log(data);
+        token.sub = data.user.id;
       }
 
       return token;
