@@ -31,4 +31,22 @@ export const usersRouter = createTRPCRouter({
       if (!returnedUser) return false;
       return true;
     }),
+
+  deleteUser: publicProcedure
+    .input(z.object({ userId: z.string(), userEmail: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const returnedUser = await ctx.db
+        .update(user)
+        .set({
+          deleted: true,
+          password: "deleted",
+          image: "deleted",
+          name: "User deleted",
+          email: input.userId + "-" + input.userEmail,
+        })
+        .where(eq(user.id, input.userId));
+
+      if (!returnedUser) return false;
+      return true;
+    }),
 });

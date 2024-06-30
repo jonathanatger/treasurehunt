@@ -47,7 +47,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           found: boolean;
           user: User;
         };
-        console.log(data);
         token.sub = data.user.id;
       }
 
