@@ -13,11 +13,11 @@ export async function POST(request: Request) {
 
   const res = await api.users.guestSubscription(reqBody);
 
-  if (!res)
+  if (!res.created)
     return Response.json({
       created: false,
-      result: null,
-      error: "Could not create user",
+      result: res.user,
+      error: res.error,
     });
 
   return Response.json({ created: true, result: res, error: "" });

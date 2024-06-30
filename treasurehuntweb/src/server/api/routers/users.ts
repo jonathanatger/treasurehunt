@@ -58,7 +58,12 @@ export const usersRouter = createTRPCRouter({
         where: eq(user.email, input.name + "@guesttreasurehunt.com"),
       });
 
-      if (fetchedUser) return fetchedUser;
+      if (fetchedUser)
+        return {
+          user: fetchedUser,
+          created: true,
+          error: "User already exists",
+        };
 
       const [returnedUser] = await ctx.db
         .insert(user)
@@ -71,7 +76,12 @@ export const usersRouter = createTRPCRouter({
         })
         .returning();
 
-      if (!returnedUser) return null;
-      return returnedUser;
+      if (!returnedUser)
+        return {
+          user: null,
+          created: false,
+          error: "Could not create user",
+        };
+      return { user: returnedUser, created: true, error: "" };
     }),
 });
