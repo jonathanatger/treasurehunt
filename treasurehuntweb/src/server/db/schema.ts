@@ -26,6 +26,7 @@ export const user = createTable("users", {
   created_at: timestamp("created_at").default(sql`now()`),
   updated_at: timestamp("updated_at").default(sql`now()`),
   password: text("password").notNull(),
+  deleted: boolean("deleted").default(false),
 });
 
 export const userRelations = relations(user, ({ one, many }) => ({
@@ -42,7 +43,7 @@ export const projects = createTable("projects", {
     .notNull(),
   updatedAt: timestamp("updatedAt"),
   description: text("projectDescription"),
-  userId: varchar("userId").notNull(),
+  userId: uuid("userId").notNull(),
   userEmail: text("email").notNull(),
   currentRace: integer("currentRace"),
   deleted: boolean("deleted").default(false),
@@ -51,8 +52,8 @@ export const projects = createTable("projects", {
 
 export const projectRelations = relations(projects, ({ one, many }) => ({
   user: one(user, {
-    fields: [projects.userEmail],
-    references: [user.email],
+    fields: [projects.userId],
+    references: [user.id],
   }),
   projectObjectives: many(projectObjectives),
   races: many(race, { relationName: "projectToRaces" }),
@@ -106,12 +107,12 @@ export const raceOnUserJoinTable = createTable(
     raceId: integer("raceId")
       .notNull()
       .references(() => race.id),
-    userEmail: text("userEmail")
+    userId: uuid("userId")
       .notNull()
-      .references(() => user.email),
+      .references(() => user.id),
   },
   (t) => {
-    return { pk: primaryKey({ columns: [t.raceId, t.userEmail] }) };
+    return { pk: primaryKey({ columns: [t.raceId, t.userId] }) };
   },
 );
 
@@ -123,8 +124,8 @@ export const raceOnUserJoinRelations = relations(
       references: [race.id],
     }),
     userEmail: one(user, {
-      fields: [raceOnUserJoinTable.userEmail],
-      references: [user.email],
+      fields: [raceOnUserJoinTable.userId],
+      references: [user.id],
     }),
   }),
 );
@@ -153,15 +154,15 @@ export const teamRelations = relations(team, ({ one, many }) => ({
 export const userOnTeamJoinTable = createTable(
   "userOnTeamJoin",
   {
-    userEmail: text("userEmail")
+    userId: uuid("userId")
       .notNull()
-      .references(() => user.email),
+      .references(() => user.id),
     teamId: integer("teamId")
       .notNull()
       .references(() => team.id),
   },
   (t) => {
-    return { pk: primaryKey({ columns: [t.userEmail, t.teamId] }) };
+    return { pk: primaryKey({ columns: [t.userId, t.teamId] }) };
   },
 );
 
@@ -169,8 +170,8 @@ export const userOnTeamJoinRelations = relations(
   userOnTeamJoinTable,
   ({ one }) => ({
     user: one(user, {
-      fields: [userOnTeamJoinTable.userEmail],
-      references: [user.email],
+      fields: [userOnTeamJoinTable.userId],
+      references: [user.id],
     }),
     team: one(team, {
       fields: [userOnTeamJoinTable.teamId],

@@ -17,7 +17,7 @@ export const usersRouter = createTRPCRouter({
         return { found: false, id: "no user with that email" };
       }
 
-      return { found: true, user: fetchedUser };
+      return { found: true, id: fetchedUser.id };
     }),
 
   editName: publicProcedure

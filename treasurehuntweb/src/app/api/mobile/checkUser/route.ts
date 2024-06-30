@@ -24,6 +24,7 @@ export async function POST(request: Request) {
         password: password,
       })
       .returning();
+
     return Response.json({ found: false, user: userInfo });
   }
   return Response.json({ found: true, user: check.user });
