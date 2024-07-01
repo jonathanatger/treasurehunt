@@ -20,6 +20,7 @@ export const createTable = pgTableCreator((name) => `treasurehunt_${name}`);
 export const user = createTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   providerid: varchar("providerid").notNull().default("0"),
+  provider: varchar("provider").notNull().default("0"),
   email: text("email").notNull().unique(),
   name: text("name"),
   image: text("image"),

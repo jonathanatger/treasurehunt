@@ -22,6 +22,7 @@ export async function POST(request: Request) {
         image: reqData.picture,
         providerid: reqData.id,
         password: password,
+        provider: reqData.provider || "0",
       })
       .returning();
 
