@@ -11,13 +11,14 @@ export async function POST(request: Request) {
   if (!reqData) return new Response("No data provided", { status: 400 });
 
   const check = await api.users.fetchUserId({ email: reqData.email });
+  const name = reqData.name === "" ? "Anonymous" : reqData.name;
 
   if (!check.found) {
     const password = nanoid();
     const userInfo = await db
       .insert(user)
       .values({
-        name: reqData.name,
+        name: name,
         email: reqData.email,
         image: reqData.picture,
         providerid: reqData.id,
